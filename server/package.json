@@ -12,11 +12,8 @@
   "dependencies": {
     "cors": "2.8.5",
     "express": "^5.0.1",
-    "mongoose": "8.7.3",
     "morgan": "1.10.0",
-    "qrcode": "1.5.4",
-    "sequelize": "6.37.5",
-    "sqlite3": "5.1.7"
+    "sequelize": "6.37.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
