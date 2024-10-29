@@ -1,9 +1,9 @@
 export default async function populateDB(sequelize) {
     console.log("Populating the database...");
-    const { document, stakeholder, connection } = sequelize.models;
+    const { Document, Stakeholder } = sequelize.models;
     try {
         // Create stakeholders
-        const stakeholders = await stakeholder.bulkCreate(
+        const stakeholders = await Stakeholder.bulkCreate(
             [
                 {
                     name: "LKAB",
@@ -34,7 +34,7 @@ export default async function populateDB(sequelize) {
         );
 
         //Create documents
-        const documents = await document.bulkCreate(
+        const documents = await Document.bulkCreate(
             [
                 {
                     title: "Compilation of responses “So what the people of Kiruna think?” (15)",

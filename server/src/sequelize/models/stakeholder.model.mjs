@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 
 // export function to define the Stakeholder model
 export default (sequelize) => {
-    sequelize.define("stakeholder", {
+    const Stakeholder = sequelize.define("Stakeholder", {
         name: {
             allowNull: false,
             type: DataTypes.ENUM(
@@ -23,4 +23,5 @@ export default (sequelize) => {
             },
         },
     });
+    return Stakeholder;
 };

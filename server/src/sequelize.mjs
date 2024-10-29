@@ -7,6 +7,7 @@ const sequelize = new Sequelize({
     define: {
         timestamps: false,
     },
+    logging: false,
 });
 
 // List of models to be defined

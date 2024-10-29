@@ -2,9 +2,24 @@ import sequelize from "../sequelize.mjs";
 
 class DocumentDAO {
     async getDocuments() {
-        return await sequelize.models.document.findAll({
-            include: ["stakeholders", "connectedDocuments"],
+        const documents = await sequelize.models.Document.findAll({
+            include: [
+                {
+                    association: "stakeholders",
+                    through: {
+                        attributes: [],
+                    },
+                },
+                {
+                    association: "connectedDocuments",
+                    through: {
+                        as: "connection",
+                        attributes: ["relationship"],
+                    },
+                },
+            ],
         });
+        return documents;
     }
     async createDocument(data) {}
 

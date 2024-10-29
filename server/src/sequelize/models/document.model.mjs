@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 
 // export function to define the Document model
 export default (sequelize) => {
-    sequelize.define("document", {
+    const Document = sequelize.define("Document", {
         title: {
             allowNull: false,
             type: DataTypes.STRING,
@@ -48,4 +48,5 @@ export default (sequelize) => {
             type: DataTypes.STRING,
         },
     });
+    return Document;
 };
