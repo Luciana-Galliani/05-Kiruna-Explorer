@@ -20,3 +20,6 @@
 
 - username, password (plus any other requested info)
 - username, password (plus any other requested info)
+
+## License
+This project is licensed under the Unlicense. See the [LICENSE](./LICENSE) file for details
