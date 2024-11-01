@@ -5,20 +5,24 @@
   "main": "index.mjs",
   "scripts": {
     "test": "jest",
-    "start": "nodemon index.mjs"
+    "start": "nodemon src/index.mjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^5.0.1",
     "morgan": "1.10.0",
-    "sequelize": "6.37.5"
+    "mysql2": "^3.11.3",
+    "sequelize": "6.37.5",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/node": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
+    "jest": "^29.7.0",
     "nodemon": "3.1.7",
     "typescript": "5.6.3"
   },
