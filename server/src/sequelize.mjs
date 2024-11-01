@@ -1,14 +1,20 @@
 import { Sequelize } from "sequelize";
 import { setupAssociations } from "./sequelize/associations.mjs";
 
-const sequelize = new Sequelize({
-    dialect: "sqlite",
-    storage: "./db.sqlite",
-    define: {
-        timestamps: false,
-    },
-    logging: false,
-});
+import dotenv from 'dotenv';
+dotenv.config();
+
+
+const sequelize = new Sequelize(
+    process.env.MYSQL_DATABASE,
+    process.env.MYSQL_USER,
+    process.env.MYSQL_PASSWORD,
+    {
+        host: process.env.MYSQL_HOST,
+        dialect: 'mysql',
+    }
+);
+
 
 // List of models to be defined
 const modelDefiners = [
