@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 
-// export function to define the Stakeholder model
+// export function to define the Connection model
 export default (sequelize) => {
     const Connection = sequelize.define("Connection", {
         relationship: {
