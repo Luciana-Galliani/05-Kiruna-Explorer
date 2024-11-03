@@ -86,7 +86,7 @@
 
     Header:
 
-    **Authorization: <your_jwt_token>**
+    **Authorization: Bearer <your_jwt_token>**
 
     Body:
 
@@ -128,7 +128,7 @@
 
     Header:
 
-    **Authorization: <your_jwt_token>**
+    **Authorization: Bearer <your_jwt_token>**
 
     Body:
 

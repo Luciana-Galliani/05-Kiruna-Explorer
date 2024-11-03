@@ -28,7 +28,7 @@ describe("authMiddleware", () => {
     });
 
     it("should return 401 if the token is invalid", () => {
-        req.headers["authorization"] = "invalidToken";
+        req.headers["authorization"] = "Bearer invalidToken";
         jwt.verify.mockImplementation((token, secret, callback) => {
             callback(new Error("Invalid token"), null);
         });
@@ -47,7 +47,7 @@ describe("authMiddleware", () => {
 
     it("should call next and set req.userId if the token is valid", () => {
         const decoded = { id: 1 };
-        req.headers["authorization"] = "validToken";
+        req.headers["authorization"] = "Bearer validToken";
         jwt.verify.mockImplementation((token, secret, callback) => {
             callback(null, decoded);
         });

@@ -128,7 +128,7 @@ describe("User Controller", () => {
             );
             expect(jwt.sign).toHaveBeenCalledWith(
                 { id: mockUser.id },
-                process.env.JWT_SECRET_KEY,
+                process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
             expect(res.status).toHaveBeenCalledWith(200);
