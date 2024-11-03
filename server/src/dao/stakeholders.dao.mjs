@@ -6,7 +6,6 @@ class StakeholdersDAO {
             const stakeholders = await sequelize.models.Stakeholder.findAll();
             return stakeholders;
         } catch (error) {
-            console.error("Error fetching stakeholders:", error);
             throw error;
         }
     }

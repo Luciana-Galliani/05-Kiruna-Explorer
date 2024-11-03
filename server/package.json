@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent",
     "start": "nodemon src/index.mjs"
   },
   "author": "",
