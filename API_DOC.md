@@ -153,3 +153,43 @@
         }
     }
     ```
+
+-   POST /api/users/register
+
+    Body:
+
+    ```json
+    {
+        "username": "aUsername",
+        "password": "aStrongPassword"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "message": "User created",
+        "user": "aUsername"
+    }
+    ```
+
+-   POST /api/users/login
+
+    Body:
+
+    ```json
+    {
+        "username": "aUsername",
+        "password": "aStrongPassword"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "message": "Login successful",
+        "token": "eyJhbGciOi...qDUpt4E"
+    }
+    ```
