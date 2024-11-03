@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent",
     "start": "nodemon src/index.mjs"
   },
   "author": "",
@@ -15,8 +15,7 @@
     "express": "^5.0.1",
     "morgan": "1.10.0",
     "mysql2": "^3.11.3",
-    "sequelize": "6.37.5",
-    "sqlite3": "^5.1.7"
+    "sequelize": "6.37.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

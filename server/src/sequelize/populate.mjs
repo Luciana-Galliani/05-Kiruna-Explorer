@@ -71,7 +71,10 @@ export default async function populateDB(sequelize) {
             { validate: true }
         );
 
-        await documents[0].setStakeholders([stakeholders[1], stakeholders[4]]);
+        await documents[0].setStakeholders([
+            stakeholders[1].id,
+            stakeholders[4].id,
+        ]);
         await documents[1].setStakeholders(stakeholders[1]);
         await documents[2].setStakeholders([stakeholders[1], stakeholders[3]]);
 
