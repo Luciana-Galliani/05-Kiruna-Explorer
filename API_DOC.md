@@ -100,7 +100,8 @@
         "language": "English",
         "pages": "12",
         "description": "This is a description",
-        "stakeholders": [{ "id": 1 }, { "id": 2 }]
+        "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
     ```
 
@@ -119,6 +120,17 @@
                     "color": "#FFFFFF"
                 },
                 ...,
+            ],
+            "connectedDocuments": [
+                {
+                    "id": 1,
+                    ...,
+                    "description": "This document is ...",
+                    "connection": {
+                        "relationship": "Prevision"
+                    }
+                },
+                ...
             ]
         }
     }
@@ -142,7 +154,8 @@
         "language": "English",
         "pages": "12",
         "description": "This is a new description",
-        "stakeholders": [{ "id": 1 }, { "id": 2 }]
+        "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
     ```
 
@@ -161,6 +174,17 @@
                     "color": "#FFFFFF"
                 },
                 ...,
+            ],
+            "connectedDocuments": [
+                {
+                    "id": 1,
+                    ...,
+                    "description": "This document is ...",
+                    "connection": {
+                        "relationship": "Prevision"
+                    }
+                },
+                ...
             ]
         }
     }
