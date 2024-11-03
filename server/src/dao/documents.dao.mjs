@@ -22,8 +22,7 @@ class DocumentsDAO {
             });
             return documents;
         } catch (error) {
-            console.error("Error fetching documents:", error);
-            throw error("Failed to fetch documents");
+            throw new Error("Failed to fetch documents");
         }
     }
 
@@ -51,7 +50,6 @@ class DocumentsDAO {
             }
             return document;
         } catch (error) {
-            console.error("Error fetching document:", error);
             throw new Error(error.message);
         }
     }
@@ -74,7 +72,6 @@ class DocumentsDAO {
             await document.setStakeholders(stakeholdersIds);
             return await this.getDocumentById(document.id);
         } catch (error) {
-            console.error("Error creating document:", error);
             throw new Error(error.message);
         }
     }
@@ -95,7 +92,6 @@ class DocumentsDAO {
             await document.setStakeholders(stakeholdersIds);
             return await this.getDocumentById(document.id);
         } catch (error) {
-            console.error("Error updating document:", error);
             throw new Error(error.message);
         }
     }
