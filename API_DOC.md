@@ -1,4 +1,4 @@
-## API Server
+# API Server
 
 -   GET /api/connections
 
@@ -22,6 +22,8 @@
         ...
     ]}
 ```
+
+## Documents
 
 -   GET /api/documents/:id
 
@@ -78,7 +80,13 @@
     }
     ```
 
+### Authenticated
+
 -   POST /api/documents
+
+    Header:
+
+    **Authorization: <your_jwt_token>**
 
     Body:
 
@@ -118,6 +126,10 @@
 
 -   PUT /api/documents/:id
 
+    Header:
+
+    **Authorization: <your_jwt_token>**
+
     Body:
 
     ```json
@@ -153,6 +165,8 @@
         }
     }
     ```
+
+## Users
 
 -   POST /api/users/register
 

@@ -1,4 +1,5 @@
 import express from "express";
+import authMiddleware from "../middlewares/authMiddlewares.mjs";
 import {
     getDocuments,
     getDocumentById,
@@ -11,7 +12,8 @@ const router = express.Router();
 // Documents routes
 router.get("/", getDocuments);
 router.get("/:id", getDocumentById);
-router.post("/", createDocument);
-router.put("/:id", updateDocument);
+// Authenticated routes
+router.post("/", authMiddleware, createDocument);
+router.put("/:id", authMiddleware, updateDocument);
 
 export default router;
