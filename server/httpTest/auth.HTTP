@@ -1,20 +1,20 @@
 ### REGISTRATION
 
-POST http://localhost:3001/api/auth/register HTTP/1.1 
+POST http://localhost:3001/api/users/register HTTP/1.1 
 Content-Type: application/json
     
     {
-        "username": "username",
+        "username": "username1",
         "password": "password"
     }
 
 ### LOGIN
 
-POST http://localhost:3001/api/auth/login HTTP/1.1
+POST http://localhost:3001/api/users/login HTTP/1.1
 Content-Type: application/json
     
         {
-            "username": "username",
+            "username": "username1",
             "password": "password"
         }
 
