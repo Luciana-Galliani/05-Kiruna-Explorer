@@ -14,6 +14,7 @@ export default (sequelize) => {
             allowNull: false,
         },
         scaleValue: {
+            allowNull: true,
             type: DataTypes.STRING,
             validate: {
                 // to check if the scaleValue is a valid scale

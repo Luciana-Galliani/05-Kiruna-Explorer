@@ -27,19 +27,7 @@ export const getDocumentById = async (req, res) => {
 
 export const createDocument = async (req, res) => {
     try {
-        const documentData = {
-            title: req.body.title,
-            scaleType: req.body.scaleType,
-            scaleValue: req.body.scaleValue,
-            issuanceDate: req.body.issuanceDate,
-            type: req.body.type,
-            language: req.body.language,
-            pages: req.body.pages,
-            description: req.body.description,
-            stakeholders: req.body.stakeholders,
-        };
-
-        const newDocument = await documentsDAO.createDocument(documentData);
+        const newDocument = await documentsDAO.createDocument(req.body.documentData);
         res.status(201).json({ document: newDocument });
     } catch (error) {
         console.error("Error in createDocument controller:", error);
