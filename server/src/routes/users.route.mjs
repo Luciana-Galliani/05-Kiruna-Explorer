@@ -1,10 +1,10 @@
 import express from "express";
-import { getUsers, createUser } from "../controllers/users.controller.mjs";
+import { getUser, createUser } from "../controllers/users.controller.mjs";
 
 const router = express.Router();
 
 // Users routes
-router.get("/", getUsers);
+router.get("/", getUser);
 
 router.post("/", createUser);
 
