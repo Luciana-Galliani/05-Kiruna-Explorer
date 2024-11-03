@@ -51,6 +51,7 @@ export const updateDocument = async (req, res) => {
             pages: req.body.pages,
             description: req.body.description,
             stakeholders: req.body.stakeholders,
+            connections: req.body.connections,
         };
 
         const updatedDocument = await documentsDAO.updateDocument(
