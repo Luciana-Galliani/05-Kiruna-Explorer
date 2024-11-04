@@ -22,8 +22,8 @@ export default function DescriptionForm() {
     const [notification, setNotification] = useState({ message: '', type: '' });
 
 
-    const typeOptions = ['Informative document', 'Prescriptive document', 'Design Document', 'Technical Document', 'Material effect'];
-    const scaleOptions = ['Plan', 'Blueprints/effect', 'Text'];
+    const typeOptions = ['Design Document', 'Informative document', 'Prescriptive document', 'Technical Document', 'Agreement', 'Conflict', 'Consultation', 'Action'];
+    const scaleOptions = ['Text', 'Concept', 'Blueprints/effect', 'Plan'];
 
 
     const showNotification = (message, type) => {
@@ -100,9 +100,10 @@ export default function DescriptionForm() {
         if (!documentData.title || !documentData.issuanceDate || !documentData.type || !documentData.description) {
             showNotification("Please fill all mandatory fields.", 'error');
             return;
-        } else if (!/^1:\d{1,3}([.,]\d{3})*$/.test(inputValues.scaleValue)) {
+        } else if (inputValues.scaleValue && !/^1:\d{1,3}([.,]\d{3})*$/.test(inputValues.scaleValue)) {
             showNotification('Plan scale must follow the format 1:1000', 'error');
             return;
+
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
             showNotification('Pages must be a single number or a range in the format 1-32', 'error');
             return;
