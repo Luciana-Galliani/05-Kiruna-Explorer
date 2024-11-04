@@ -19,9 +19,17 @@ export default function DescriptionForm() {
     const [activeField, setActiveField] = useState('');
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const tempRef = useRef(null);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+
 
     const typeOptions = ['Informative document', 'Prescriptive document', 'Design Document', 'Technical Document', 'Material effect'];
     const scaleOptions = ['Plan', 'Blueprints/effect', 'Text'];
+
+
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification({ message: '', type: '' }), 3000); // Notifica sparisce dopo 3 secondi
+    };
 
     useEffect(() => {
         const fetchStakeholders = async () => {
@@ -89,11 +97,23 @@ export default function DescriptionForm() {
             stakeholders: inputValues.stakeholders
         };
 
+        if (!documentData.title || !documentData.issuanceDate || !documentData.type || !documentData.description) {
+            showNotification("Please fill all mandatory fields.", 'error');
+            return;
+        } else if (!/^1:\d{1,3}([.,]\d{3})*$/.test(inputValues.scaleValue)) {
+            showNotification('Plan scale must follow the format 1:1000', 'error');
+            return;
+        } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
+            showNotification('Pages must be a single number or a range in the format 1-32', 'error');
+            return;
+        }
+
         try {
             const savedDocument = await API.createDocument(documentData);
-            console.log("Document saved successfully:", savedDocument);
+            showNotification("Document saved successfully!", 'success');
         } catch (error) {
             console.error("Error saving document:", error);
+            showNotification("Error saving document. Please try again.", 'error');
         }
     };
 
@@ -105,6 +125,20 @@ export default function DescriptionForm() {
             background: 'rgba(255, 255, 255, 0.8)',
             zIndex: 1,
         }}>
+            {notification.message && (
+                <div style={{
+                    padding: '10px',
+                    marginBottom: '15px',
+                    borderRadius: '5px',
+                    color: notification.type === 'success' ? '#155724' : '#721c24',
+                    backgroundColor: notification.type === 'success' ? '#d4edda' : '#f8d7da',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                }}>
+                    {notification.message}
+                </div>
+            )}
             <div style={{
                 position: 'absolute',
                 top: 0,
@@ -117,7 +151,7 @@ export default function DescriptionForm() {
                 zIndex: -1,
             }} />
             <Row>
-                <Col md={8}>
+                <Col md={7}>
                     <Form>
                         <Form.Group controlId="formTitle" className="mb-3">
                             <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Title</Form.Label>
@@ -215,7 +249,7 @@ export default function DescriptionForm() {
                         </Form.Group>
                     </Form>
                 </Col>
-                <Col md={4}>
+                <Col md={5}>
                     <Form.Group controlId="formDescription" className="mb-3">
                         <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Description</Form.Label>
                         <Form.Control

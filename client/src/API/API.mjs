@@ -1,4 +1,11 @@
+const getAuthToken = () => localStorage.getItem("authToken");
+
 const baseURL = "http://localhost:3001";
+
+const authHeaders = () => ({
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${getAuthToken()}`,
+});
 
 const getUsers = async () => {
     const response = await fetch(`${baseURL}/api/users`);
@@ -11,8 +18,46 @@ const getUsers = async () => {
     }
 };
 
+const registerUser = async ({ username, password }) => {
+    const response = await fetch(`${baseURL}/api/users/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+    });
+    if (response.ok) {
+        const doc = await response.json();
+        return doc;
+    } else {
+        const errDetails = await response.text();
+        throw errDetails;
+    }
+};
+
+const loginUser = async ({ username, password }) => {
+    const response = await fetch(`${baseURL}/api/users/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+    });
+    if (response.ok) {
+        const doc = await response.json();
+        localStorage.setItem("authToken", doc.token);
+        return doc;
+    } else {
+        const errDetails = await response.text();
+        throw errDetails;
+    }
+};
+
+
 const getDocuments = async () => {
-    const response = await fetch(`${baseURL}/api/documents`);
+    const response = await fetch(`${baseURL}/api/documents`, {
+        headers: authHeaders(),
+    });
     if (response.ok) {
         const documents = await response.json();
         return documents;
@@ -22,13 +67,10 @@ const getDocuments = async () => {
     }
 };
 
-//get the document for a specific documentId
 const getDocument = async (documentId) => {
     const response = await fetch(`${baseURL}/api/services/${documentId}`, {
         method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: authHeaders(),
     });
     if (response.ok) {
         const doc = await response.json();
@@ -39,14 +81,11 @@ const getDocument = async (documentId) => {
     }
 };
 
-// create document
 const createDocument = async (documentData) => {
     const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ documentData }),
+        headers: authHeaders(),
+        body: JSON.stringify(documentData),
     });
     if (response.ok) {
         const doc = await response.json();
@@ -57,13 +96,11 @@ const createDocument = async (documentData) => {
     }
 };
 
-const updateDocument = async (documentData) => {
-    const response = await fetch(`${baseURL}/api/documents/:id`, {
+const updateDocument = async (documentId, documentData) => {
+    const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ documentData }),
+        headers: authHeaders(),
+        body: JSON.stringify(documentData),
     });
     if (response.ok) {
         const doc = await response.json();
@@ -75,7 +112,9 @@ const updateDocument = async (documentData) => {
 };
 
 const getConnections = async () => {
-    const response = await fetch(`${baseURL}/api/connections`);
+    const response = await fetch(`${baseURL}/api/connections`, {
+        headers: authHeaders(),
+    });
     if (response.ok) {
         const connections = await response.json();
         return connections;
@@ -86,7 +125,9 @@ const getConnections = async () => {
 };
 
 const getStakeholders = async () => {
-    const response = await fetch(`${baseURL}/api/stakeholders`);
+    const response = await fetch(`${baseURL}/api/stakeholders`, {
+        headers: authHeaders(),
+    });
     if (response.ok) {
         const stakeholders = await response.json();
         return stakeholders;
@@ -98,12 +139,14 @@ const getStakeholders = async () => {
 
 const API = {
     getUsers,
+    registerUser,
+    loginUser,
     getDocuments,
     getDocument,
     createDocument,
     updateDocument,
     getConnections,
     getStakeholders
-}
+};
 
 export default API;
