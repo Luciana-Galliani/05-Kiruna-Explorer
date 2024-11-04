@@ -118,12 +118,13 @@ class DocumentsDAO {
 
             // Set connected documents
             for (const connection of documentData.connections) {
-                await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
+                await this._connectDocuments(document, connection.document.id, connection.relationship, transaction);
             }
 
             await transaction.commit();
             return await this.getDocumentById(document.id);
         } catch (error) {
+            console.log(error);
             await transaction.rollback();
             throw new Error(error.message);
         }

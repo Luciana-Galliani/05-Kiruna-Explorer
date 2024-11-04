@@ -81,7 +81,7 @@ export default async function populateDB(sequelize) {
 
                 {
                     title: "Adjusted development plan (47)",
-                    scaleType: "Scale",
+                    scaleType: "Plan",
                     scaleValue: "1:7.500",
                     issuanceDate: "2015",
                     type: "Design Document",
@@ -91,7 +91,7 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     title: "Detail plan for square and commercial street (50)",
-                    scaleType: "Scale",
+                    scaleType: "Plan",
                     scaleValue: "1:1.000",
                     issuanceDate: "2016-06-22",
                     type: "Prescriptive Document",
@@ -101,9 +101,9 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     title: "Construction of Scandic Hotel begins (63)",
-                    scaleType: "Blueprints/effects",
+                    scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
-                    type: "Material Effect",
+                    type: "Action",
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'54.7\"N 20°18'17.2\"E",
@@ -111,9 +111,9 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     title: "Town Hall demolition (64)",
-                    scaleType: "Blueprints/effects",
+                    scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
-                    type: "Material Effect",
+                    type: "Action",
                     language: "-",
                     pages: "-",
                     coordinates: "67°51'09.0\"N 20°13'20.8\"E",
@@ -121,9 +121,9 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     title: "Construction of Aurora Center begins (65)",
-                    scaleType: "Blueprints/effects",
+                    scaleType: "Blueprints/actions",
                     issuanceDate: "2019-05",
-                    type: "Material Effect",
+                    type: "Action",
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'57.0\"N 20°18'15.8\"E",
@@ -131,9 +131,9 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     title: "Construction of Block 1 begins(69)",
-                    scaleType: "Blueprints/effects",
+                    scaleType: "Blueprints/actions",
                     issuanceDate: "2019-06",
-                    type: "Material Effect",
+                    type: "Action",
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'54.8\"N 20°18'01.2\"E",
@@ -149,14 +149,14 @@ export default async function populateDB(sequelize) {
         ]);
         await documents[1].setStakeholders(stakeholders[1]);
         await documents[2].setStakeholders([stakeholders[1], stakeholders[3]]);
-
-        await documents[3].setStakeholders(stakeholders[0]);
-        await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
-        await documents[5].setStakeholders(stakeholders[1]);
-        await documents[6].setStakeholders(stakeholders[0]);
-        await documents[7].setStakeholders(stakeholders[0]);
-        await documents[8].setStakeholders(stakeholders[0]);
-        await documents[9].setStakeholders(stakeholders[0]);
+        /*
+                await documents[3].setStakeholders(stakeholders[0]);
+                await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
+                await documents[5].setStakeholders(stakeholders[1]);
+                await documents[6].setStakeholders(stakeholders[0]);
+                await documents[7].setStakeholders(stakeholders[0]);
+                await documents[8].setStakeholders(stakeholders[0]);
+                await documents[9].setStakeholders(stakeholders[0]);*/
 
 
         await documents[0].addConnectedDocument(documents[1], {

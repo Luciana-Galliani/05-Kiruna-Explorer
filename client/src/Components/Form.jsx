@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, Card } from 'react-bootstrap';
 import API from '../API/API.mjs';
-import { Stakeholder } from '../models.mjs';
+import { Stakeholder, Connection } from '../models.mjs';
 
 export default function DescriptionForm() {
     const [inputValues, setInputValues] = useState({
@@ -13,23 +13,32 @@ export default function DescriptionForm() {
         pages: '',
         description: '',
         scale: '',
-        planScale: ''
+        planScale: '',
+        connections: []
     });
     const [showModal, setShowModal] = useState(false);
     const [activeField, setActiveField] = useState('');
+    const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
+    const [documentOptions, setDocumentOptions] = useState([]);
+    const [relationshipOptions, setRelationshipOptions] = useState([]);
+
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: '', type: '' });
 
-
     const typeOptions = ['Design Document', 'Informative document', 'Prescriptive document', 'Technical Document', 'Agreement', 'Conflict', 'Consultation', 'Action'];
-    const scaleOptions = ['Text', 'Concept', 'Blueprints/effect', 'Plan'];
+    const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
+
+    const [document, setDocument] = useState(''); // For first dropdown
+    const [relationship, setRelationship] = useState(''); // For second dropdown
 
 
     const showNotification = (message, type) => {
         setNotification({ message, type });
-        setTimeout(() => setNotification({ message: '', type: '' }), 3000); // Notifica sparisce dopo 3 secondi
+        setTimeout(() => setNotification({ message: '', type: '' }), 3000);
     };
+
+
 
     useEffect(() => {
         const fetchStakeholders = async () => {
@@ -42,6 +51,25 @@ export default function DescriptionForm() {
             }
         };
 
+        const fetchRelationshipOptions = async () => {
+            try {
+                const resp = await API.getConnections();
+                setRelationshipOptions(resp.connections);
+            } catch (error) {
+                console.error("Error fetching typeOf options:", error);
+            }
+        };
+        const fetchDocuments = async () => {
+            try {
+                const resp = await API.getDocuments();
+                setDocumentOptions(resp.documents);
+            } catch (error) {
+                console.error("Error fetching documents:", error);
+            }
+        };
+
+        fetchDocuments();
+        fetchRelationshipOptions();
         fetchStakeholders();
     }, []);
 
@@ -83,6 +111,34 @@ export default function DescriptionForm() {
             handleSave();
         }
     };
+    const handleDocumentChange = (e) => {
+        const selectedDocumentId = e.target.value;
+        setDocument(selectedDocumentId);
+        setIsTypeOfEnabled(selectedDocumentId !== "");
+    };
+
+
+    const addConnection = () => {
+        if (document && relationship) {
+            const selectedDocument = documentOptions.find(doc => doc.id === Number(document));
+
+            if (selectedDocument) {
+                const newConnection = new Connection(selectedDocument, relationship);
+                setInputValues((prev) => ({
+                    ...prev,
+                    connections: [...prev.connections, newConnection]
+                }));
+                setDocument(''); // Resetta l'input
+                setRelationship('');
+            } else {
+                showNotification('Document not found.', 'error');
+            }
+        } else {
+            showNotification('Please fill in both document and type.', 'error');
+        }
+    };
+
+
 
     const handleSaveForm = async () => {
         const documentData = {
@@ -94,7 +150,8 @@ export default function DescriptionForm() {
             language: inputValues.language,
             pages: inputValues.pages,
             description: inputValues.description,
-            stakeholders: inputValues.stakeholders
+            stakeholders: inputValues.stakeholders,
+            connections: inputValues.connections
         };
 
         if (!documentData.title || !documentData.issuanceDate || !documentData.type || !documentData.description) {
@@ -110,7 +167,7 @@ export default function DescriptionForm() {
         }
 
         try {
-            const savedDocument = await API.createDocument(documentData);
+            await API.createDocument(documentData);
             showNotification("Document saved successfully!", 'success');
         } catch (error) {
             console.error("Error saving document:", error);
@@ -251,17 +308,67 @@ export default function DescriptionForm() {
                     </Form>
                 </Col>
                 <Col md={5}>
-                    <Form.Group controlId="formDescription" className="mb-3">
-                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Description</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={5}
-                            value={inputValues.description}
-                            onFocus={() => handleInputFocus('description')}
-                            readOnly
-                            placeholder="Click to enter description"
-                        />
-                    </Form.Group>
+                    <Form>
+                        <Form.Group controlId="formDescription" className="mb-3">
+                            <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={5}
+                                value={inputValues.description}
+                                onFocus={() => handleInputFocus('description')}
+                                readOnly
+                                placeholder="Click to enter description"
+                            />
+                        </Form.Group>
+
+                        {/* Connections Input */}
+                        <Form.Group controlId="formDocument" className="mb-3">
+                            <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Document</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={document.id}
+                                onChange={handleDocumentChange}
+                                className="w-75"
+                            >
+                                <option value="">Select a document</option>
+                                {documentOptions.map((document) => (
+                                    <option key={document.id} value={document.id}>
+                                        {document.title}
+                                    </option>
+                                ))}
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="formRelationship" className="mb-3">
+                            <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Type Of Connection</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={relationship}
+                                onChange={(e) => setRelationship(e.target.value)}
+                                className="w-75"
+                                disabled={!isTypeOfEnabled}
+                            >
+                                <option value="">Select type</option>
+                                {relationshipOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </Form.Control>
+                        </Form.Group>
+                    </Form>
+                    <Button variant="success" onClick={addConnection} className="my-2">
+                        Add Connection
+                    </Button>
+
+                    {inputValues.connections.map((connection, index) => (
+                        <Card key={index} className="mb-2">
+                            <Card.Body>
+                                <Card.Text><strong>Document:</strong> {connection.document.title}</Card.Text>
+                                <Card.Text><strong>Type:</strong> {connection.relationship}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    ))}
+
                 </Col>
             </Row>
 

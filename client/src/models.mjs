@@ -5,3 +5,10 @@ export class Stakeholder {
         this.color = color;
     }
 }
+
+export class Connection {
+    constructor(document, relationship) {
+        this.document = document;
+        this.relationship = relationship;
+    }
+}
