@@ -1,4 +1,4 @@
-## API Server
+# API Server
 
 -   GET /api/connections
 
@@ -22,6 +22,8 @@
         ...
     ]}
 ```
+
+## Documents
 
 -   GET /api/documents/:id
 
@@ -78,7 +80,13 @@
     }
     ```
 
+### Authenticated
+
 -   POST /api/documents
+
+    Header:
+
+    **Authorization: Bearer <your_jwt_token>**
 
     Body:
 
@@ -92,7 +100,8 @@
         "language": "English",
         "pages": "12",
         "description": "This is a description",
-        "stakeholders": [{ "id": 1 }, { "id": 2 }]
+        "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
     ```
 
@@ -111,12 +120,27 @@
                     "color": "#FFFFFF"
                 },
                 ...,
+            ],
+            "connectedDocuments": [
+                {
+                    "id": 1,
+                    ...,
+                    "description": "This document is ...",
+                    "connection": {
+                        "relationship": "Prevision"
+                    }
+                },
+                ...
             ]
         }
     }
     ```
 
 -   PUT /api/documents/:id
+
+    Header:
+
+    **Authorization: Bearer <your_jwt_token>**
 
     Body:
 
@@ -130,7 +154,8 @@
         "language": "English",
         "pages": "12",
         "description": "This is a new description",
-        "stakeholders": [{ "id": 1 }, { "id": 2 }]
+        "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
     ```
 
@@ -149,10 +174,23 @@
                     "color": "#FFFFFF"
                 },
                 ...,
+            ],
+            "connectedDocuments": [
+                {
+                    "id": 1,
+                    ...,
+                    "description": "This document is ...",
+                    "connection": {
+                        "relationship": "Prevision"
+                    }
+                },
+                ...
             ]
         }
     }
     ```
+
+## Users
 
 -   POST /api/users/register
 

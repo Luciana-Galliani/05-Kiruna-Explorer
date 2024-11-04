@@ -27,7 +27,7 @@ export const getDocumentById = async (req, res) => {
 
 export const createDocument = async (req, res) => {
     try {
-        const newDocument = await documentsDAO.createDocument(req.body.documentData);
+        const newDocument = await documentsDAO.createDocument(req.body);
         res.status(201).json({ document: newDocument });
     } catch (error) {
         console.error("Error in createDocument controller:", error);
@@ -51,6 +51,7 @@ export const updateDocument = async (req, res) => {
             pages: req.body.pages,
             description: req.body.description,
             stakeholders: req.body.stakeholders,
+            connections: req.body.connections,
         };
 
         const updatedDocument = await documentsDAO.updateDocument(
