@@ -1,9 +1,4 @@
-import {
-    getDocuments,
-    getDocumentById,
-    createDocument,
-    updateDocument,
-} from "../../controllers/documents.controller.mjs";
+import { getDocuments, getDocumentById, createDocument, updateDocument } from "../../controllers/documents.controller.mjs";
 import documentsDAO from "../../dao/documents.dao.mjs";
 
 jest.mock("../../dao/documents.dao.mjs", () => ({
@@ -70,9 +65,7 @@ describe("Documents Controller", () => {
 
         it("should respond with a 404 status if document is not found", async () => {
             req.params.id = "1";
-            documentsDAO.getDocumentById.mockRejectedValue(
-                new Error("Document not found")
-            );
+            documentsDAO.getDocumentById.mockRejectedValue(new Error("Document not found"));
 
             await getDocumentById(req, res);
 
@@ -98,6 +91,10 @@ describe("Documents Controller", () => {
                 pages: "100",
                 description: "Test Description",
                 stakeholders: [{ id: 1 }, { id: 2 }],
+                connections: [
+                    { documentId: 2, relationship: "Update" },
+                    { documentId: 3, relationship: "Prevision" },
+                ],
             };
             documentsDAO.createDocument.mockResolvedValue(mockDocument);
 
@@ -137,15 +134,16 @@ describe("Documents Controller", () => {
                 pages: "150",
                 description: "Updated Description",
                 stakeholders: [{ id: 3 }, { id: 4 }],
+                connections: [
+                    { documentId: 2, relationship: "Update" },
+                    { documentId: 3, relationship: "Prevision" },
+                ],
             };
             documentsDAO.updateDocument.mockResolvedValue(mockDocument);
 
             await updateDocument(req, res);
 
-            expect(documentsDAO.updateDocument).toHaveBeenCalledWith(
-                "1",
-                req.body
-            );
+            expect(documentsDAO.updateDocument).toHaveBeenCalledWith("1", req.body);
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({ document: mockDocument });
         });
@@ -157,10 +155,7 @@ describe("Documents Controller", () => {
 
             await updateDocument(req, res);
 
-            expect(documentsDAO.updateDocument).toHaveBeenCalledWith(
-                "1",
-                req.body
-            );
+            expect(documentsDAO.updateDocument).toHaveBeenCalledWith("1", req.body);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({
                 message: "Failed to update document",
