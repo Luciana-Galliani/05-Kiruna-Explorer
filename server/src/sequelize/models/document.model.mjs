@@ -48,6 +48,18 @@ export default (sequelize) => {
             allowNull: false,
             type: DataTypes.TEXT,
         },
+        allMunicipality: {
+            allowNull: true,
+            type: DataTypes.BOOLEAN,
+        },
+        latitude: {
+            allowNull: true,
+            type: DataTypes.DECIMAL(10, 8),
+        },
+        longitude: {
+            allowNull: true,
+            type: DataTypes.DECIMAL(11, 8),
+        },
     });
     return Document;
 };

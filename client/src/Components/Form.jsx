@@ -13,7 +13,10 @@ export default function DescriptionForm() {
         pages: '',
         description: '',
         scale: '',
-        planScale: ''
+        planScale: '',
+        allMunicipality: false,
+        latitude: null,
+        longitude: null,
     });
     const [showModal, setShowModal] = useState(false);
     const [activeField, setActiveField] = useState('');
@@ -94,7 +97,10 @@ export default function DescriptionForm() {
             language: inputValues.language,
             pages: inputValues.pages,
             description: inputValues.description,
-            stakeholders: inputValues.stakeholders
+            stakeholders: inputValues.stakeholders,
+            allMunicipality: inputValues.allMunicipality,
+            latitude: inputValues.latitude,
+            longitude: inputValues.longitude
         };
 
         if (!documentData.title || !documentData.issuanceDate || !documentData.type || !documentData.description) {
@@ -262,6 +268,36 @@ export default function DescriptionForm() {
                             placeholder="Click to enter description"
                         />
                     </Form.Group>
+                    <Form.Group controlId="formAllMunicipality" className="mb-3">
+                        <Form.Check
+                            type="checkbox"
+                            label="All Municipality"
+                            checked={inputValues.allMunicipality}
+                            onChange={(e) => setInputValues({ ...inputValues, allMunicipality: e.target.checked })}
+                        />
+                    </Form.Group>
+                    { !inputValues.allMunicipality && (
+                    <> 
+                    <Form.Group controlId="formLatitude" className="mb-3">
+                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Latitude</Form.Label>
+                        <Form.Control
+                            type="number"
+                            value={inputValues.latitude || ''}
+                            onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
+                            placeholder="Enter latitude"
+                        />
+                    </Form.Group>
+                    <Form.Group controlId="formLongitude" className="mb-3">
+                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Longitude</Form.Label>
+                        <Form.Control
+                            type="number"
+                            value={inputValues.longitude || ''}
+                            onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
+                            placeholder="Enter longitude"
+                        />
+                    </Form.Group>
+                    </>
+                    )}
                 </Col>
             </Row>
 

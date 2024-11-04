@@ -108,6 +108,9 @@ class DocumentsDAO {
                     language: documentData.language,
                     pages: documentData.pages,
                     description: documentData.description,
+                    allMunicipality: documentData.allMunicipality,
+                    latitude: documentData.latitude,
+                    longitude: documentData.longitude,
                 },
                 { transaction }
             );
@@ -117,8 +120,10 @@ class DocumentsDAO {
             await document.setStakeholders(stakeholdersIds, { transaction });
 
             // Set connected documents
-            for (const connection of documentData.connections) {
-                await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
+            if(documentData.connections !== undefined) {
+                for (const connection of documentData.connections) {
+                    await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
+                }
             }
 
             await transaction.commit();
