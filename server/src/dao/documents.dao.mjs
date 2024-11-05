@@ -108,6 +108,9 @@ class DocumentsDAO {
                     language: documentData.language,
                     pages: documentData.pages,
                     description: documentData.description,
+                    allMunicipality: documentData.allMunicipality,
+                    latitude: documentData.latitude,
+                    longitude: documentData.longitude,
                 },
                 { transaction }
             );

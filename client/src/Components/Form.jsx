@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Card } from 'react-bootstrap';
 import API from '../API/API.mjs';
+import { useNavigate } from 'react-router-dom';
 import { Stakeholder, Connection } from '../models.mjs';
 
 export default function DescriptionForm() {
@@ -14,6 +15,10 @@ export default function DescriptionForm() {
         description: '',
         scale: '',
         planScale: '',
+        allMunicipality: false,
+        latitude: null,
+        longitude: null,
+        planScale: '',
         connections: []
     });
     const [showModal, setShowModal] = useState(false);
@@ -26,7 +31,11 @@ export default function DescriptionForm() {
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: '', type: '' });
 
+    const navigate = useNavigate();
+
+
     const typeOptions = ['Design Document', 'Informative document', 'Prescriptive document', 'Technical Document', 'Agreement', 'Conflict', 'Consultation', 'Action'];
+    const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
     const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
 
     const [document, setDocument] = useState(''); // For first dropdown
@@ -151,6 +160,10 @@ export default function DescriptionForm() {
             pages: inputValues.pages,
             description: inputValues.description,
             stakeholders: inputValues.stakeholders,
+            allMunicipality: inputValues.allMunicipality,
+            latitude: inputValues.latitude,
+            longitude: inputValues.longitude
+            stakeholders: inputValues.stakeholders,
             connections: inputValues.connections
         };
 
@@ -164,11 +177,21 @@ export default function DescriptionForm() {
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
             showNotification('Pages must be a single number or a range in the format 1-32', 'error');
             return;
+        } else if(!documentData.allMunicipality && (!documentData.latitude || !documentData.longitude)) {
+            showNotification('Please enter latitude and longitude', 'error');
+            return;
+        } else if(documentData.allMunicipality && (documentData.latitude || documentData.longitude)) {
+            showNotification('Please uncheck "All Municipality" if you want to enter latitude and longitude', 'error');
+            return;
+        } else if(documentData.allMunicipality && (!documentData.latitude && !documentData.longitude)) {
+            documentData.latitude = null;
+            documentData.longitude = null;
         }
 
         try {
             await API.createDocument(documentData);
             showNotification("Document saved successfully!", 'success');
+            navigate('/'); // Redirect to home page
         } catch (error) {
             console.error("Error saving document:", error);
             showNotification("Error saving document. Please try again.", 'error');
@@ -308,6 +331,47 @@ export default function DescriptionForm() {
                     </Form>
                 </Col>
                 <Col md={5}>
+                    <Form.Group controlId="formDescription" className="mb-3">
+                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={5}
+                            value={inputValues.description}
+                            onFocus={() => handleInputFocus('description')}
+                            readOnly
+                            placeholder="Click to enter description"
+                        />
+                    </Form.Group>
+                    <Form.Group controlId="formAllMunicipality" className="mb-3">
+                        <Form.Check
+                            type="checkbox"
+                            label="All Municipality"
+                            checked={inputValues.allMunicipality}
+                            onChange={(e) => setInputValues({ ...inputValues, allMunicipality: e.target.checked })}
+                        />
+                    </Form.Group>
+                    { !inputValues.allMunicipality && (
+                    <> 
+                    <Form.Group controlId="formLatitude" className="mb-3">
+                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Latitude</Form.Label>
+                        <Form.Control
+                            type="number"
+                            value={inputValues.latitude || ''}
+                            onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
+                            placeholder="Enter latitude"
+                        />
+                    </Form.Group>
+                    <Form.Group controlId="formLongitude" className="mb-3">
+                        <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Longitude</Form.Label>
+                        <Form.Control
+                            type="number"
+                            value={inputValues.longitude || ''}
+                            onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
+                            placeholder="Enter longitude"
+                        />
+                    </Form.Group>
+                    </>
+                    )}
                     <Form>
                         <Form.Group controlId="formDescription" className="mb-3">
                             <Form.Label style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}>Description</Form.Label>

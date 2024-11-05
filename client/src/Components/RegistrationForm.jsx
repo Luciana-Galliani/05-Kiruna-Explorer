@@ -3,7 +3,7 @@ import { Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../API/API.mjs';
 
-function RegistrationForm() {
+function RegistrationForm({ handleLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -14,7 +14,8 @@ function RegistrationForm() {
 
         try {
             await API.registerUser({ username, password });
-            navigate('/login');
+            await handleLogin(username, password);
+            navigate('/');
         } catch (err) {
             setError(err);
             navigate('/registration');

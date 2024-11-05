@@ -1,0 +1,7 @@
+/* CityMap */
+
+.map-container {
+    height: 100vh; /* Full page height */
+    width: 100vw; /* Full page width */
+    position: relative;
+}
