@@ -1,6 +1,6 @@
 # API Server
 
--   GET /api/connections
+- GET /api/connections
 
     Response:
 
@@ -8,7 +8,7 @@
     { "connections": ["Direct Consequence", ...] }
 ```
 
--   GET /api/stakeholders
+- GET /api/stakeholders
 
     Response:
 
@@ -25,7 +25,7 @@
 
 ## Documents
 
--   GET /api/documents/:id
+- GET /api/documents/:id
 
     Response:
 
@@ -70,7 +70,7 @@
     }
     ```
 
--   GET /api/documents
+- GET /api/documents
 
     Response:
 
@@ -82,7 +82,7 @@
 
 ### Authenticated
 
--   POST /api/documents
+- POST /api/documents
 
     Header:
 
@@ -136,7 +136,7 @@
     }
     ```
 
--   PUT /api/documents/:id
+- PUT /api/documents/:id
 
     Header:
 
@@ -192,7 +192,7 @@
 
 ## Users
 
--   POST /api/users/register
+- POST /api/users/register
 
     Body:
 
@@ -212,7 +212,7 @@
     }
     ```
 
--   POST /api/users/login
+- POST /api/users/login
 
     Body:
 
