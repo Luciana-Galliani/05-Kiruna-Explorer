@@ -6,18 +6,24 @@ import API from "../API/API.mjs";
 function RegistrationForm({ handleLogin }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
         try {
             await API.registerUser({ username, password });
             await handleLogin(username, password);
             navigate("/");
         } catch (err) {
-            setError(err);
+            setError(err.message);
             navigate("/registration");
         }
     };
@@ -49,6 +55,18 @@ function RegistrationForm({ handleLogin }) {
                                 required
                                 minLength={6}
                                 placeholder="Enter your password"
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="confirmPassword" className="mb-3">
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(ev) => setConfirmPassword(ev.target.value)}
+                                required
+                                minLength={6}
+                                placeholder="Confirm your password"
                             />
                         </Form.Group>
 
