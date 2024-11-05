@@ -4,7 +4,17 @@ import API from "../API/API.mjs";
 import { useNavigate } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export default function DescriptionForm() {
+export default function DescriptionForm({ isLoggedIn }) {
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/login');
+        }
+    }, [isLoggedIn, navigate]);
+
+
     const [inputValues, setInputValues] = useState({
         title: "",
         stakeholders: [],
@@ -30,7 +40,6 @@ export default function DescriptionForm() {
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
 
-    const navigate = useNavigate();
 
     const typeOptions = [
         "Design Document",
@@ -124,8 +133,16 @@ export default function DescriptionForm() {
         setIsTypeOfEnabled(selectedDocumentId !== "");
     };
 
+    const removeConnection = (index) => {
+        console.log(inputValues.connections);
+        setInputValues((prev) => ({
+            ...prev,
+            connections: prev.connections.filter((_, i) => i !== index),
+        }));
+        console.log(inputValues.connections);
+    };
+
     const addConnection = () => {
-        console.log(document, relationship);
         if (document && relationship) {
             const selectedDocument = documentOptions.find((doc) => doc.id === Number(document));
 
@@ -460,7 +477,12 @@ export default function DescriptionForm() {
                     </Form.Group>
                     <div className="overflow-y-scroll" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
                         {inputValues.connections.map((connection, index) => (
-                            <Card key={index} className="mb-2">
+                            <Card key={index} className="mb-2 position-relative">
+                                <button
+                                    onClick={() => removeConnection(index)}
+                                    style={{ border: 'none', background: 'none', cursor: 'pointer', position: 'absolute', top: '2%', right: '2%', fontSize: '1.2rem', color: 'red' }}>
+                                    ✖
+                                </button>
                                 <Card.Body>
                                     <Card.Text>
                                         <strong>Document:</strong> {connection.document.title}
@@ -472,6 +494,7 @@ export default function DescriptionForm() {
                             </Card>
                         ))}
                     </div>
+
                 </Col>
             </Row>
 
