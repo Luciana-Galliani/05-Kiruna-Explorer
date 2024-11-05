@@ -1,17 +1,17 @@
 // CityMap.js
-import React, { useEffect, useRef } from 'react';
-import 'ol/ol.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Style from 'ol/style/Style';
-import Icon from 'ol/style/Icon';
+import React, { useEffect, useRef } from "react";
+import "ol/ol.css";
+import Map from "ol/Map";
+import View from "ol/View";
+import TileLayer from "ol/layer/Tile";
+import OSM from "ol/source/OSM";
+import { fromLonLat } from "ol/proj";
+import Feature from "ol/Feature";
+import Point from "ol/geom/Point";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import Style from "ol/style/Style";
+import Icon from "ol/style/Icon";
 
 const CityMap = () => {
     const mapRef = useRef(null); // Reference to map div container
@@ -50,7 +50,7 @@ const CityMap = () => {
             new Style({
                 image: new Icon({
                     anchor: [0.5, 1],
-                    src: 'https://openlayers.org/en/latest/examples/data/icon.png', // Replace with the path to your icon
+                    src: "https://openlayers.org/en/latest/examples/data/icon.png", // Replace with the path to your icon
                     scale: 1, // Adjust the scale as needed
                 }),
             })
@@ -73,20 +73,19 @@ const CityMap = () => {
     }, []);
 
     return (
-        <div style={{ position: 'relative', height: '75vh' }}>
-            <div id="map" ref={mapRef} className="map-container"
-            style={{ width: '100%', height: '100%' }}></div>
-            <div
+        <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
+            <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+            {/* <div
                 className="gradient-overlay"
                 style={{
-                    position: 'absolute',
+                    position: "absolute",
                     bottom: 0,
                     left: 0,
-                    width: '100%',
-                    height: '50%',
-                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))',
+                    width: "100%",
+                    height: "50%",
+                    background: "linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))",
                 }}
-            ></div>
+            ></div> */}
         </div>
     );
 };

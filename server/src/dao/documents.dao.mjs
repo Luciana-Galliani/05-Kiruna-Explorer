@@ -121,7 +121,7 @@ class DocumentsDAO {
 
             // Set connected documents
             for (const connection of documentData.connections) {
-                await this._connectDocuments(document, connection.document.id, connection.relationship, transaction);
+                await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
             }
 
             await transaction.commit();
