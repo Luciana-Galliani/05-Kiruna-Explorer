@@ -36,7 +36,6 @@ export default function DescriptionForm() {
 
     const typeOptions = ['Design Document', 'Informative document', 'Prescriptive document', 'Technical Document', 'Agreement', 'Conflict', 'Consultation', 'Action'];
     const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
-    const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
 
     const [document, setDocument] = useState(''); // For first dropdown
     const [relationship, setRelationship] = useState(''); // For second dropdown
@@ -162,8 +161,7 @@ export default function DescriptionForm() {
             stakeholders: inputValues.stakeholders,
             allMunicipality: inputValues.allMunicipality,
             latitude: inputValues.latitude,
-            longitude: inputValues.longitude
-            stakeholders: inputValues.stakeholders,
+            longitude: inputValues.longitude,
             connections: inputValues.connections
         };
 
