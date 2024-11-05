@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import API from '../API/API.mjs';
 import { Stakeholder } from '../models.mjs';
+import { useNavigate } from 'react-router-dom';
 
 export default function DescriptionForm() {
     const [inputValues, setInputValues] = useState({
@@ -24,9 +25,11 @@ export default function DescriptionForm() {
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: '', type: '' });
 
+    const navigate = useNavigate();
+
 
     const typeOptions = ['Design Document', 'Informative document', 'Prescriptive document', 'Technical Document', 'Agreement', 'Conflict', 'Consultation', 'Action'];
-    const scaleOptions = ['Text', 'Concept', 'Blueprints/effect', 'Plan'];
+    const scaleOptions = ['Text', 'Concept', 'Blueprints/actions', 'Plan'];
 
 
     const showNotification = (message, type) => {
@@ -113,11 +116,21 @@ export default function DescriptionForm() {
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
             showNotification('Pages must be a single number or a range in the format 1-32', 'error');
             return;
+        } else if(!documentData.allMunicipality && (!documentData.latitude || !documentData.longitude)) {
+            showNotification('Please enter latitude and longitude', 'error');
+            return;
+        } else if(documentData.allMunicipality && (documentData.latitude || documentData.longitude)) {
+            showNotification('Please uncheck "All Municipality" if you want to enter latitude and longitude', 'error');
+            return;
+        } else if(documentData.allMunicipality && (!documentData.latitude && !documentData.longitude)) {
+            documentData.latitude = null;
+            documentData.longitude = null;
         }
 
         try {
             const savedDocument = await API.createDocument(documentData);
             showNotification("Document saved successfully!", 'success');
+            navigate('/'); // Redirect to home page
         } catch (error) {
             console.error("Error saving document:", error);
             showNotification("Error saving document. Please try again.", 'error');

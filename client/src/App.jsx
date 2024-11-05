@@ -73,7 +73,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/add" element={<DescriptionForm getToken={getToken} />} />
         <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
-        <Route path="/registration" element={<RegistrationForm />} />
+        <Route path="/registration" element={<RegistrationForm handleLogin={handleLogin}/>} />
       </Routes>
 
       {/* Buttons for the home page */}

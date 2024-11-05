@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
 
         //create user
         const user = await usersDAO.createUser(username, hashedPassword);
-
+        
         res.status(201).json({ message: "User created", user: user.username });
     } catch (error) {
         return res.status(500).json({ error: error.message });
