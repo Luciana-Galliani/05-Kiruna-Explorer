@@ -4,7 +4,7 @@ const baseURL = "http://localhost:3001";
 
 const authHeaders = () => ({
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${getAuthToken()}`,
+    Authorization: `Bearer ${getAuthToken()}`,
 });
 
 const getUsers = async () => {
@@ -53,7 +53,6 @@ const loginUser = async ({ username, password }) => {
     }
 };
 
-
 const getDocuments = async () => {
     const response = await fetch(`${baseURL}/api/documents`, {
         headers: authHeaders(),
@@ -82,6 +81,10 @@ const getDocument = async (documentId) => {
 };
 
 const createDocument = async (documentData) => {
+    documentData.connections = documentData.connections.map((connection) => ({
+        documentId: connection.document.id,
+        relationship: connection.relationship,
+    }));
     const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
         headers: authHeaders(),
@@ -146,7 +149,7 @@ const API = {
     createDocument,
     updateDocument,
     getConnections,
-    getStakeholders
+    getStakeholders,
 };
 
 export default API;

@@ -1,7 +1,27 @@
 /* CityMap */
 
-.map-container {
-    height: 100vh; /* Full page height */
-    width: 100vw; /* Full page width */
-    position: relative;
+/* Change the position of the default zoom control */
+.ol-zoom {
+    top: auto !important; /* Remove default top positioning */
+    bottom: 0.5rem; /* Set to bottom */
+}
+
+/* Form */
+.blurred-fieldset {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 5px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background*/
+    backdrop-filter: blur(2px); /* Apply blur effect*/
+    --webkit-backdrop-filter: blur(2px); /* And for Safari*/
+}
+
+.legend {
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    float: none;
+    width: max-content;
 }
