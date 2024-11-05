@@ -3,17 +3,16 @@ import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
 import API from "../API/API.mjs";
 import { useNavigate } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
+import { set } from "ol/transform";
 
 export default function DescriptionForm({ isLoggedIn }) {
-
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!isLoggedIn) {
-            navigate('/login');
+            navigate("/login");
         }
     }, [isLoggedIn, navigate]);
-
 
     const [inputValues, setInputValues] = useState({
         title: "",
@@ -39,7 +38,6 @@ export default function DescriptionForm({ isLoggedIn }) {
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
-
 
     const typeOptions = [
         "Design Document",
@@ -154,6 +152,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 }));
                 setDocument(""); // Resetta l'input
                 setRelationship("");
+                setIsTypeOfEnabled(false);
             } else {
                 showNotification("Document not found.", "error");
             }
@@ -419,7 +418,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                     </fieldset>
                     <Form>
                         <fieldset className="blurred-fieldset">
-                            <legend className="legend">Connections</legend>
+                            <legend className="legend">Add a connection</legend>
                             {/* Connections Input */}
                             <Form.Group controlId="formDocument" className="mb-3">
                                 <Form.Label
@@ -429,11 +428,14 @@ export default function DescriptionForm({ isLoggedIn }) {
                                 </Form.Label>
                                 <Form.Control as="select" value={document} onChange={handleDocumentChange}>
                                     <option value="">Select a document</option>
-                                    {documentOptions.map((document) => (
-                                        <option key={document.id} value={document.id}>
-                                            {document.title}
-                                        </option>
-                                    ))}
+                                    {/* only the titles of the documents which are not in inputValues.connections */}
+                                    {documentOptions
+                                        .filter((doc) => !inputValues.connections.map((c) => c.document.id).includes(doc.id))
+                                        .map((doc) => (
+                                            <option key={doc.id} value={doc.id}>
+                                                {doc.title}
+                                            </option>
+                                        ))}
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="formRelationship" className="mb-3">
@@ -475,12 +477,26 @@ export default function DescriptionForm({ isLoggedIn }) {
                             placeholder="Click to enter description"
                         />
                     </Form.Group>
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}>
+                        Connections :
+                    </Form.Label>
                     <div className="overflow-y-scroll" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
                         {inputValues.connections.map((connection, index) => (
                             <Card key={index} className="mb-2 position-relative">
                                 <button
                                     onClick={() => removeConnection(index)}
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', position: 'absolute', top: '2%', right: '2%', fontSize: '1.2rem', color: 'red' }}>
+                                    style={{
+                                        border: "none",
+                                        background: "none",
+                                        padding: "0",
+                                        cursor: "pointer",
+                                        position: "absolute",
+                                        top: "2px",
+                                        right: "2px",
+                                        fontSize: "1rem",
+                                        color: "red",
+                                    }}
+                                >
                                     ✖
                                 </button>
                                 <Card.Body>
@@ -494,7 +510,6 @@ export default function DescriptionForm({ isLoggedIn }) {
                             </Card>
                         ))}
                     </div>
-
                 </Col>
             </Row>
 
