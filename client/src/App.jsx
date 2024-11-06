@@ -52,7 +52,7 @@ function App() {
                 </h1>
                 <div>
                     {isLoggedIn ? (
-                        <button className="btn btn-outline-dark" onClick={handleLogout}>
+                        <button className="btn btn-dark" onClick={handleLogout}>
                             Logout
                         </button>
                     ) : (
