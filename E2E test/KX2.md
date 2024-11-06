@@ -7,9 +7,9 @@
 ````txt
 Precondition: The user is on the document addition form.
 Steps:
-The user selects a document from the "Document" dropdown.
-The user selects a connection type from the "Type of Connection" dropdown.
-The user clicks on the "Add Connection" button.
+-The user selects a document from the "Document" dropdown.
+-The user selects a connection type from the "Type of Connection" dropdown.
+-The user clicks on the "Add Connection" button.
 Expected Result: The selected connection appears next to the form, showing the document and connection type.
 ```
 ````
@@ -18,10 +18,10 @@ Expected Result: The selected connection appears next to the form, showing the d
 ````txt
 Precondition: The user is on the document addition form.
 Steps:
-The user selects a document from the "Document" dropdown.
-The user selects a connection type from the "Type of Connection" dropdown.
-The user clicks on the "Add Connection" button.
-The user repeats these steps to add more connections.
+-The user selects a document from the "Document" dropdown.
+-The user selects a connection type from the "Type of Connection" dropdown.
+-The user clicks on the "Add Connection" button.
+-The user repeats these steps to add more connections.
 Expected Result: Each added connection appears next to the form in a list format, showing the document and connection type for each one.
 ```
 ````
@@ -30,7 +30,7 @@ Expected Result: Each added connection appears next to the form in a list format
 ````txt
 Precondition: The user has added one or more connections on the document addition form.
 Steps:
-The user clicks on the "x" next to a specific connection to remove it.
+-The user clicks on the "x" next to a specific connection to remove it.
 Expected Result: The selected connection is removed from the list of connections without affecting other connections.
 ```
 ````
@@ -39,7 +39,7 @@ Expected Result: The selected connection is removed from the list of connections
 ````txt
 Precondition: The user is on the document addition form.
 Steps:
-The user selects a document but leaves the "Type of Connection" field empty (or vice versa).
+-The user selects a document but leaves the "Type of Connection" field empty (or vice versa).
 Expected Result: The user cannot click the "Add connection" button, and the connection is not added.
 ```
 ````
@@ -48,7 +48,7 @@ Expected Result: The user cannot click the "Add connection" button, and the conn
 ````txt
 Precondition: The user is on the document addition form and has added one or more connections.
 Steps:
-The user reviews the connections list displayed next to the form.
+-The user reviews the connections list displayed next to the form.
 Expected Result: The list correctly displays all added connections with their respective document names and connection types, allowing the user to review connections before saving.
 ```
 ````
@@ -57,7 +57,7 @@ Expected Result: The list correctly displays all added connections with their re
 ````txt
 Precondition: The user has filled in all required fields in the document addition form and added one or more connections.
 Steps:
-The user clicks on the "Save Document" button to save the new document.
+-The user clicks on the "Save Document" button to save the new document.
 Expected Result: The document is saved successfully along with the connections.
 ```
 ````
@@ -66,6 +66,6 @@ Expected Result: The document is saved successfully along with the connections.
 ````txt
 Precondition: The user has filled in all other required fields but has not added any connections.
 Steps:
-The user clicks on the "Save Document" button to save the document.
+-The user clicks on the "Save Document" button to save the document.
 Expected Result: The document is saved successfully, as connections are optional.
 ```
