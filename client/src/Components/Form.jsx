@@ -185,7 +185,7 @@ export default function DescriptionForm({ isLoggedIn }) {
             showNotification("Plan scale must follow the format 1:1.000", "error");
             return;
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
-            showNotification("Pages must be a single number or a range in the format 1-32", "error");
+            showNotification("Please enter a single number or a range in the format '1-32' where the starting number is less than the ending number.", "error");
             return;
         } else if (!documentData.allMunicipality && (!documentData.latitude || !documentData.longitude)) {
             showNotification("Please enter latitude and longitude", "error");
