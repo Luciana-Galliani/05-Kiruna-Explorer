@@ -245,7 +245,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 </div>
             )}
             <Row style={{ height: "100%" }}>
-                <Col md={4}>
+                <Col className="overflow-y-scroll h-100" md={4} style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
                     <Form>
                         <Form.Group controlId="formTitle" className="mb-3">
                             <Form.Label
