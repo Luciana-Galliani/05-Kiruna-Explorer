@@ -219,7 +219,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 background: "rgba(255, 255, 255, 0.9)",
                 color: "#333",
                 zIndex: 1,
-                
+
             }}
         >
             {notification.message && (
@@ -244,7 +244,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                     {notification.message}
                 </div>
             )}
-            <Row style={{ height: "100%"}}>
+            <Row style={{ height: "100%" }}>
                 <Col md={4}>
                     <Form>
                         <Form.Group controlId="formTitle" className="mb-3">
@@ -313,28 +313,32 @@ export default function DescriptionForm({ isLoggedIn }) {
                             >
                                 Scale
                             </Form.Label>
-                            <Form.Control
-                                as="select"
-                                value={inputValues.scale}
-                                onChange={(e) => setInputValues({ ...inputValues, scale: e.target.value })}
-                            >
-                                <option value="">Select a scale</option>
-                                {scaleOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </Form.Control>
-                            {inputValues.scale === "Plan" && (
+                            <div style={{ display: "flex", gap: "1rem" }}>
                                 <Form.Control
-                                    type="text"
-                                    value={inputValues.planScale}
-                                    onChange={(e) => setInputValues({ ...inputValues, planScale: e.target.value })}
-                                    placeholder="Enter scale for Plan (e.g., 1:1000)"
-                                    className="mt-2"
-                                />
-                            )}
+                                    as="select"
+                                    value={inputValues.scale}
+                                    onChange={(e) => setInputValues({ ...inputValues, scale: e.target.value })}
+                                    style={{ flex: "1" }}
+                                >
+                                    <option value="">Select a scale</option>
+                                    {scaleOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </Form.Control>
+                                {inputValues.scale === "Plan" && (
+                                    <Form.Control
+                                        type="text"
+                                        value={inputValues.planScale}
+                                        onChange={(e) => setInputValues({ ...inputValues, planScale: e.target.value })}
+                                        placeholder="Enter scale for Plan (e.g., 1:1000)"
+                                        style={{ flex: "1" }}
+                                    />
+                                )}
+                            </div>
                         </Form.Group>
+
                         <Form.Group controlId="formLanguage" className="mb-3">
                             <Form.Label
                                 style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
