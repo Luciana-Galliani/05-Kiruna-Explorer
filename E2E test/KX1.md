@@ -66,7 +66,7 @@ Expected Result: An error message appears, indicating which fields need to be co
 ````txt
 Precondition: The user is logged into the system as an Urban Planner.
 Steps:
-The user clicks on "Add Document".
+The user clicks on the "+" button.
 Expected Result: A page or form for entering the new document details is displayed.
 ````
 
@@ -154,4 +154,12 @@ Precondition: The user is not logged into the system.
 Steps:
 The user attempts to navigate directly to the document addition page (e.g., by entering the URL).
 Expected Result: The user is redirected to the login page and prompted to log in. Access to the document addition page is restricted until the user has logged in successfully.
+```
+**Scenario 17**: Return to homepage from addition page using "x" button
+
+```txt
+Precondition: The user is logged into the system as an Urban Planner.
+Steps:
+The user clicks on the "x" button.
+Expected Result: The user is successfullyredirected to the homepage. Any unsaved information on the document addition page is cleared for security reasons.
 ```
