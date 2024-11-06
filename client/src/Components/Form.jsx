@@ -3,17 +3,16 @@ import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
 import API from "../API/API.mjs";
 import { useNavigate } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
+import { set } from "ol/transform";
 
 export default function DescriptionForm({ isLoggedIn }) {
-
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!isLoggedIn) {
-            navigate('/login');
+            navigate("/login");
         }
     }, [isLoggedIn, navigate]);
-
 
     const [inputValues, setInputValues] = useState({
         title: "",
@@ -39,7 +38,6 @@ export default function DescriptionForm({ isLoggedIn }) {
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
-
 
     const typeOptions = [
         "Design Document",
@@ -154,6 +152,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 }));
                 setDocument(""); // Resetta l'input
                 setRelationship("");
+                setIsTypeOfEnabled(false);
             } else {
                 showNotification("Document not found.", "error");
             }
@@ -217,11 +216,10 @@ export default function DescriptionForm({ isLoggedIn }) {
                 height: "90%",
                 borderRadius: "0.375rem",
                 boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-                background: "rgba(255, 255, 255, 0.8)",
+                background: "rgba(255, 255, 255, 0.9)",
+                color: "#333",
                 zIndex: 1,
-                backgroundImage: `url(../../../This_is_Kiruna.jpg)`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                
             }}
         >
             {notification.message && (
@@ -246,12 +244,12 @@ export default function DescriptionForm({ isLoggedIn }) {
                     {notification.message}
                 </div>
             )}
-            <Row style={{ height: "100%" }}>
+            <Row style={{ height: "100%"}}>
                 <Col md={4}>
                     <Form>
                         <Form.Group controlId="formTitle" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Title
                             </Form.Label>
@@ -265,7 +263,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formStakeholders" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Stakeholders
                             </Form.Label>
@@ -279,7 +277,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formIssuanceDate" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Issuance Date
                             </Form.Label>
@@ -292,7 +290,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formType" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Type
                             </Form.Label>
@@ -311,7 +309,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formScale" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Scale
                             </Form.Label>
@@ -339,7 +337,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formLanguage" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Language
                             </Form.Label>
@@ -352,7 +350,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         </Form.Group>
                         <Form.Group controlId="formPages" className="mb-3">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                             >
                                 Pages
                             </Form.Label>
@@ -383,8 +381,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                         style={{
                                             fontWeight: "bold",
                                             fontSize: "1.2rem",
-                                            color: "white",
-                                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)",
+                                            color: "black",
                                         }}
                                     >
                                         Latitude
@@ -401,8 +398,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                         style={{
                                             fontWeight: "bold",
                                             fontSize: "1.2rem",
-                                            color: "white",
-                                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)",
+                                            color: "black",
                                         }}
                                     >
                                         Longitude
@@ -419,26 +415,29 @@ export default function DescriptionForm({ isLoggedIn }) {
                     </fieldset>
                     <Form>
                         <fieldset className="blurred-fieldset">
-                            <legend className="legend">Connections</legend>
+                            <legend className="legend">Add a connection</legend>
                             {/* Connections Input */}
                             <Form.Group controlId="formDocument" className="mb-3">
                                 <Form.Label
-                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                                 >
                                     Document
                                 </Form.Label>
                                 <Form.Control as="select" value={document} onChange={handleDocumentChange}>
                                     <option value="">Select a document</option>
-                                    {documentOptions.map((document) => (
-                                        <option key={document.id} value={document.id}>
-                                            {document.title}
-                                        </option>
-                                    ))}
+                                    {/* only the titles of the documents which are not in inputValues.connections */}
+                                    {documentOptions
+                                        .filter((doc) => !inputValues.connections.map((c) => c.document.id).includes(doc.id))
+                                        .map((doc) => (
+                                            <option key={doc.id} value={doc.id}>
+                                                {doc.title}
+                                            </option>
+                                        ))}
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="formRelationship" className="mb-3">
                                 <Form.Label
-                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}
+                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
                                 >
                                     Type Of Connection
                                 </Form.Label>
@@ -464,7 +463,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 </Col>
                 <Col md={4} className="d-flex flex-column h-100">
                     <Form.Group controlId="formDescription" className="mb-3">
-                        <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "white", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.7)" }}>
+                        <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                             Description
                         </Form.Label>
                         <Form.Control
@@ -475,12 +474,26 @@ export default function DescriptionForm({ isLoggedIn }) {
                             placeholder="Click to enter description"
                         />
                     </Form.Group>
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
+                        Connections :
+                    </Form.Label>
                     <div className="overflow-y-scroll" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
                         {inputValues.connections.map((connection, index) => (
                             <Card key={index} className="mb-2 position-relative">
                                 <button
                                     onClick={() => removeConnection(index)}
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', position: 'absolute', top: '2%', right: '2%', fontSize: '1.2rem', color: 'red' }}>
+                                    style={{
+                                        border: "none",
+                                        background: "none",
+                                        padding: "0",
+                                        cursor: "pointer",
+                                        position: "absolute",
+                                        top: "2px",
+                                        right: "2px",
+                                        fontSize: "1rem",
+                                        color: "red",
+                                    }}
+                                >
                                     ✖
                                 </button>
                                 <Card.Body>
@@ -494,7 +507,6 @@ export default function DescriptionForm({ isLoggedIn }) {
                             </Card>
                         ))}
                     </div>
-
                 </Col>
             </Row>
 
