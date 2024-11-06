@@ -182,10 +182,13 @@ export default function DescriptionForm({ isLoggedIn }) {
             showNotification("Please fill all mandatory fields.", "error");
             return;
         } else if (inputValues.scaleValue && !/^1:\d{1,3}([.,]\d{3})*$/.test(inputValues.scaleValue)) {
-            showNotification("Plan scale must follow the format 1:1.000", "error");
+            showNotification("Plan scale must follow the format 1:1,000", "error");
             return;
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
-            showNotification("Please enter a single number or a range in the format '1-32' where the starting number is less than the ending number.", "error");
+            showNotification(
+                "Please enter a single number or a range in the format '1-32' where the starting number is less than the ending number.",
+                "error"
+            );
             return;
         } else if (!documentData.allMunicipality && (!documentData.latitude || !documentData.longitude)) {
             showNotification("Please enter latitude and longitude", "error");
@@ -232,7 +235,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         padding: "10px",
                         borderRadius: "5px",
                         color: notification.type === "success" ? "#155724" : "#721c24",
-                        backgroundColor: notification.type === "success" ? "#d4edda88" : "#f8d7da88",
+                        backgroundColor: notification.type === "success" ? "#d4edda88" : "#f8d7daff",
                         borderColor: notification.type === "success" ? "#155724" : "#721c24",
                         border: "2px solid",
                         textAlign: "center",
@@ -251,6 +254,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                             <Form.Control
                                 type="text"
                                 autoFocus
+                                required
                                 value={inputValues.title}
                                 onChange={(e) => setInputValues({ ...inputValues, title: e.target.value })}
                                 placeholder="Click to enter the title"
@@ -422,7 +426,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                     ))}
                                 </Form.Control>
                             </Form.Group>
-                            <Button variant="success" onClick={addConnection} className="my-2 d-block mx-auto" disabled={!document || !relationship}>
+                            <Button variant="primary" onClick={addConnection} className="my-2 d-block mx-auto" disabled={!document || !relationship}>
                                 Add Connection
                             </Button>
                         </fieldset>
@@ -505,7 +509,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 </Modal.Footer>
             </Modal>
             <Button
-                variant="success"
+                variant="primary"
                 onClick={handleSaveForm}
                 className="mx-auto d-block position-absolute bottom-0 start-50 translate-middle"
                 style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
