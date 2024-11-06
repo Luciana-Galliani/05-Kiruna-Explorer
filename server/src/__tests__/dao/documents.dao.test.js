@@ -212,6 +212,9 @@ describe("DocumentsDAO", () => {
     });
 
     describe("createDocument", () => {
+        let transaction;
+        let document;
+
         beforeEach(() => {
             transaction = {
                 commit: jest.fn(),
@@ -240,6 +243,9 @@ describe("DocumentsDAO", () => {
                 language: "english",
                 pages: "1-32",
                 description: "A sample document",
+                allMunicipality: true,
+                latitude: null,
+                longitude: null,
                 stakeholders: [{ id: 1 }, { id: 2 }],
                 connections: [
                     { documentId: 2, relationship: "Prevision" },
@@ -265,6 +271,9 @@ describe("DocumentsDAO", () => {
                     language: documentData.language,
                     pages: documentData.pages,
                     description: documentData.description,
+                    allMunicipality: documentData.allMunicipality,
+                    latitude: documentData.latitude,
+                    longitude: documentData.longitude,
                 },
                 { transaction }
             );
@@ -297,6 +306,9 @@ describe("DocumentsDAO", () => {
                 language: "en",
                 pages: 10,
                 description: "A sample document",
+                allMunicipality: false,
+                latitude: 45.12345,
+                longitude: 7.12345,
                 stakeholders: [{ id: 1 }, { id: 2 }],
                 connections: [{ documentId: 2, relationship: "related" }],
             };

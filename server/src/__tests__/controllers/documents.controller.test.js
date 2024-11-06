@@ -90,6 +90,9 @@ describe("Documents Controller", () => {
                 language: "English",
                 pages: "100",
                 description: "Test Description",
+                allMunicipality: true,
+                latitude: null,
+                longitude: null,
                 stakeholders: [{ id: 1 }, { id: 2 }],
                 connections: [
                     { documentId: 2, relationship: "Update" },
