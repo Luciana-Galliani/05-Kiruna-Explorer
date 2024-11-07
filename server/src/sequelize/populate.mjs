@@ -1,6 +1,6 @@
 export default async function populateDB(sequelize) {
     console.log("Populating the database...");
-    const { Document, Stakeholder } = sequelize.models;
+    const { Document, Stakeholder, Connection } = sequelize.models;
     try {
         // Create stakeholders
         const stakeholders = await Stakeholder.bulkCreate(
@@ -76,7 +76,7 @@ export default async function populateDB(sequelize) {
                     language: "Swedish",
                     pages: "1",
                     description:
-                        "The development plan shapes the form of the new city. The document, unlike previous competition documents, is written entirely in Swedish, which reflects the target audience: the citizens of Kiruna. The plan obviously contains many elements of the winning masterplan from the competition, some recommended by the jury, and others that were deemed appropriate to integrate later. The document is divided into four parts, with the third part, spanning 80 pages, describing the shape the new city will take and the strategies to be implemented for its relocation through plans, sections, images, diagrams, and texts. The document also includes numerous studies aimed at demonstrating the future success of the project"
+                        "The development plan shapes the form of the new city. The document, unlike previous competition documents, is written entirely in Swedish, which reflects the target audience: the citizens of Kiruna. The plan obviously contains many elements of the winning masterplan from the competition, some recommended by the jury, and others that were deemed appropriate to integrate later. The document is divided into four parts, with the third part, spanning 80 pages, describing the shape the new city will take and the strategies to be implemented for its relocation through plans, sections, images, diagrams, and texts. The document also includes numerous studies aimed at demonstrating the future success of the project",
                 },
 
                 {
@@ -87,7 +87,8 @@ export default async function populateDB(sequelize) {
                     type: "Design Document",
                     language: "Swedish",
                     pages: "1",
-                    description: "This document is the update of the Development Plan, one year after its creation, modifications are made to the general master plan, which is published under the name 'Adjusted Development Plan91,' and still represents the version used today after 10 years. Certainly, there are no drastic differences compared to the previous plan, but upon careful comparison, several modified elements stand out. For example, the central square now takes its final shape, as well as the large school complex just north of it, which appears for the first time."
+                    description:
+                        "This document is the update of the Development Plan, one year after its creation, modifications are made to the general master plan, which is published under the name 'Adjusted Development Plan91,' and still represents the version used today after 10 years. Certainly, there are no drastic differences compared to the previous plan, but upon careful comparison, several modified elements stand out. For example, the central square now takes its final shape, as well as the large school complex just north of it, which appears for the first time.",
                 },
                 {
                     title: "Detail plan for square and commercial street (50)",
@@ -97,7 +98,8 @@ export default async function populateDB(sequelize) {
                     type: "Prescriptive Document",
                     language: "Swedish",
                     pages: "1-43",
-                    description: "This plan, approved in July 2016, is the first detailed plan to be implemented from the new masterplan (Adjusted development plan). The document defines the entire area near the town hall, comprising a total of 9 blocks known for their density. Among these are the 6 buildings that will face the main square. The functions are mixed, both public and private, with residential being prominent, as well as the possibility of incorporating accommodation facilities such as hotels. For all buildings in this plan, the only height limit is imposed by air traffic."
+                    description:
+                        "This plan, approved in July 2016, is the first detailed plan to be implemented from the new masterplan (Adjusted development plan). The document defines the entire area near the town hall, comprising a total of 9 blocks known for their density. Among these are the 6 buildings that will face the main square. The functions are mixed, both public and private, with residential being prominent, as well as the possibility of incorporating accommodation facilities such as hotels. For all buildings in this plan, the only height limit is imposed by air traffic.",
                 },
                 {
                     title: "Construction of Scandic Hotel begins (63)",
@@ -107,7 +109,8 @@ export default async function populateDB(sequelize) {
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'54.7\"N 20°18'17.2\"E",
-                    description: "After two extensions of the land acquisition agreement, necessary because this document in Sweden is valid for only two years, construction of the hotel finally began in 2019."
+                    description:
+                        "After two extensions of the land acquisition agreement, necessary because this document in Sweden is valid for only two years, construction of the hotel finally began in 2019.",
                 },
                 {
                     title: "Town Hall demolition (64)",
@@ -117,7 +120,8 @@ export default async function populateDB(sequelize) {
                     language: "-",
                     pages: "-",
                     coordinates: "67°51'09.0\"N 20°13'20.8\"E",
-                    description: "After the construction of the new town hall was completed, the old building, nicknamed \"The Igloo,\" was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building."
+                    description:
+                        'After the construction of the new town hall was completed, the old building, nicknamed "The Igloo," was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building.',
                 },
                 {
                     title: "Construction of Aurora Center begins (65)",
@@ -127,7 +131,8 @@ export default async function populateDB(sequelize) {
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'57.0\"N 20°18'15.8\"E",
-                    description: "Shortly after the construction of the Scandic hotel began, work on the Aurora Center also started, a multifunctional complex that includes the municipal library of Kiruna. The two buildings are close to each other and connected by a skywalk, just like in the old town center."
+                    description:
+                        "Shortly after the construction of the Scandic hotel began, work on the Aurora Center also started, a multifunctional complex that includes the municipal library of Kiruna. The two buildings are close to each other and connected by a skywalk, just like in the old town center.",
                 },
                 {
                     title: "Construction of Block 1 begins(69)",
@@ -137,16 +142,14 @@ export default async function populateDB(sequelize) {
                     language: "-",
                     pages: "-",
                     coordinates: "67°50'54.8\"N 20°18'01.2\"E",
-                    description: "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town."
-                }
+                    description:
+                        "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town.",
+                },
             ],
             { validate: true }
         );
 
-        await documents[0].setStakeholders([
-            stakeholders[1].id,
-            stakeholders[4].id,
-        ]);
+        await documents[0].setStakeholders([stakeholders[1].id, stakeholders[4].id]);
         await documents[1].setStakeholders(stakeholders[1]);
         await documents[2].setStakeholders([stakeholders[1], stakeholders[3]]);
         /*
@@ -158,19 +161,28 @@ export default async function populateDB(sequelize) {
                 await documents[8].setStakeholders(stakeholders[0]);
                 await documents[9].setStakeholders(stakeholders[0]);*/
 
-
-        await documents[0].addConnectedDocument(documents[1], {
-            through: { relationship: "Update" },
-        });
-        await documents[1].addConnectedDocument(documents[0], {
-            through: { relationship: "Update" },
-        });
-        await documents[1].addConnectedDocument(documents[2], {
-            through: { relationship: "Collateral Consequence" },
-        });
-        await documents[2].addConnectedDocument(documents[1], {
-            through: { relationship: "Collateral Consequence" },
-        });
+        await Connection.bulkCreate([
+            {
+                sourceDocumentId: documents[0].id,
+                targetDocumentId: documents[1].id,
+                relationship: "Update",
+            },
+            {
+                sourceDocumentId: documents[1].id,
+                targetDocumentId: documents[0].id,
+                relationship: "Update",
+            },
+            {
+                sourceDocumentId: documents[1].id,
+                targetDocumentId: documents[2].id,
+                relationship: "Collateral Consequence",
+            },
+            {
+                sourceDocumentId: documents[2].id,
+                targetDocumentId: documents[1].id,
+                relationship: "Collateral Consequence",
+            },
+        ]);
 
         console.log("Database populated successfully.");
     } catch (error) {

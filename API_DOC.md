@@ -1,6 +1,6 @@
 # API Server
 
-- GET /api/connections
+-   GET /api/connections
 
     Response:
 
@@ -8,7 +8,7 @@
     { "connections": ["Direct Consequence", ...] }
 ```
 
-- GET /api/stakeholders
+-   GET /api/stakeholders
 
     Response:
 
@@ -25,7 +25,7 @@
 
 ## Documents
 
-- GET /api/documents/:id
+-   GET /api/documents/:id
 
     Response:
 
@@ -48,21 +48,23 @@
                     "color": "#FF0000"
                 }
             ],
-            "connectedDocuments": [
+            "connections": [
                 {
-                    "id": 1,
-                    ...,
-                    "description": "This document is ...",
-                    "connection": {
-                        "relationship": "Update"
+                    "id": 5,
+                    "relationship": "Update",
+                    "targetDocument": {
+                        "id": 6,
+                        ...,
+                        "description": "This document is ...",
                     }
                 },
                 {
-                    "id": 3,
-                    ...,
-                    "description": "The development plan ...",
-                    "connection": {
-                        "relationship": "Collateral Consequence"
+                    "id": 7,
+                    "relationship": "Prevision",
+                    "targetDocument": {
+                        "id": 3,
+                        ...,
+                        "description": "The development plan ...",
                     }
                 }
             ]
@@ -70,7 +72,7 @@
     }
     ```
 
-- GET /api/documents
+-   GET /api/documents
 
     Response:
 
@@ -82,7 +84,7 @@
 
 ### Authenticated
 
-- POST /api/documents
+-   POST /api/documents
 
     Header:
 
@@ -110,33 +112,42 @@
     ```json
     {
         "document": {
-            "id": 4,
-            ...,
-            "description": "This is a description.",
+            "id": 11,
+            "title": "Sample Document",
+            "scaleType": "Plan",
+            "scaleValue": "1:1.000",
+            "issuanceDate": "2014-02-14T00:00:00.000Z",
+            "type": "Technical Document",
+            "language": "English",
+            "pages": "12",
+            "description": "This is a description",
+            "allMunicipality": null,
+            "latitude": null,
+            "longitude": null,
             "stakeholders": [
                 {
-                    "id": 2,
-                    "name": "Municipality",
-                    "color": "#FFFFFF"
-                },
-                ...,
-            ],
-            "connectedDocuments": [
-                {
                     "id": 1,
-                    ...,
-                    "description": "This document is ...",
-                    "connection": {
-                        "relationship": "Prevision"
+                    "name": "Citizens",
+                    "color": "#FFFF00"
+                }
+            ],
+            "connections": [
+                {
+                    "id": 11,
+                    "relationship": "Prevision",
+                    "targetDocument": {
+                        "id": 1,
+                        ...,
+                        "longitude": null
                     }
                 },
-                ...
+                ...,
             ]
         }
     }
     ```
 
-- PUT /api/documents/:id
+-   PUT /api/documents/:id
 
     Header:
 
@@ -164,27 +175,36 @@
     ```json
     {
         "document": {
-            "id": 4,
-            ...,
-            "description": "This is a new description.",
+            "id": 11,
+            "title": "Sample Document",
+            "scaleType": "Plan",
+            "scaleValue": "1:1.000",
+            "issuanceDate": "2014-02-14T00:00:00.000Z",
+            "type": "Technical Document",
+            "language": "English",
+            "pages": "12",
+            "description": "This is a description",
+            "allMunicipality": null,
+            "latitude": null,
+            "longitude": null,
             "stakeholders": [
                 {
-                    "id": 2,
-                    "name": "Municipality",
-                    "color": "#FFFFFF"
-                },
-                ...,
-            ],
-            "connectedDocuments": [
-                {
                     "id": 1,
-                    ...,
-                    "description": "This document is ...",
-                    "connection": {
-                        "relationship": "Prevision"
+                    "name": "Citizens",
+                    "color": "#FFFF00"
+                }
+            ],
+            "connections": [
+                {
+                    "id": 11,
+                    "relationship": "Prevision",
+                    "targetDocument": {
+                        "id": 1,
+                        ...,
+                        "longitude": null
                     }
                 },
-                ...
+                ...,
             ]
         }
     }
@@ -192,7 +212,7 @@
 
 ## Users
 
-- POST /api/users/register
+-   POST /api/users/register
 
     Body:
 
@@ -212,7 +232,7 @@
     }
     ```
 
-- POST /api/users/login
+-   POST /api/users/login
 
     Body:
 

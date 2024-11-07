@@ -13,12 +13,21 @@ function setupAssociations(sequelize) {
         foreignKey: "stakeholderId",
     });
 
-    // Define the association between Documents through Connection (self referencing many-to-many)
-    Document.belongsToMany(Document, {
-        through: Connection,
-        as: "connectedDocuments",
+    // Define the association between Documents through Connection (2 one-to-many relationships)
+    Document.hasMany(Connection, {
+        as: "connections",
         foreignKey: "sourceDocumentId",
-        otherKey: "targetDocumentId",
+    });
+    Connection.belongsTo(Document, {
+        foreignKey: "sourceDocumentId",
+        as: "sourceDocument",
+    });
+    Document.hasMany(Connection, {
+        foreignKey: "targetDocumentId",
+    });
+    Connection.belongsTo(Document, {
+        foreignKey: "targetDocumentId",
+        as: "targetDocument",
     });
 }
 
