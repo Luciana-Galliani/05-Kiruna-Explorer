@@ -31,18 +31,23 @@ sections:
 | _#0_   |   10    |        |   25h      |    24h15m    |
 | 1      |   11    |   5    |   15h30m   |    16h30m    |
 | 2      |   5     |   3    |   7h       |    7h30m     |
-| 3      |   7     |   7    |   15h30m   |     14h20m   |
+| 3      |   7     |   7    |   15h30m   |    14h20m    |
 
 > story `#0` is for technical tasks, leave out story points (not applicable in this case)
 
 -   Hours per task average, standard deviation (estimate and actual)
+
+    ESTIMATE: 6.23  -- ACTUAL: 6.27
+
 -   Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
+    VALUE: 0.66%
 
 -   Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
     $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
+    VALUE: ???%
 
 ## QUALITY MEASURES
 
