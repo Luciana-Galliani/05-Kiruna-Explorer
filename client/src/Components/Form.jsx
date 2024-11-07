@@ -182,10 +182,13 @@ export default function DescriptionForm({ isLoggedIn }) {
             showNotification("Please fill all mandatory fields.", "error");
             return;
         } else if (inputValues.scaleValue && !/^1:\d{1,3}([.,]\d{3})*$/.test(inputValues.scaleValue)) {
-            showNotification("Plan scale must follow the format 1:1.000", "error");
+            showNotification("Plan scale must follow the format 1:1,000", "error");
             return;
         } else if (documentData.pages && !/^\d+(-\d+)?$/.test(documentData.pages)) {
-            showNotification("Pages must be a single number or a range in the format 1-32", "error");
+            showNotification(
+                "Please enter a single number or a range in the format '1-32' where the starting number is less than the ending number.",
+                "error"
+            );
             return;
         } else if (!documentData.allMunicipality && (!documentData.latitude || !documentData.longitude)) {
             showNotification("Please enter latitude and longitude", "error");
@@ -219,7 +222,6 @@ export default function DescriptionForm({ isLoggedIn }) {
                 background: "rgba(255, 255, 255, 0.9)",
                 color: "#333",
                 zIndex: 1,
-                
             }}
         >
             {notification.message && (
@@ -233,7 +235,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                         padding: "10px",
                         borderRadius: "5px",
                         color: notification.type === "success" ? "#155724" : "#721c24",
-                        backgroundColor: notification.type === "success" ? "#d4edda88" : "#f8d7da88",
+                        backgroundColor: notification.type === "success" ? "#d4edda88" : "#f8d7daff",
                         borderColor: notification.type === "success" ? "#155724" : "#721c24",
                         border: "2px solid",
                         textAlign: "center",
@@ -244,29 +246,22 @@ export default function DescriptionForm({ isLoggedIn }) {
                     {notification.message}
                 </div>
             )}
-            <Row style={{ height: "100%"}}>
+            <Row style={{ height: "100%" }}>
                 <Col className="overflow-y-scroll h-100" md={4} style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
                     <Form>
                         <Form.Group controlId="formTitle" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Title
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 autoFocus
+                                required
                                 value={inputValues.title}
                                 onChange={(e) => setInputValues({ ...inputValues, title: e.target.value })}
                                 placeholder="Click to enter the title"
                             />
                         </Form.Group>
                         <Form.Group controlId="formStakeholders" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Stakeholders
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Stakeholders</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={inputValues.stakeholders.map((s) => s.name).join(", ")} // Display stakeholder names
@@ -276,11 +271,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                             />
                         </Form.Group>
                         <Form.Group controlId="formIssuanceDate" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Issuance Date
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Issuance Date</Form.Label>
                             <Form.Control
                                 type="date"
                                 value={inputValues.issuanceDate}
@@ -289,11 +280,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                             />
                         </Form.Group>
                         <Form.Group controlId="formType" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Type
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Type</Form.Label>
                             <Form.Control
                                 as="select"
                                 value={inputValues.type}
@@ -308,39 +295,35 @@ export default function DescriptionForm({ isLoggedIn }) {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formScale" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Scale
-                            </Form.Label>
-                            <Form.Control
-                                as="select"
-                                value={inputValues.scale}
-                                onChange={(e) => setInputValues({ ...inputValues, scale: e.target.value })}
-                            >
-                                <option value="">Select a scale</option>
-                                {scaleOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </Form.Control>
-                            {inputValues.scale === "Plan" && (
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Scale</Form.Label>
+                            <div style={{ display: "flex", gap: "1rem" }}>
                                 <Form.Control
-                                    type="text"
-                                    value={inputValues.planScale}
-                                    onChange={(e) => setInputValues({ ...inputValues, planScale: e.target.value })}
-                                    placeholder="Enter scale for Plan (e.g., 1:1000)"
-                                    className="mt-2"
-                                />
-                            )}
+                                    as="select"
+                                    value={inputValues.scale}
+                                    onChange={(e) => setInputValues({ ...inputValues, scale: e.target.value })}
+                                    style={{ flex: "1" }}
+                                >
+                                    <option value="">Select a scale</option>
+                                    {scaleOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </Form.Control>
+                                {inputValues.scale === "Plan" && (
+                                    <Form.Control
+                                        type="text"
+                                        value={inputValues.planScale}
+                                        onChange={(e) => setInputValues({ ...inputValues, planScale: e.target.value })}
+                                        placeholder="Plan scale (e.g. 1:1,000)"
+                                        style={{ flex: "3" }}
+                                    />
+                                )}
+                            </div>
                         </Form.Group>
+
                         <Form.Group controlId="formLanguage" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Language
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Language</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={inputValues.language}
@@ -349,11 +332,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                             />
                         </Form.Group>
                         <Form.Group controlId="formPages" className="mb-3">
-                            <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                            >
-                                Pages
-                            </Form.Label>
+                            <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Pages</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={inputValues.pages}
@@ -371,58 +350,54 @@ export default function DescriptionForm({ isLoggedIn }) {
                                 type="checkbox"
                                 label="All Municipality"
                                 checked={inputValues.allMunicipality}
-                                onChange={(e) => setInputValues({ ...inputValues, allMunicipality: e.target.checked })}
+                                onChange={(e) =>
+                                    setInputValues({ ...inputValues, longitude: null, latitude: null, allMunicipality: e.target.checked })
+                                }
                             />
                         </Form.Group>
-                        {!inputValues.allMunicipality && (
-                            <>
-                                <Form.Group controlId="formLatitude" className="mb-3">
-                                    <Form.Label
-                                        style={{
-                                            fontWeight: "bold",
-                                            fontSize: "1.2rem",
-                                            color: "black",
-                                        }}
-                                    >
-                                        Latitude
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        value={inputValues.latitude || ""}
-                                        onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
-                                        placeholder="Enter latitude"
-                                    />
-                                </Form.Group>
-                                <Form.Group controlId="formLongitude" className="mb-3">
-                                    <Form.Label
-                                        style={{
-                                            fontWeight: "bold",
-                                            fontSize: "1.2rem",
-                                            color: "black",
-                                        }}
-                                    >
-                                        Longitude
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        value={inputValues.longitude || ""}
-                                        onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
-                                        placeholder="Enter longitude"
-                                    />
-                                </Form.Group>
-                            </>
-                        )}
+                        <Form.Group controlId="formLatitude" className="mb-3">
+                            <Form.Label
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: "1.2rem",
+                                    color: "black",
+                                }}
+                            >
+                                Latitude
+                            </Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={inputValues.latitude || ""}
+                                onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
+                                placeholder="Enter latitude"
+                                disabled={inputValues.allMunicipality}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="formLongitude" className="mb-3">
+                            <Form.Label
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: "1.2rem",
+                                    color: "black",
+                                }}
+                            >
+                                Longitude
+                            </Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={inputValues.longitude || ""}
+                                onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
+                                placeholder="Enter longitude"
+                                disabled={inputValues.allMunicipality}
+                            />
+                        </Form.Group>
                     </fieldset>
                     <Form>
                         <fieldset className="blurred-fieldset">
                             <legend className="legend">Add a connection</legend>
                             {/* Connections Input */}
                             <Form.Group controlId="formDocument" className="mb-3">
-                                <Form.Label
-                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                                >
-                                    Document
-                                </Form.Label>
+                                <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Document</Form.Label>
                                 <Form.Control as="select" value={document} onChange={handleDocumentChange}>
                                     <option value="">Select a document</option>
                                     {/* only the titles of the documents which are not in inputValues.connections */}
@@ -436,11 +411,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="formRelationship" className="mb-3">
-                                <Form.Label
-                                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                                >
-                                    Type Of Connection
-                                </Form.Label>
+                                <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Type Of Connection</Form.Label>
                                 <Form.Control
                                     as="select"
                                     value={relationship}
@@ -455,7 +426,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                     ))}
                                 </Form.Control>
                             </Form.Group>
-                            <Button variant="success" onClick={addConnection} className="my-2 d-block mx-auto" disabled={!document || !relationship}>
+                            <Button variant="primary" onClick={addConnection} className="my-2 d-block mx-auto" disabled={!document || !relationship}>
                                 Add Connection
                             </Button>
                         </fieldset>
@@ -463,9 +434,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 </Col>
                 <Col md={4} className="d-flex flex-column h-100">
                     <Form.Group controlId="formDescription" className="mb-3">
-                        <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
-                            Description
-                        </Form.Label>
+                        <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Description</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={5}
@@ -474,12 +443,10 @@ export default function DescriptionForm({ isLoggedIn }) {
                             placeholder="Click to enter description"
                         />
                     </Form.Group>
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
-                        Connections :
-                    </Form.Label>
-                    <div className="overflow-y-scroll" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>Connections :</Form.Label>
+                    <div className="connections overflow-y-auto">
                         {inputValues.connections.map((connection, index) => (
-                            <Card key={index} className="mb-2 position-relative">
+                            <Card key={index} className="mb-2 me-1 position-relative">
                                 <button
                                     onClick={() => removeConnection(index)}
                                     style={{
@@ -515,7 +482,7 @@ export default function DescriptionForm({ isLoggedIn }) {
             <Modal show={showModal} onHide={handleModalClose} centered>
                 <Modal.Body>
                     {activeField === "stakeholders" && (
-                        <div>
+                        <div className="d-flex flex-wrap justify-content-evenly">
                             {stakeholderOptions.length === 0 ? (
                                 <p>Loading stakeholders...</p>
                             ) : (
@@ -528,6 +495,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                                         value={option.name}
                                         checked={inputValues.stakeholders.includes(option)} // Check if object is in array
                                         onChange={handleInputChange}
+                                        style={{ width: "35%" }}
                                     />
                                 ))
                             )}
@@ -541,7 +509,7 @@ export default function DescriptionForm({ isLoggedIn }) {
                 </Modal.Footer>
             </Modal>
             <Button
-                variant="success"
+                variant="primary"
                 onClick={handleSaveForm}
                 className="mx-auto d-block position-absolute bottom-0 start-50 translate-middle"
                 style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}

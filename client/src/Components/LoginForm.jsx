@@ -13,7 +13,6 @@ function LoginForm({ handleLogin }) {
 
         try {
             await handleLogin(username, password);
-            navigate("/");
         } catch (err) {
             setError(err);
         }
@@ -50,7 +49,7 @@ function LoginForm({ handleLogin }) {
                         </Form.Group>
 
                         <div className="d-grid gap-2">
-                            <Button variant="primary" type="submit" className="mb-2">
+                            <Button variant="primary" type="submit" className="mb-2" disabled={!username || !password}>
                                 Login
                             </Button>
                             <Link className="btn btn-danger" to={"/"}>

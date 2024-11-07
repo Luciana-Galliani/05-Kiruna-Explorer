@@ -55,7 +55,9 @@ function RegistrationForm({ handleLogin }) {
                                 required
                                 minLength={6}
                                 placeholder="Enter your password"
+                                className={password && password.length < 6 ? "is-invalid" : ""}
                             />
+                            <Form.Control.Feedback type="invalid">Password must be at least 6 characters long.</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group controlId="confirmPassword" className="mb-3">
@@ -67,11 +69,18 @@ function RegistrationForm({ handleLogin }) {
                                 required
                                 minLength={6}
                                 placeholder="Confirm your password"
+                                className={confirmPassword && confirmPassword !== password ? "is-invalid" : ""}
                             />
+                            <Form.Control.Feedback type="invalid">Passwords do not match.</Form.Control.Feedback>
                         </Form.Group>
 
                         <div className="d-grid gap-2">
-                            <Button variant="primary" type="submit" className="mb-2">
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                className="mb-2"
+                                disabled={!username || !password || confirmPassword !== password}
+                            >
                                 Register
                             </Button>
                             <Link className="btn btn-danger" to={"/"}>
