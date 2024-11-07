@@ -26,10 +26,12 @@ sections:
 
 ### Detailed statistics
 
-| Story | # Tasks | Points | Hours est. | Hours actual |
-| ----- | ------- | ------ | ---------- | ------------ |
-| _#0_  |         |        |            |              |
-| n     |         |        |            |              |
+| Story  | # Tasks | Points | Hours est. | Hours actual |
+|--------|---------|--------|------------|--------------|
+| _#0_   |   10    |        |   25h      |    24h15m    |
+| 1      |   11    |   5    |   15h30m   |    16h30m    |
+| 2      |   5     |   3    |   7h       |    7h30m     |
+| 3      |   7     |   7    |   15h30m   |     14h20m   |
 
 > story `#0` is for technical tasks, leave out story points (not applicable in this case)
 
