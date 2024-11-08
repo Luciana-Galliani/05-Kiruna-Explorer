@@ -67,7 +67,7 @@ sections:
 
 -   What caused your errors in estimation (if any)?
 
-    -   only 5 min
+    -   Not so much estimation error, only 5 minutes
 
 -   What lessons did you learn (both positive and negative) in this sprint?
 
