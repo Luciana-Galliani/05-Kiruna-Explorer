@@ -39,8 +39,7 @@ function App() {
             setIsLoggedIn(true);
             navigate("/");
         } catch (error) {
-            console.error("Login failed:", error);
-            alert("Login failed. Please check your credentials.");
+            throw new Error("Login failed, check your credentials");
         }
     };
 

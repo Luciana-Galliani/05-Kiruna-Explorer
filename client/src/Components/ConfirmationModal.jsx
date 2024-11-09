@@ -1,17 +1,17 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React from "react";
+import { Modal, Button } from "react-bootstrap";
 
 const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
     return (
         <Modal show={show} onHide={onClose} centered>
             <Modal.Body>
-                <p>{message}</p>
+                <p className="text-center m-2 fs-5">{message}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
+                <Button variant="secondary" onClick={onClose} className="ms-auto">
                     No
                 </Button>
-                <Button variant="primary" onClick={onConfirm}>
+                <Button variant="primary" onClick={onConfirm} className="me-auto">
                     Yes
                 </Button>
             </Modal.Footer>
