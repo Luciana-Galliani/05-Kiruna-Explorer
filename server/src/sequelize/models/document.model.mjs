@@ -23,7 +23,11 @@ export default (sequelize) => {
         },
         issuanceDate: {
             allowNull: false,
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
+            validate: {
+                // to check if the date is in the format YYYY-MM-DD or YYYY-MM or YYYY
+                is: /^(\d{4})-(\d{2})-(\d{2})|(\d{4})-(\d{2})|(\d{4})$/,
+            },
         },
         type: {
             allowNull: false,

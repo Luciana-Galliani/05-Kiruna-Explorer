@@ -9,6 +9,9 @@ class UsersDAO {
             });
             return newUser;
         } catch (error) {
+            if (error.name === "SequelizeUniqueConstraintError") {
+                throw new Error("Username already exists");
+            }
             throw new Error(error.message);
         }
     }

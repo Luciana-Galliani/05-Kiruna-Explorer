@@ -1,21 +1,33 @@
 import sequelize from "../sequelize.mjs";
+import { Op } from "sequelize";
 
 class DocumentsDAO {
     async _connectDocuments(document, otherDocumentId, relationship, transaction) {
-        const otherDocument = await sequelize.models.Document.findByPk(otherDocumentId, { transaction });
+        const otherDocument = await sequelize.models.Document.findByPk(otherDocumentId, {
+            transaction,
+        });
         if (!otherDocument) {
             throw new Error("Document not found");
         }
 
-        // Bidirectional connection with transaction
-        await document.addConnectedDocument(otherDocument, {
-            through: { relationship: relationship },
-            transaction,
-        });
-        await otherDocument.addConnectedDocument(document, {
-            through: { relationship: relationship },
-            transaction,
-        });
+        await sequelize.models.Connection.create(
+            {
+                sourceDocumentId: document.id,
+                targetDocumentId: otherDocument.id,
+                relationship: relationship,
+            },
+            { transaction }
+        );
+
+        // Insert the reverse connection for bidirectional linking
+        await sequelize.models.Connection.create(
+            {
+                sourceDocumentId: otherDocument.id,
+                targetDocumentId: document.id,
+                relationship: relationship,
+            },
+            { transaction }
+        );
     }
 
     async _updateConnectedDocuments(document, connections, transaction) {
@@ -23,21 +35,22 @@ class DocumentsDAO {
             throw new Error("Connections are required");
         }
 
-        // Retrieve current connected documents
-        const currentConnections = await document.getConnectedDocuments({ transaction });
-
-        // Disconnect only the necessary connections in both directions
-        for (const currentConnection of currentConnections) {
-            if (!connections.some((conn) => conn.documentId === currentConnection.id)) {
-                // Remove connection in both directions
-                await document.removeConnectedDocument(currentConnection, { transaction });
-                await currentConnection.removeConnectedDocument(document, { transaction });
-            }
-        }
+        // Delete all existing connections
+        await sequelize.models.Connection.destroy({
+            where: {
+                [Op.or]: [{ sourceDocumentId: document.id }, { targetDocumentId: document.id }],
+            },
+            transaction,
+        });
 
         // Establish new or modified connections
         for (const connection of connections) {
-            await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
+            await this._connectDocuments(
+                document,
+                connection.documentId,
+                connection.relationship,
+                transaction
+            );
         }
     }
 
@@ -52,10 +65,10 @@ class DocumentsDAO {
                         },
                     },
                     {
-                        association: "connectedDocuments",
-                        through: {
-                            as: "connection",
-                            attributes: ["relationship"],
+                        association: "connections",
+                        attributes: ["id", "relationship"],
+                        include: {
+                            association: "targetDocument",
                         },
                     },
                 ],
@@ -77,10 +90,10 @@ class DocumentsDAO {
                         },
                     },
                     {
-                        association: "connectedDocuments",
-                        through: {
-                            as: "connection",
-                            attributes: ["relationship"],
+                        association: "connections",
+                        attributes: ["id", "relationship"],
+                        include: {
+                            association: "targetDocument",
                         },
                     },
                 ],
@@ -96,6 +109,24 @@ class DocumentsDAO {
 
     async createDocument(documentData) {
         const transaction = await sequelize.transaction();
+
+        const MIN_LAT = 67.5;
+        const MAX_LAT = 68.5;
+        const MIN_LNG = 20;
+        const MAX_LNG = 21.5;
+
+        if (
+            documentData.latitude &&
+            (documentData.latitude < MIN_LAT || documentData.latitude > MAX_LAT)
+        ) {
+            throw new Error("Latitude must be between 67.5 and 68.5 for Kiruna.");
+        }
+        if (
+            documentData.longitude &&
+            (documentData.longitude < MIN_LNG || documentData.longitude > MAX_LNG)
+        ) {
+            throw new Error("Longitude must be between 20 and 21.5 for Kiruna.");
+        }
 
         try {
             const document = await sequelize.models.Document.create(
@@ -121,7 +152,12 @@ class DocumentsDAO {
 
             // Set connected documents
             for (const connection of documentData.connections) {
-                await this._connectDocuments(document, connection.documentId, connection.relationship, transaction);
+                await this._connectDocuments(
+                    document,
+                    connection.documentId,
+                    connection.relationship,
+                    transaction
+                );
             }
 
             await transaction.commit();

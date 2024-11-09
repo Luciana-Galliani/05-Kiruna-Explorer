@@ -7,9 +7,7 @@ export const registerUser = async (req, res) => {
 
     //return error if username or password is missing
     if (!username || !password) {
-        return res
-            .status(400)
-            .json({ error: "Username and password required" });
+        return res.status(400).json({ error: "Username and password required" });
     }
 
     try {
@@ -18,9 +16,12 @@ export const registerUser = async (req, res) => {
 
         //create user
         const user = await usersDAO.createUser(username, hashedPassword);
-        
+
         res.status(201).json({ message: "User created", user: user.username });
     } catch (error) {
+        if (error.message === "Username already exists") {
+            return res.status(400).json({ error: error.message });
+        }
         return res.status(500).json({ error: error.message });
     }
 };

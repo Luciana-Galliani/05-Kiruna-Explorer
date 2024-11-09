@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Form, Button, Row, Col, Card } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Form, Button, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function LoginForm({ handleLogin }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -14,7 +13,7 @@ function LoginForm({ handleLogin }) {
         try {
             await handleLogin(username, password);
         } catch (err) {
-            setError(err);
+            setError(err.message);
         }
     };
 
@@ -23,7 +22,7 @@ function LoginForm({ handleLogin }) {
             <Card className="shadow-sm">
                 <Card.Body>
                     <Card.Title className="text-center mb-4">Login</Card.Title>
-                    {error && <div className="alert alert-danger">{error}</div>}
+                    {error && <div className="alert alert-danger text-center">{error}</div>}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="username" className="mb-3">
                             <Form.Label>Username</Form.Label>
@@ -33,6 +32,7 @@ function LoginForm({ handleLogin }) {
                                 onChange={(ev) => setUsername(ev.target.value)}
                                 required
                                 placeholder="Enter your Username"
+                                autoComplete="on"
                             />
                         </Form.Group>
 
@@ -49,7 +49,12 @@ function LoginForm({ handleLogin }) {
                         </Form.Group>
 
                         <div className="d-grid gap-2">
-                            <Button variant="primary" type="submit" className="mb-2" disabled={!username || !password}>
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                className="mb-2"
+                                disabled={!username || !password}
+                            >
                                 Login
                             </Button>
                             <Link className="btn btn-danger" to={"/"}>

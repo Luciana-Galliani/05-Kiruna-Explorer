@@ -1,7 +1,6 @@
 import React from 'react';
 import CityMap from './Map.jsx';
-
-const HomePage = () => {
+const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates }) => {
     return (
         /*<div className="homepage text-center text-white position-relative" style={{
             backgroundImage: 'url("../../This_is_Kiruna.jpg")',
@@ -11,7 +10,7 @@ const HomePage = () => {
         }}>
             <div className="overlay position-absolute w-100 h-100" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
         </div>*/
-        <CityMap />
+        <CityMap isSelectingCoordinates={isSelectingCoordinates} handleCoordinatesSelected={handleCoordinatesSelected} />
     );
 };
 
