@@ -357,57 +357,71 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                                 />
                             </div>
                         </Form.Group>
-                        <Form.Group controlId="formIssuanceDate" className="mb-3 position-relative">
+                        <Form.Group className="mb-3 position-relative">
                             <Form.Label
-                                style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: "1.2rem",
+                                    color: "black",
+                                    marginBottom: "0",
+                                }}
                             >
                                 Issuance Date <span className="text-danger">*</span>
+                                <div
+                                    className="d-flex align-items-center gap-2"
+                                    style={{ marginTop: ".5rem" }}
+                                >
+                                    <Form.Group controlId="issuanceYear" className="mb-0">
+                                        <Form.Control
+                                            type="number"
+                                            name="issuanceYear"
+                                            placeholder="YYYY"
+                                            value={inputValues.issuanceYear}
+                                            onChange={(e) =>
+                                                setInputValues({
+                                                    ...inputValues,
+                                                    issuanceYear: e.target.value,
+                                                })
+                                            }
+                                            min="1900"
+                                            max="2100"
+                                            required
+                                        />
+                                    </Form.Group>
+                                    <Form.Group controlId="issuanceMonth" className="mb-0">
+                                        <Form.Control
+                                            type="number"
+                                            name="issuanceMonth"
+                                            placeholder="MM"
+                                            value={inputValues.issuanceMonth}
+                                            onChange={(e) =>
+                                                setInputValues({
+                                                    ...inputValues,
+                                                    issuanceMonth: e.target.value,
+                                                })
+                                            }
+                                            min="1"
+                                            max="12"
+                                        />
+                                    </Form.Group>
+                                    <Form.Group controlId="issuanceDay" className="mb-0">
+                                        <Form.Control
+                                            type="number"
+                                            name="issuanceDay"
+                                            placeholder="DD"
+                                            value={inputValues.issuanceDay}
+                                            onChange={(e) =>
+                                                setInputValues({
+                                                    ...inputValues,
+                                                    issuanceDay: e.target.value,
+                                                })
+                                            }
+                                            min="1"
+                                            max="31"
+                                        />
+                                    </Form.Group>
+                                </div>
                             </Form.Label>
-                            <div className="d-flex align-items-center gap-2">
-                                <Form.Control
-                                    type="number"
-                                    name="issuanceYear"
-                                    placeholder="YYYY"
-                                    value={inputValues.issuanceYear}
-                                    onChange={(e) =>
-                                        setInputValues({
-                                            ...inputValues,
-                                            issuanceYear: e.target.value,
-                                        })
-                                    }
-                                    min="1900"
-                                    max="2100"
-                                    required
-                                />
-                                <Form.Control
-                                    type="number"
-                                    name="issuanceMonth"
-                                    placeholder="MM"
-                                    value={inputValues.issuanceMonth}
-                                    onChange={(e) =>
-                                        setInputValues({
-                                            ...inputValues,
-                                            issuanceMonth: e.target.value,
-                                        })
-                                    }
-                                    min="1"
-                                    max="12"
-                                />
-                                <Form.Control
-                                    type="number"
-                                    name="issuanceDay"
-                                    placeholder="DD"
-                                    value={inputValues.issuanceDay}
-                                    onChange={(e) =>
-                                        setInputValues({
-                                            ...inputValues,
-                                            issuanceDay: e.target.value,
-                                        })
-                                    }
-                                    min="1"
-                                    max="31"
-                                />
-                            </div>
                         </Form.Group>
                         <Form.Group controlId="formType" className="mb-3">
                             <Form.Label
@@ -672,9 +686,9 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                             />
                         </div>
                     </Form.Group>
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
+                    <p style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                         Connections :
-                    </Form.Label>
+                    </p>
                     <div className="connections overflow-y-auto">
                         {inputValues.connections.map((connection, index) => (
                             <Card key={index} className="mb-2 me-1 position-relative">
@@ -708,7 +722,11 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                 </Col>
             </Row>
 
-            <input ref={tempRef} style={{ position: "absolute", left: "-9999px" }} />
+            <input
+                ref={tempRef}
+                id="tempInputToRemoveFocus"
+                style={{ position: "absolute", left: "-9999px" }}
+            />
 
             <Modal show={showModal} onHide={handleModalClose} centered>
                 <Modal.Body>

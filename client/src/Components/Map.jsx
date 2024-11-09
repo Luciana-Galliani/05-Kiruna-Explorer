@@ -4,7 +4,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
-import { fromLonLat, toLonLat } from "ol/proj";
+import { fromLonLat, toLonLat, transformExtent } from "ol/proj";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import VectorLayer from "ol/layer/Vector";
@@ -16,12 +16,24 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
 
-    const longitude = 20.22513; // Replace with city's longitude
-    const latitude = 67.85572; // Replace with city's latitude
-    const poiLongitude = 20.22355; // Replace with POI's longitude
-    const poiLatitude = 67.856602; // Replace with POI's latitude
+    const longitude = 20.22513;
+    const latitude = 67.85572;
+    const poiLongitude = 20.22355;
+    const poiLatitude = 67.856602;
+
+    // Define bounding coordinates for latitude and longitude
+    const MIN_LAT = 67.5;
+    const MAX_LAT = 68.17;
+    const MIN_LNG = 19.09;
+    const MAX_LNG = 21.3;
 
     useEffect(() => {
+        // Transform extent to the map projection
+        const extent = transformExtent(
+            [MIN_LNG, MIN_LAT, MAX_LNG, MAX_LAT],
+            "EPSG:4326",
+            "EPSG:3857"
+        );
         const cityCenter = fromLonLat([longitude, latitude]);
         const poiLocation = fromLonLat([poiLongitude, poiLatitude]);
 
@@ -35,6 +47,9 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
             view: new View({
                 center: cityCenter,
                 zoom: 14,
+                minZoom: 12,
+                maxZoom: 20,
+                extent: extent,
             }),
         });
 

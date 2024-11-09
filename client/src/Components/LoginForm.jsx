@@ -32,6 +32,7 @@ function LoginForm({ handleLogin }) {
                                 onChange={(ev) => setUsername(ev.target.value)}
                                 required
                                 placeholder="Enter your Username"
+                                autoComplete="on"
                             />
                         </Form.Group>
 

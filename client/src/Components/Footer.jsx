@@ -1,7 +1,13 @@
 import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ConfirmationModal from "./ConfirmationModal";
+import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Footer = ({ isHomePage, isLoggedIn, location }) => {
+    const navigate = useNavigate();
+    const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
     return (
         <>
             {isHomePage && isLoggedIn && (
@@ -22,7 +28,8 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                         onMouseEnter={(e) => {
                             e.currentTarget.style.width = "8rem";
                             e.currentTarget.style.borderRadius = "0.5rem";
-                            e.currentTarget.querySelector(".add-text").style.transition = "opacity 0.3s 0.1s";
+                            e.currentTarget.querySelector(".add-text").style.transition =
+                                "opacity 0.3s 0.1s";
                             e.currentTarget.querySelector(".add-text").style.opacity = "1";
                             e.currentTarget.querySelector(".add-icon").style.opacity = "0";
                         }}
@@ -48,15 +55,12 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                             Add Document
                         </span>
                     </Link>
-                    {/*<Link to="/connect" className="btn btn-dark custom-link">
-        Connect Documents
-    </Link> */}
                 </div>
             )}
             {location.pathname === "/add" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
-                    <Link
-                        to="/"
+                    <Button
+                        onClick={() => setShowCloseConfirmation(true)}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{
                             width: "3rem",
@@ -67,10 +71,22 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                             position: "relative",
                         }}
                     >
-                        <i className="bi bi-x" style={{ transition: "opacity 0.3s", fontSize: "2rem" }}></i>
-                    </Link>
+                        <i
+                            className="bi bi-x"
+                            style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
+                        ></i>
+                    </Button>
                 </div>
             )}
+            <ConfirmationModal
+                show={showCloseConfirmation}
+                onClose={() => setShowCloseConfirmation(false)}
+                onConfirm={() => {
+                    setShowCloseConfirmation(false);
+                    navigate("/");
+                }}
+                message="Are you sure you want to close the form? Your changes will be lost."
+            />
         </>
     );
 };
