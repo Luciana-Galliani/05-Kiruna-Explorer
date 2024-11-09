@@ -11,11 +11,10 @@ import Footer from "./Components/Footer";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
-import CityMap from "./Components/Map";
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState("Are you sure to logout?");
+    const [confirmationMessage, setConfirmationMessage] = useState("Do you really want to logout?");
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -63,14 +62,35 @@ function App() {
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
             {/* Header */}
-            <Header isLoggedIn={isLoggedIn} handleLogout={() => setShowLogoutModal(true)} headerClass={headerClass} isHomePage={isHomePage} />
+            <Header
+                isLoggedIn={isLoggedIn}
+                handleLogout={() => setShowLogoutModal(true)}
+                headerClass={headerClass}
+                isHomePage={isHomePage}
+            />
 
             {/* Routes */}
-            <HomePage isSelectingCoordinates={isSelectingCoordinates} handleCoordinatesSelected={handleCoordinatesSelected} />
+            <HomePage
+                isSelectingCoordinates={isSelectingCoordinates}
+                handleCoordinatesSelected={handleCoordinatesSelected}
+            />
             <Routes>
-                <Route path="/add" element={!isSelectingCoordinates && <DescriptionForm isLoggedIn={isLoggedIn} coordinates={coordinates} handleChooseInMap={handleChooseInMap} />} />
+                <Route
+                    path="/add"
+                    element={
+                        <DescriptionForm
+                            isLoggedIn={isLoggedIn}
+                            coordinates={coordinates}
+                            handleChooseInMap={handleChooseInMap}
+                            className={isSelectingCoordinates ? "d-none" : "d-block"}
+                        />
+                    }
+                />
                 <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
-                <Route path="/registration" element={<RegistrationForm handleLogin={handleLogin} />} />
+                <Route
+                    path="/registration"
+                    element={<RegistrationForm handleLogin={handleLogin} />}
+                />
             </Routes>
 
             {/* Buttons for the home page */}

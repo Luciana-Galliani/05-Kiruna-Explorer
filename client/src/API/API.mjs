@@ -30,8 +30,8 @@ const registerUser = async ({ username, password }) => {
         const doc = await response.json();
         return doc;
     } else {
-        const errDetails = await response.text();
-        throw errDetails;
+        const errDetails = await response.json();
+        throw new Error(errDetails.error);
     }
 };
 

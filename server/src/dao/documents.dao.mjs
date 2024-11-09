@@ -115,13 +115,18 @@ class DocumentsDAO {
         const MIN_LNG = 20;
         const MAX_LNG = 21.5;
 
-        if (documentData.latitude && (documentData.latitude < MIN_LAT || documentData.latitude > MAX_LAT)) {
+        if (
+            documentData.latitude &&
+            (documentData.latitude < MIN_LAT || documentData.latitude > MAX_LAT)
+        ) {
             throw new Error("Latitude must be between 67.5 and 68.5 for Kiruna.");
         }
-        if (documentData.longitude && (documentData.longitude < MIN_LNG || documentData.longitude > MAX_LNG)) {
+        if (
+            documentData.longitude &&
+            (documentData.longitude < MIN_LNG || documentData.longitude > MAX_LNG)
+        ) {
             throw new Error("Longitude must be between 20 and 21.5 for Kiruna.");
         }
-
 
         try {
             const document = await sequelize.models.Document.create(

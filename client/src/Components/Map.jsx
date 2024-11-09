@@ -14,6 +14,7 @@ import Icon from "ol/style/Icon";
 
 const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
     const mapRef = useRef(null);
+    const mapInstanceRef = useRef(null);
 
     const longitude = 20.22513; // Replace with city's longitude
     const latitude = 67.85572; // Replace with city's latitude
@@ -58,6 +59,21 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
         });
 
         map.addLayer(poiLayer);
+        mapInstanceRef.current = map;
+
+        return () => {
+            map.setTarget(null);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Change cursor style based on isSelectingCoordinates
+        const targetElement = mapRef.current;
+        if (isSelectingCoordinates) {
+            targetElement.style.cursor = "pointer";
+        } else {
+            targetElement.style.cursor = "default";
+        }
 
         const handleMapClick = (event) => {
             if (isSelectingCoordinates) {
@@ -67,10 +83,10 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
             }
         };
 
+        const map = mapInstanceRef.current;
+        if (!map) return;
         map.on("click", handleMapClick);
-
         return () => {
-            map.setTarget(null);
             map.un("click", handleMapClick);
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected]);
