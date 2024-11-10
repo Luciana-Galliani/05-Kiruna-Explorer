@@ -42,8 +42,8 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
 
     const typeOptions = [
         "Design Document",
-        "Informative document",
-        "Prescriptive document",
+        "Informative Document",
+        "Prescriptive Document",
         "Technical Document",
         "Agreement",
         "Conflict",

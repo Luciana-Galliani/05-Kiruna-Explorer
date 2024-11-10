@@ -25,6 +25,18 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
     const MIN_LNG = 19.09;
     const MAX_LNG = 21.3;
 
+    const iconMap = {
+        "Design Document": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Informative Document": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Prescriptive Document": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Technical Document": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Agreement": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Conflict": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Consultation": "https://openlayers.org/en/latest/examples/data/icon.png",
+        "Action": "https://openlayers.org/en/latest/examples/data/icon.png",
+        //TODO: Replace these URLs with those of your custom icons
+    };
+
     useEffect(() => {
         // Transform extent to the map projection
         const extent = transformExtent(
@@ -76,7 +88,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 new Style({
                     image: new Icon({
                         anchor: [0.5, 1],
-                        src: "https://openlayers.org/en/latest/examples/data/icon.png", // Change if needed
+                        src: iconMap[doc.type],
                         scale: 1,
                     }),
                 })
