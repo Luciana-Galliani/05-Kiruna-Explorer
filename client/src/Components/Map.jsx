@@ -12,14 +12,14 @@ import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
 
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
+const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
 
     const longitude = 20.22513;
     const latitude = 67.85572;
-    const poiLongitude = 20.22355;
-    const poiLatitude = 67.856602;
+    /*const poiLongitude = 20.22355;
+    const poiLatitude = 67.856602; */
 
     // Define bounding coordinates for latitude and longitude
     const MIN_LAT = 67.5;
@@ -35,7 +35,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
             "EPSG:3857"
         );
         const cityCenter = fromLonLat([longitude, latitude]);
-        const poiLocation = fromLonLat([poiLongitude, poiLatitude]);
+       // const poiLocation = fromLonLat([poiLongitude, poiLatitude]);
 
         const map = new Map({
             target: mapRef.current,
@@ -53,7 +53,13 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
             }),
         });
 
-        const poiFeature = new Feature({
+        mapInstanceRef.current = map;
+
+        return () => {
+            map.setTarget(null);
+        };
+
+        /*const poiFeature = new Feature({
             geometry: new Point(poiLocation),
         });
 
@@ -78,8 +84,53 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
 
         return () => {
             map.setTarget(null);
-        };
+        }; */
     }, []);
+
+    useEffect(() => {
+        if (!allDocuments || allDocuments.length === 0) return;
+
+        const features = allDocuments.map((doc) => {
+            const { longitude, latitude } = doc;
+            const location = fromLonLat([longitude, latitude]);
+
+            const feature = new Feature({
+                geometry: new Point(location),
+                documentId: doc.id, // Optional: for later reference
+            });
+
+            feature.setStyle(
+                new Style({
+                    image: new Icon({
+                        anchor: [0.5, 1],
+                        src: "https://openlayers.org/en/latest/examples/data/icon.png", // Change if needed
+                        scale: 1,
+                    }),
+                })
+            );
+
+            return feature;
+        });
+
+        const vectorSource = new VectorSource({
+            features: features,
+        });
+
+        const vectorLayer = new VectorLayer({
+            source: vectorSource,
+        });
+
+        const map = mapInstanceRef.current;
+        if (map) {
+            map.addLayer(vectorLayer);
+        }
+
+        return () => {
+            if (map) {
+                map.removeLayer(vectorLayer); // Clean up on component unmount
+            }
+        };
+    }, [allDocuments]);
 
     useEffect(() => {
         // Change cursor style based on isSelectingCoordinates

@@ -42,7 +42,7 @@ By using Docker Compose, you can easily manage and deploy the entire application
 
 In order to run the application it is needed this few command:
 
-- First, on the server folder run `npm unisntall bcrypt` (this is needed for the different installation of the packet on windows or linux env)
+- First, on the server folder run `npm uninstall bcrypt` (this is needed for the different installation of the packet on windows or linux env)
 - Return on the main folder of the project and run the followin command in order
   - `docker-compose build` is needed to create a fresh image from the Dockerfiles (server and client)
   - `docker-compose up` is the command that allow to start the entire application

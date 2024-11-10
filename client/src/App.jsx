@@ -11,6 +11,7 @@ import Footer from "./Components/Footer";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
+
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -20,6 +21,21 @@ function App() {
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
+
+    const [allDocuments, setAllDocuments] = useState([]);
+
+    useEffect(() => {
+        const fetchAllDocuments = async () => {
+            try {
+                const response = await API.getDocuments();
+                setAllDocuments(response.documents);
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        };
+
+        fetchAllDocuments();
+    }, []);
 
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
@@ -72,6 +88,7 @@ function App() {
             <HomePage
                 isSelectingCoordinates={isSelectingCoordinates}
                 handleCoordinatesSelected={handleCoordinatesSelected}
+                allDocuments={allDocuments}
             />
             <Routes>
                 <Route
