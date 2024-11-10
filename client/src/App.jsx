@@ -35,7 +35,7 @@ function App() {
         };
 
         fetchAllDocuments();
-    }, []);
+    }, [allDocuments]);
 
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {

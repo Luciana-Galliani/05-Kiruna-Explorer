@@ -18,8 +18,6 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
 
     const longitude = 20.22513;
     const latitude = 67.85572;
-    /*const poiLongitude = 20.22355;
-    const poiLatitude = 67.856602; */
 
     // Define bounding coordinates for latitude and longitude
     const MIN_LAT = 67.5;
@@ -35,7 +33,6 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
             "EPSG:3857"
         );
         const cityCenter = fromLonLat([longitude, latitude]);
-       // const poiLocation = fromLonLat([poiLongitude, poiLatitude]);
 
         const map = new Map({
             target: mapRef.current,
@@ -58,45 +55,21 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         return () => {
             map.setTarget(null);
         };
-
-        /*const poiFeature = new Feature({
-            geometry: new Point(poiLocation),
-        });
-
-        poiFeature.setStyle(
-            new Style({
-                image: new Icon({
-                    anchor: [0.5, 1],
-                    src: "https://openlayers.org/en/latest/examples/data/icon.png",
-                    scale: 1,
-                }),
-            })
-        );
-
-        const poiLayer = new VectorLayer({
-            source: new VectorSource({
-                features: [poiFeature],
-            }),
-        });
-
-        map.addLayer(poiLayer);
-        mapInstanceRef.current = map;
-
-        return () => {
-            map.setTarget(null);
-        }; */
+        
     }, []);
 
     useEffect(() => {
         if (!allDocuments || allDocuments.length === 0) return;
 
-        const features = allDocuments.map((doc) => {
+        const features = allDocuments
+        .filter((doc) => doc.longitude !== null && doc.latitude !== null)
+        .map((doc) => {
             const { longitude, latitude } = doc;
             const location = fromLonLat([longitude, latitude]);
 
             const feature = new Feature({
                 geometry: new Point(location),
-                documentId: doc.id, // Optional: for later reference
+                documentId: doc.id,
             });
 
             feature.setStyle(
