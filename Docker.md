@@ -47,5 +47,7 @@ In order to run the application it is needed this few command:
   - `docker-compose build` is needed to create a fresh image from the Dockerfiles (server and client)
   - `docker-compose up` is the command that allow to start the entire application
 
+**IMPORTANT**: every time you do change on the code, you need to re-build the application, in order to do this is needed to run the command build. There is an alternative command `docker-compose up --build` (this command do the run command and additionally re-build a new image of the application)
+
 The set-up files (Dockerfiles and Docker-compose) are adjust for running correctly even if the mysql server is running on the host machine. In case of any problems on the port you can adjust the port number on this files.
 Additionally the **.env** file is changed allowing the correct connection between DB and server.
