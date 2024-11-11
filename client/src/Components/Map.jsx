@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -12,9 +12,16 @@ import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
 import API from "../API/API.mjs";
+import designIcon from "../Icons/design.svg";
+import informativeIcon from "../Icons/informative.svg";
+import prescriptiveIcon from "../Icons/prescriptive.svg";
+import technicalIcon from "../Icons/technical.svg";
+import agreementIcon from "../Icons/agreement.svg";
+import conflictIcon from "../Icons/conflict.svg";
+import consultationIcon from "../Icons/consultation.svg";
+import actionIcon from "../Icons/action.svg";
 
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
-    const [allDocuments, setAllDocuments] = useState([]);
+const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
 
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
@@ -29,15 +36,24 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
     const MAX_LNG = 21.3;
 
     const iconMap = {
-        "Design Document": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Informative Document": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Prescriptive Document": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Technical Document": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Agreement": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Conflict": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Consultation": "https://openlayers.org/en/latest/examples/data/icon.png",
-        "Action": "https://openlayers.org/en/latest/examples/data/icon.png",
-        //TODO: Replace these URLs with those of your custom icons
+        "Design Document": designIcon,
+        "Informative Document": informativeIcon,
+        "Prescriptive Document": prescriptiveIcon,
+        "Technical Document": technicalIcon,
+        "Agreement": agreementIcon,
+        "Conflict": conflictIcon,
+        "Consultation": consultationIcon,
+        "Action": actionIcon,
+    };
+
+    const colorMap = {
+        "LKAB": "#000000",
+        "Municipality": "#FF0000",
+        "Norrbotten County": "#00FF00",
+        "Architecture firms": "#0000FF",
+        "Citizens": "#FFFF00",
+        "Others": "#00FFFF",
+        default: "#FFFFFF", // TODO: CAMBIARE COLORE DEFAULT (White) for multiple stakeholders
     };
 
     useEffect(() => {
@@ -46,12 +62,12 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
                 const response = await API.getDocuments();
                 setAllDocuments(response.documents);
             } catch (err) {
-                throw new Error(err.message);
+                throw new Error("Failed to fetch documents:", err.message);
             }
         };
 
         fetchAllDocuments();
-    }, [allDocuments]);
+    }, []);
 
     useEffect(() => {
         // Transform extent to the map projection
@@ -92,7 +108,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
         const features = allDocuments
         .filter((doc) => doc.longitude !== null && doc.latitude !== null)
         .map((doc) => {
-            const { longitude, latitude } = doc;
+            const { longitude, latitude, stakeholders } = doc;
             const location = fromLonLat([longitude, latitude]);
 
             const feature = new Feature({
@@ -100,12 +116,21 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
                 documentId: doc.id,
             });
 
+            let color = "";
+
+            if(stakeholders && stakeholders.length === 1){
+                color = colorMap[stakeholders[0]]
+            }else{
+                color = colorMap.default;
+            }
+            
             feature.setStyle(
                 new Style({
                     image: new Icon({
-                        anchor: [0.5, 1],
+                        anchor: [0.2, 0.3],
                         src: iconMap[doc.type],
-                        scale: 1,
+                        scale: 0.07,
+                        color: color,
                     }),
                 })
             );

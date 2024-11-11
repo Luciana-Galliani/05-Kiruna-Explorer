@@ -22,6 +22,8 @@ function App() {
     const [coordinates, setCoordinates] = useState(null);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
 
+    const [allDocuments, setAllDocuments] = useState([]);
+
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
@@ -73,6 +75,8 @@ function App() {
             <HomePage
                 isSelectingCoordinates={isSelectingCoordinates}
                 handleCoordinatesSelected={handleCoordinatesSelected}
+                allDocuments={allDocuments}
+                setAllDocuments={setAllDocuments}
             />
             <Routes>
                 <Route
@@ -82,6 +86,8 @@ function App() {
                             isLoggedIn={isLoggedIn}
                             coordinates={coordinates}
                             handleChooseInMap={handleChooseInMap}
+                            documentOptions={allDocuments}
+                            setDocumentOptions={setAllDocuments}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />
                     }

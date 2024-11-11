@@ -4,7 +4,7 @@ import API from "../API/API.mjs";
 import { useNavigate } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, className }) {
+export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, className }) {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,7 +34,6 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
     const [activeField, setActiveField] = useState("");
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
-    const [documentOptions, setDocumentOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
 
     const tempRef = useRef(null);
@@ -269,6 +268,7 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
         try {
             await API.createDocument(documentData);
             showNotification("Document saved successfully!", "success");
+            setDocumentOptions([...documentOptions, documentData]);
             navigate("/"); // Redirect to home page
         } catch (error) {
             console.error("Error saving document:", error);
@@ -606,6 +606,7 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
+                                    key={document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
