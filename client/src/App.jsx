@@ -22,21 +22,6 @@ function App() {
     const [coordinates, setCoordinates] = useState(null);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
 
-    const [allDocuments, setAllDocuments] = useState([]);
-
-    useEffect(() => {
-        const fetchAllDocuments = async () => {
-            try {
-                const response = await API.getDocuments();
-                setAllDocuments(response.documents);
-            } catch (err) {
-                throw new Error(err.message);
-            }
-        };
-
-        fetchAllDocuments();
-    }, [allDocuments]);
-
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
@@ -88,7 +73,6 @@ function App() {
             <HomePage
                 isSelectingCoordinates={isSelectingCoordinates}
                 handleCoordinatesSelected={handleCoordinatesSelected}
-                allDocuments={allDocuments}
             />
             <Routes>
                 <Route

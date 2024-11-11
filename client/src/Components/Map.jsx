@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -11,8 +11,11 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
+import API from "../API/API.mjs";
 
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments }) => {
+const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected }) => {
+    const [allDocuments, setAllDocuments] = useState([]);
+
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
 
@@ -36,6 +39,19 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         "Action": "https://openlayers.org/en/latest/examples/data/icon.png",
         //TODO: Replace these URLs with those of your custom icons
     };
+
+    useEffect(() => {
+        const fetchAllDocuments = async () => {
+            try {
+                const response = await API.getDocuments();
+                setAllDocuments(response.documents);
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        };
+
+        fetchAllDocuments();
+    }, [allDocuments]);
 
     useEffect(() => {
         // Transform extent to the map projection
