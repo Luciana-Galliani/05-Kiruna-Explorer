@@ -116,13 +116,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 documentId: doc.id,
             });
 
-            let color = "";
-
-            if(stakeholders && stakeholders.length === 1){
-                color = colorMap[stakeholders[0]]
-            }else{
-                color = colorMap.default;
-            }
+            let color = stakeholders && stakeholders.length === 1 ? colorMap[stakeholders[0]] : colorMap.default;
             
             const img = new Image();
             img.src = iconMap[doc.type];
@@ -131,10 +125,10 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 feature.setStyle(
                     new Style({
                         image: new Icon({
-                            anchor: [0.5, 0.5],
+                            anchor: doc.type == "Action" ? [0.2, 0.2] : [0.2, 0.5],
                             img: img,
                             imgSize: [img.width, img.height],
-                            scale: 1,
+                            scale: 0.4,
                             color: color,
                         }),
                     })
