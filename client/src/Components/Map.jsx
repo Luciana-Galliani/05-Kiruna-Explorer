@@ -124,16 +124,22 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 color = colorMap.default;
             }
             
-            feature.setStyle(
-                new Style({
-                    image: new Icon({
-                        anchor: [0.2, 0.3],
-                        src: iconMap[doc.type],
-                        scale: 0.07,
-                        color: color,
-                    }),
-                })
-            );
+            const img = new Image();
+            img.src = iconMap[doc.type];
+
+            img.onload = () => {
+                feature.setStyle(
+                    new Style({
+                        image: new Icon({
+                            anchor: [0.5, 0.5],
+                            img: img,
+                            imgSize: [img.width, img.height],
+                            scale: 1,
+                            color: color,
+                        }),
+                    })
+                );
+            };
 
             return feature;
         });
