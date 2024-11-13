@@ -18,7 +18,7 @@ import prescriptiveIcon from "../Icons/prescriptive.svg";
 import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.svg";
+import consultationIcon from "../Icons/consultation.jsx";
 import actionIcon from "../Icons/action.svg";
 
 const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
@@ -35,26 +35,16 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
     const MIN_LNG = 19.09;
     const MAX_LNG = 21.3;
 
-    const iconMap = {
+  /*  const iconMap = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
         "Prescriptive Document": prescriptiveIcon,
         "Technical Document": technicalIcon,
         "Agreement": agreementIcon,
         "Conflict": conflictIcon,
-        "Consultation": consultationIcon,
+        "Consultation": <consultationIcon color={"red"} />,
         "Action": actionIcon,
-    };
-
-    const colorMap = {
-        "LKAB": "#000000",
-        "Municipality": "#FF0000",
-        "Norrbotten County": "#00FF00",
-        "Architecture firms": "#0000FF",
-        "Citizens": "#FFFF00",
-        "Others": "#00FFFF",
-        default: "#FFFFFF", // TODO: CAMBIARE COLORE DEFAULT (White) for multiple stakeholders
-    };
+    }; */
 
     useEffect(() => {
         const fetchAllDocuments = async () => {
@@ -116,10 +106,14 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 documentId: doc.id,
             });
 
-            let color = stakeholders && stakeholders.length === 1 ? colorMap[stakeholders[0]] : colorMap.default;
+            let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "viola";
             
             const img = new Image();
-            img.src = iconMap[doc.type];
+
+            if(doc.type == "Consultation")
+                img.src = <consultationIcon color={colorIcon} />
+
+            //img.src = iconMap[doc.type];
 
             img.onload = () => {
                 feature.setStyle(
@@ -127,9 +121,9 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                         image: new Icon({
                             anchor: doc.type == "Action" ? [0.2, 0.2] : [0.2, 0.5],
                             img: img,
+                            color: colorIcon,
                             imgSize: [img.width, img.height],
-                            scale: 0.4,
-                            color: color,
+                            scale: 3, //0.4
                         }),
                     })
                 );
