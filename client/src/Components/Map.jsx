@@ -119,7 +119,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                             img: img,
                             color: colorIcon,
                             imgSize: [img.width, img.height],
-                            scale: 1.4, //0.4
+                            scale: 2,
                             
                         }),
                     })
