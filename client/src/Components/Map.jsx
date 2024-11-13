@@ -18,7 +18,7 @@ import prescriptiveIcon from "../Icons/prescriptive.svg";
 import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.jsx";
+import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 
 const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
@@ -35,16 +35,16 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
     const MIN_LNG = 19.09;
     const MAX_LNG = 21.3;
 
-  /*  const iconMap = {
+    const iconMap = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
         "Prescriptive Document": prescriptiveIcon,
         "Technical Document": technicalIcon,
         "Agreement": agreementIcon,
         "Conflict": conflictIcon,
-        "Consultation": <consultationIcon color={"red"} />,
+        "Consultation": consultationIcon,
         "Action": actionIcon,
-    }; */
+    };
 
     useEffect(() => {
         const fetchAllDocuments = async () => {
@@ -109,24 +109,21 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
             let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "viola";
             
             const img = new Image();
-
-            if(doc.type == "Consultation")
-                img.src = <consultationIcon color={colorIcon} />
-
-            //img.src = iconMap[doc.type];
+            img.src = iconMap[doc.type];
 
             img.onload = () => {
-                feature.setStyle(
+                feature.setStyle([
                     new Style({
                         image: new Icon({
-                            anchor: doc.type == "Action" ? [0.2, 0.2] : [0.2, 0.5],
+                            anchor: doc.type == "Action" ? [0.2, 0.2] : [0.05, 0.1],
                             img: img,
                             color: colorIcon,
                             imgSize: [img.width, img.height],
-                            scale: 3, //0.4
+                            scale: 1.4, //0.4
+                            
                         }),
                     })
-                );
+                ]);
             };
 
             return feature;
