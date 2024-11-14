@@ -9,7 +9,7 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage }) => {
         >
             <h1 className="m-0">
                 <Link to="/" className={"text-dark text-decoration-none"} style={{ fontFamily: "fantasy" }}>
-                    Kiruna eXplorer
+                    Kiruna eXploreerer
                 </Link>
             </h1>
             <div>
