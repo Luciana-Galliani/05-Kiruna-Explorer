@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="80" height="80">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-<path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 288c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128z"/>
+<path d="M 0 64 C 0 28.7 28.7 0 64 0 L 224 0 l 0 128 c 0 17.7 14.3 32 32 32 l 128 0 l 0 288 c 0 35.3 -28.7 64 -64 64 L 64 512 c -35.3 0 -64 -28.7 -64 -64 L 0 64 z m 384 64 l -128 0 L 256 0 L 384 128 z"/>
+<g transform="matrix(1,0,0,1,0,200)">
+        <path transform="matrix(9.3,0,0,7.7,-570.7,-1052)" d="M 67 161.3 L 77 151.3 L 87 161.3 L 87 171.3 L 67 171.3 L 67 161.3 Z" stroke="currentColor" stroke-width="2" fill="black"/>
+        <path transform="matrix(9.3,0,0,7.7,-570.7,-1116.2)" d="M 74 179.6 L 74 172.6 L 80 172.6 L 80 179.6 Z" stroke="currentColor" stroke-width="2" fill="black"/>    
+</g>
 </svg>

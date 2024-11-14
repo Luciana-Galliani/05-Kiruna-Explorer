@@ -1,15 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-     viewBox="0 0 1000 1000" style="enable-background: new 0 0 80 80" xml:space="preserve" width="80" height="80">
-<g>
-<g transform="matrix(12.7,0,0,10.8,-653.3,-614.2)" id="_x37_7_Essential_Icons_19_">
-    <path id="Document" d="M 117.4 85.9 L 95.6 64.1 C 95.2 63.7 94.7 63.5 94.2 63.5 H 62.2 c -2.2 0 -4 1.8 -4 4 v 72 c 0 2.2 1.8 4 4 4 h 52 c 2.2 0 4 -1.8 4 -4 V 87.2 C 118.1 86.6 117.8 86.3 117.4 85.9 z M 96.2 70.3 L 111.4 85.5 H 96.2 V 70.3 z M 114.2 139.5 H 62.2 V 67.5 h 30 v 20 c 0 1.1 0.9 2 2 2 h 20 V 139.5 z"
-        stroke="currentColor" stroke-width="2" fill="none"/>
-</g>
-<g transform="matrix(12.7,0,0,10.8,-473.9,-921)" id="Home_Icon">
-    <path d="M 54 151.7 L 64 141.7 L 74 151.7 L 74 161.7 L 54 161.7 L 54 151.7 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-    <path d="M 61 161.7 L 61 154.7 L 67 154.7 L 67 161.7 Z" stroke="currentColor" stroke-width="2" fill="none"/>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="80" height="80">
+<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+<rect width="100%" height="100%" fill="lightgray"/>
+<path d="M 0 64 C 0 28.7 28.7 0 64 0 L 224 0 l 0 128 c 0 17.7 14.3 32 32 32 l 128 0 l 0 288 c 0 35.3 -28.7 64 -64 64 L 64 512 c -35.3 0 -64 -28.7 -64 -64 L 0 64 z m 384 64 l -128 0 L 256 0 L 384 128 z"/>
+<g transform="matrix(1,0,0,1,0,200)">
+        <path transform="matrix(9.3,0,0,7.7,-570.7,-1052)" d="M 67 161.3 L 77 151.3 L 87 161.3 L 87 171.3 L 67 171.3 L 67 161.3 Z" stroke="currentColor" stroke-width="2" fill="white"/>
+        <path transform="matrix(9.3,0,0,7.7,-570.7,-1116.2)" d="M 74 179.6 L 74 172.6 L 80 172.6 L 80 179.6 Z" stroke="currentColor" stroke-width="2" fill="white"/>    
 </g>
 </svg>
