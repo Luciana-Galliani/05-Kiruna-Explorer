@@ -119,7 +119,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                             anchor: [0.5, 0.5],
                             img: img,
                             imgSize: [img.width, img.height],
-                            scale: 0.3,
+                            scale: 0.4,
                             color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
                         }),
                     })
