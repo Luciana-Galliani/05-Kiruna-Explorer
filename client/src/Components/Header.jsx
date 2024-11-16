@@ -8,18 +8,18 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage }) => {
             style={{ position: "fixed", top: 0, zIndex: 2, height: "60px" }}
         >
             <h1 className="m-0">
-                <Link to="/" className={"text-dark text-decoration-none"} style={{ fontFamily: "fantasy" }}>
+                <Link to="/" className={"text-light text-decoration-none"} style={{ fontFamily: "fantasy" }}>
                     Kiruna eXplorer
                 </Link>
             </h1>
             <div>
                 {isLoggedIn ? (
-                    <button className="btn btn-dark" onClick={handleLogout}>
+                    <button className="btn btn-light" onClick={handleLogout}>
                         Logout
                     </button>
                 ) : (
                     location.pathname !== "/login" && (
-                        <Link to="/login" className="btn btn-dark">
+                        <Link to="/login" className="btn btn-light">
                             Login
                         </Link>
                     )

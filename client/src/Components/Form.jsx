@@ -27,21 +27,21 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
     console.log(existingDocument);
 
     const [inputValues, setInputValues] = useState({
-        title: existingDocument.document.title || "",
-        stakeholders: existingDocument.document.stakeholders || [],
-        issuanceYear: date[0] || "",
-        issuanceMonth: date[1] || "",
-        issuanceDay: date[2] || "",
-        type: existingDocument.document.type || "",
-        language: existingDocument.document.language || "",
-        pages: existingDocument.document.pages || "",
-        description: existingDocument.document.description || "",
-        scale: existingDocument.document.scaleType || "",
-        planScale: existingDocument.document.scaleValue || "",
-        allMunicipality: existingDocument.document.allMunicipality || false,
-        latitude: existingDocument.document.latitude || null,
-        longitude: existingDocument.document.longitude || null,
-        connections: existingDocument.document.connections || [],
+        title: existingDocument ? existingDocument.document.title : "",
+        stakeholders: existingDocument ? existingDocument.document.stakeholders : [],
+        issuanceYear: existingDocument ? date[0] : "",
+        issuanceMonth: existingDocument ? date[1] : "",
+        issuanceDay: existingDocument ? date[2] : "",
+        type: existingDocument ? existingDocument.document.type : "",
+        language: existingDocument ? existingDocument.document.language : "",
+        pages: existingDocument ? existingDocument.document.pages : "",
+        description: existingDocument ? existingDocument.document.description : "",
+        scale: existingDocument ? existingDocument.document.scaleType : "",
+        planScale: existingDocument ? existingDocument.document.scaleValue : "",
+        allMunicipality: existingDocument ? existingDocument.document.allMunicipality : false,
+        latitude: existingDocument ? existingDocument.document.latitude : null,
+        longitude: existingDocument ? existingDocument.document.longitude : null,
+        connections: existingDocument ? existingDocument.document.connections : [],
     });
 
     const [showModal, setShowModal] = useState(false);
@@ -815,8 +815,8 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
                 setLoading(false);
             })
             .catch(e =>  {
-                    if (e.message) message = e.message;
-                    else message = "Unknown Error";
+                const message = e.message || "Unknown Error";
+                console.error(message);
                 }
             );
     },[]);
@@ -836,11 +836,13 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
         );
     }else{
         return(
-            <Row className="justify-content-center mt-4">   
-                <Col md={6} className="proposals-container">
-                    <p className="lead">Document non found!</p>
-                </Col>
-            </Row>
+            <div className="position-absolute top-50 start-50 translate-middle w-25">
+            <Card className="shadow-sm">
+                <Card.Body>
+                    <p className="text-center mb-4">Document not found!</p>
+                </Card.Body>
+            </Card>
+        </div>
         );
     }
 }

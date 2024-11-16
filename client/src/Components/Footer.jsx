@@ -14,6 +14,7 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
             {isHomePage && isLoggedIn && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <LinkButton msg="Add Document" link="/add" />
+                    <LinkButton msg="Edit Document" link="/edit" /> {/* da togliere poi */}
                     <LinkButton msg="List documents" link="/" />
                 </div>
             )}
@@ -39,6 +40,7 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                 </div>
             )}
 
+            {/* da aggiornare il path poi */}
             {location.pathname === "/edit" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
