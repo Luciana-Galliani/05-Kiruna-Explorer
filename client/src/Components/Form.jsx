@@ -1,11 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
 import API from "../API/API.mjs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, className }) {
+export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, existingDocument, className  }) {
     const navigate = useNavigate();
+
+    let date = "";
+    if(existingDocument && existingDocument.document.issuanceDate.includes('-')){
+        date = existingDocument.document.issuanceDate.split('-');
+        if(date.length == 1){
+            date.push("00");
+            date.push("00");
+        }else if(date.length == 2){
+            date.push("00");
+        }
+    }
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -13,23 +24,26 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
         }
     }, [isLoggedIn, navigate]);
 
+    console.log(existingDocument);
+
     const [inputValues, setInputValues] = useState({
-        title: "",
-        stakeholders: [],
-        issuanceYear: "",
-        issuanceMonth: "",
-        issuanceDay: "",
-        type: "",
-        language: "",
-        pages: "",
-        description: "",
-        scale: "",
-        planScale: "",
-        allMunicipality: false,
-        latitude: null,
-        longitude: null,
-        connections: [],
+        title: existingDocument.document.title || "",
+        stakeholders: existingDocument.document.stakeholders || [],
+        issuanceYear: date[0] || "",
+        issuanceMonth: date[1] || "",
+        issuanceDay: date[2] || "",
+        type: existingDocument.document.type || "",
+        language: existingDocument.document.language || "",
+        pages: existingDocument.document.pages || "",
+        description: existingDocument.document.description || "",
+        scale: existingDocument.document.scaleType || "",
+        planScale: existingDocument.document.scaleValue || "",
+        allMunicipality: existingDocument.document.allMunicipality || false,
+        latitude: existingDocument.document.latitude || null,
+        longitude: existingDocument.document.longitude || null,
+        connections: existingDocument.document.connections || [],
     });
+
     const [showModal, setShowModal] = useState(false);
     const [activeField, setActiveField] = useState("");
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
@@ -266,10 +280,17 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
         }
 
         try {
-            await API.createDocument(documentData);
-            showNotification("Document saved successfully!", "success");
-            setDocumentOptions([...documentOptions, documentData]);
-            navigate("/"); // Redirect to home page
+            if(existingDocument){
+                await API.updateDocument(existingDocument.document.id, documentData);
+                showNotification("Document modified successfully!", "success");
+                setDocumentOptions([...documentOptions, documentData]);
+                navigate("/"); // Redirect to home page
+            }else{
+                await API.createDocument(documentData);
+                showNotification("Document saved successfully!", "success");
+                setDocumentOptions([...documentOptions, documentData]);
+                navigate("/"); // Redirect to home page
+            }
         } catch (error) {
             console.error("Error saving document:", error);
             showNotification("Error saving document. Please try again.", "error");
@@ -606,7 +627,7 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key={document.id}
+                                    key= {document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -642,7 +663,7 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
-                                                        connection.document.id === document &&
+                                                        (existingDocument ? connection.targetDocument.id === document : connection.document.id === document) &&
                                                         connection.relationship === option
                                                 );
                                             return !isOptionAlreadyConnected; // Escludi le opzioni già connesse
@@ -711,7 +732,7 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong> {connection.document.title}
+                                        <strong>Document:</strong> {existingDocument ? connection.targetDocument.title : connection.document.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
@@ -772,4 +793,54 @@ export default function DescriptionForm({ isLoggedIn, coordinates, handleChooseI
             </Button>
         </div>
     );
+}
+
+export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, className }) {
+    //const { docId } = useParams(); //Get the document ID
+    const docId = 11;
+    const navigate = useNavigate();
+    const [existingDocument, setExistingDocument] = useState();
+    const [loading, setLoading] = useState(true); // Loading status
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate]);
+
+    useEffect ( () => {
+        API.getDocument(docId)
+            .then(doc => {
+                setExistingDocument(doc);
+                setLoading(false);
+            })
+            .catch(e =>  {
+                    if (e.message) message = e.message;
+                    else message = "Unknown Error";
+                }
+            );
+    },[]);
+
+
+    if(!loading && existingDocument){
+        return (
+            <DescriptionForm
+                isLoggedIn={isLoggedIn}
+                coordinates={coordinates}
+                handleChooseInMap={handleChooseInMap}
+                documentOptions={documentOptions}
+                setDocumentOptions={setDocumentOptions}
+                existingDocument={existingDocument}
+                className={className}
+            />
+        );
+    }else{
+        return(
+            <Row className="justify-content-center mt-4">   
+                <Col md={6} className="proposals-container">
+                    <p className="lead">Document non found!</p>
+                </Col>
+            </Row>
+        );
+    }
 }

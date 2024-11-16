@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import DescriptionForm from "./Components/Form";
+import { DescriptionForm, EditDocumentForm } from "./Components/Form";
 import HomePage from "./Components/HomePage";
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
@@ -83,6 +83,20 @@ function App() {
                     path="/add"
                     element={
                         <DescriptionForm
+                            isLoggedIn={isLoggedIn}
+                            coordinates={coordinates}
+                            handleChooseInMap={handleChooseInMap}
+                            documentOptions={allDocuments}
+                            setDocumentOptions={setAllDocuments}
+                            className={isSelectingCoordinates ? "d-none" : "d-block"}
+                        />
+                    }
+                />
+                <Route 
+                    //path="edit/:documentId" 
+                    path="edit"
+                    element={
+                        <EditDocumentForm
                             isLoggedIn={isLoggedIn}
                             coordinates={coordinates}
                             handleChooseInMap={handleChooseInMap}

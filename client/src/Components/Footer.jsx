@@ -55,9 +55,59 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                             Add Document
                         </span>
                     </Link>
+                    <Link
+                        to="/edit"
+                        className="btn d-flex align-items-center justify-content-center"
+                        style={{
+                            width: "3rem",
+                            height: "3rem",
+                            backgroundColor: "#212529",
+                            borderRadius: "50%",
+                            color: "white",
+                            transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
+                            position: "relative",
+                        }}
+                        title="Edit Document"
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.width = "8rem";
+                            e.currentTarget.style.borderRadius = "0.5rem";
+                            e.currentTarget.querySelector(".add-text").style.transition = "opacity 0.3s 0.1s";
+                            e.currentTarget.querySelector(".add-text").style.opacity = "1";
+                            e.currentTarget.querySelector(".add-icon").style.opacity = "0";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.width = "3rem";
+                            e.currentTarget.style.borderRadius = "50%";
+                            e.currentTarget.querySelector(".add-text").style.transition = "none";
+                            e.currentTarget.querySelector(".add-text").style.opacity = "0";
+                            e.currentTarget.querySelector(".add-icon").style.opacity = "1";
+                        }}
+                    ></Link>
                 </div>
             )}
             {location.pathname === "/add" && (
+                <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
+                    <Button
+                        onClick={() => setShowCloseConfirmation(true)}
+                        className="btn btn-danger d-flex align-items-center justify-content-center"
+                        style={{
+                            width: "3rem",
+                            height: "3rem",
+                            borderRadius: "50%",
+                            color: "white",
+                            transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
+                            position: "relative",
+                        }}
+                    >
+                        <i
+                            className="bi bi-x"
+                            style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
+                        ></i>
+                    </Button>
+                </div>
+            )}
+
+            {location.pathname === "/edit" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => setShowCloseConfirmation(true)}
