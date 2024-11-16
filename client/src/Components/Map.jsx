@@ -73,8 +73,11 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
             target: mapRef.current,
             layers: [
                 new TileLayer({
-                    source: new OSM(),
+                    source: new OSM({
+                        url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
                 }),
+                }),
+                
             ],
             view: new View({
                 center: cityCenter,
@@ -135,6 +138,12 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
 
         const vectorLayer = new VectorLayer({
             source: vectorSource,
+        });
+
+        const satelliteLayer = new TileLayer({
+            source: new OSM({
+                url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+            }),
         });
 
         const map = mapInstanceRef.current;
