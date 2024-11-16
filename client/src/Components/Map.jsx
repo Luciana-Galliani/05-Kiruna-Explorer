@@ -20,6 +20,7 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
+import { none } from "ol/centerconstraint";
 
 const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
 
@@ -72,8 +73,11 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
             target: mapRef.current,
             layers: [
                 new TileLayer({
-                    source: new OSM(),
+                    source: new OSM({
+                        url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
                 }),
+                }),
+                
             ],
             view: new View({
                 center: cityCenter,
@@ -106,7 +110,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 documentId: doc.id,
             });
 
-            let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "viola";
+            let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
             
             const img = new Image();
             img.src = iconMap[doc.type];
@@ -115,12 +119,11 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 feature.setStyle([
                     new Style({
                         image: new Icon({
-                            anchor: doc.type == "Action" ? [0.2, 0.2] : [0.05, 0.1],
+                            anchor: [0.5, 0.5],
                             img: img,
-                            color: colorIcon,
                             imgSize: [img.width, img.height],
-                            scale: 2,
-                            
+                            scale: 0.4,
+                            color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
                         }),
                     })
                 ]);
@@ -135,6 +138,12 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
 
         const vectorLayer = new VectorLayer({
             source: vectorSource,
+        });
+
+        const satelliteLayer = new TileLayer({
+            source: new OSM({
+                url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+            }),
         });
 
         const map = mapInstanceRef.current;

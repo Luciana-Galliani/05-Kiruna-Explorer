@@ -5,19 +5,29 @@ services:
   client:
     build:
       context: ./client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
     ports:
       - "5173:5173"  # Map host port 3000 to client container port
+    environment:
+      - NODE_ENV=development
     depends_on:
       - server
     networks:
       - app-network
+    command: ["npm", "run", "dev", "--", "--host"]
 
   server:
     build:
       context: ./server
+    volumes:
+      - ./server:/app
+      - /app/node_modules
     ports:
       - "3001:3001"  # Map host port 5000 to server container port
     environment:
+      - NODE_ENV=development
       - DB_HOST=mysql  # Set MySQL hostname to service name
       - DB_USER=user
       - DB_PASSWORD=password
@@ -27,6 +37,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    command: ["nodemon", "--watch", ".", "--exec", "node", "./src/index.mjs"]
 
   mysql:
     image: mysql:8.0
