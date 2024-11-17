@@ -15,7 +15,7 @@ const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatel
                 <div className="container">  
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                         <LinkButton msg="Add Document" link="/add" color={isSatelliteView}/>
-                        <LinkButton msg="List documents" link="/list" color={isSatelliteView}/>
+                        <LinkButton msg="Edit Document" link="/edit" color={isSatelliteView}/> {/* da togliere poi */}
                     </div>
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
                         <Button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
@@ -47,7 +47,7 @@ const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatel
                 </div>
             )}
 
-            {location.pathname === "/list" && (
+            {location.pathname === "/allDocuments" || location.pathname === "/municipality" ? (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                 <Button
                     onClick={() => navigate("/")}
@@ -67,10 +67,10 @@ const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatel
                     ></i>
                 </Button>
             </div>
-            )}
+            ) : null}
 
-                        {/* da aggiornare il path poi */}
-                        {location.pathname === "/edit" && (
+            {/* da aggiornare il path poi */}
+            {location.pathname === "/edit" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => setShowCloseConfirmation(true)}

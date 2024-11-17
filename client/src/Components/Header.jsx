@@ -18,7 +18,7 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage, isSatellite
                 {/* Toggle Sidebar Button */}
                 <button onClick={toggleSidebar} style={{
                     backgroundColor: 'transparent',
-                    color: 'white',
+                    color: `${isSatelliteView ? "white" : "black"}`,
                     border: 'none',
                     fontSize: '1.5rem',
                     cursor: 'pointer',
@@ -30,7 +30,7 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage, isSatellite
                 {/* Title */}
                 <h1 className="m-0" style={{transition: "transform 0.3s ease",
                 transform: isSidebarOpen ? "translateX(200px)" : "translateX(0)"}}>
-                    <Link to="/" className="text-light text-decoration-none" style={{ fontFamily: "fantasy" }}>
+                    <Link to="/" className={`${isSatelliteView ? "text-light" : "text-dark"} text-decoration-none`} style={{ fontFamily: "fantasy" }}>
                         Kiruna eXplorer
                     </Link>
                 </h1>

@@ -2,16 +2,23 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import API from '../API/API.mjs';
 
-const List = () => {
+const List = ({ condition }) => {
     
     const [documents, setDocuments] = useState([]);
+    const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
 
     useEffect(() => {
         const fetchDocuments = async () => {
             const response = await API.getDocuments();
             setDocuments(response.documents);
+            if(condition === "true") {
+                setDocumentsToShow(response.documents.filter(document => document.allMunicipality === condition));
+            } else {
+                setDocumentsToShow(response.documents);
+            }
         };
+
         fetchDocuments();
     }, []);
 
@@ -39,7 +46,7 @@ const List = () => {
             >
                 <h1>Documents</h1>
                 <ul className="list-group">
-                    {documents.map((document) => (
+                    {documentsToShow.map((document) => (
                         <li key={document.id}
                             className={`list-group-item ${hoveredItem === document.id ? "active" : ""}`}
                             onMouseEnter={() => setHoveredItem(document.id)}

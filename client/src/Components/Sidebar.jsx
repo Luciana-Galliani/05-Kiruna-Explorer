@@ -1,6 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+
+    const closeSidebar = () => {
+        toggleSidebar();
+    };
+
+    const [hoveredItem, setHoveredItem] = useState(null);
 
     const handleOverlayClick = (e) => {
         // If the overlay was clicked, close the sidebar
@@ -35,9 +43,17 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 zIndex: 1001
             }}>
                 <h2>Menu</h2>
-                <ul style={{ listStyleType: 'none', padding: 0 }}>
-                    <li><a href="/add" style={{ color: 'black' }}>Municipal documents</a></li>
-                    <li><a href="#" style={{ color: 'black' }}>All documents</a></li>
+                <ul className="list-group" style={{ listStyleType: 'none', padding: 0 }}>
+                    <li className={`list-group-item ${hoveredItem === "municipalDocuments" ? "active" : ""}`}
+                        onMouseEnter={() => setHoveredItem("municipalDocuments")}
+                        onAbort={() => setHoveredItem(null)}>
+                        <Link to="/municipality" style={{ textDecoration: 'none', color: 'black' }} onClick={closeSidebar}>Municipal Documents</Link>
+                    </li>
+                    <li className={`list-group-item ${hoveredItem === "allDocuments" ? "active" : ""}`}
+                        onMouseEnter={() => setHoveredItem("allDocuments")}
+                        onAbort={() => setHoveredItem(null)}>
+                        <Link to="/allDocuments" style={{ textDecoration: 'none', color: 'black' }} onClick={closeSidebar}>All documents</Link>
+                    </li>
                 </ul>
             </div>
 
