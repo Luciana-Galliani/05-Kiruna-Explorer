@@ -24,8 +24,6 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         }
     }, [isLoggedIn, navigate]);
 
-    console.log(existingDocument);
-
     const [inputValues, setInputValues] = useState({
         title: existingDocument ? existingDocument.document.title : "",
         stakeholders: existingDocument ? existingDocument.document.stakeholders : [],
@@ -94,6 +92,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                 console.error("Error fetching typeOf options:", error);
             }
         };
+
         const fetchDocuments = async () => {
             try {
                 const resp = await API.getDocuments();
@@ -809,18 +808,18 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
     }, [isLoggedIn, navigate]);
 
     useEffect ( () => {
-        API.getDocument(docId)
-            .then(doc => {
-                setExistingDocument(doc);
+        const fetchDocumentById = async () => {
+            try {
+                const resp = await API.getDocument(docId);
+                setExistingDocument(resp);
                 setLoading(false);
-            })
-            .catch(e =>  {
-                const message = e.message || "Unknown Error";
-                console.error(message);
-                }
-            );
-    },[]);
+            } catch (error) {
+                console.error("Error fetching document:", error);
+            }
+        };
 
+        fetchDocumentById();
+    },[]);
 
     if(!loading && existingDocument){
         return (
