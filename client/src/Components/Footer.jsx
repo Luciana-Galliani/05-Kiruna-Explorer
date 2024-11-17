@@ -6,16 +6,23 @@ import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import  LinkButton  from "./LinkButton";
 
-const Footer = ({ isHomePage, isLoggedIn, location }) => {
+const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatelliteView }) => {
     const navigate = useNavigate();
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
     return (
         <>
             {isHomePage && isLoggedIn && (
-                <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
-                    <LinkButton msg="Add Document" link="/add" />
-                    <LinkButton msg="Edit Document" link="/edit" /> {/* da togliere poi */}
-                    <LinkButton msg="List documents" link="/" />
+                <div className="container">  
+                    <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
+                        <LinkButton msg="Add Document" link="/add" color={isSatelliteView}/>
+                        <LinkButton msg="List documents" link="/list" color={isSatelliteView}/>
+                    </div>
+                    <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
+                        <Button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                            onClick={handleSatelliteView}>
+                            <i className="bi bi-globe"></i>
+                        </Button>
+                    </div>
                 </div>
             )}
             {location.pathname === "/add" && (
@@ -40,8 +47,30 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                 </div>
             )}
 
-            {/* da aggiornare il path poi */}
-            {location.pathname === "/edit" && (
+            {location.pathname === "/list" && (
+                <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
+                <Button
+                    onClick={() => navigate("/")}
+                    className="btn btn-danger d-flex align-items-center justify-content-center"
+                    style={{
+                        width: "3rem",
+                        height: "3rem",
+                        borderRadius: "50%",
+                        color: "white",
+                        transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
+                        position: "relative",
+                    }}
+                >
+                    <i
+                        className="bi bi-x"
+                        style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
+                    ></i>
+                </Button>
+            </div>
+            )}
+
+                        {/* da aggiornare il path poi */}
+                        {location.pathname === "/edit" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => setShowCloseConfirmation(true)}
@@ -62,6 +91,19 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                     </Button>
                 </div>
             )}
+
+            {/* Not logged */
+            !isLoggedIn && (
+                <div className="container">  
+                    <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
+                        <Button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                            onClick={handleSatelliteView}>
+                            <i className="bi bi-globe"></i>
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             <ConfirmationModal
                 show={showCloseConfirmation}
                 onClose={() => setShowCloseConfirmation(false)}

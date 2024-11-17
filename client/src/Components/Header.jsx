@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
 
-const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage }) => {
+const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage, isSatelliteView }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const toggleSidebar = () => {
@@ -38,12 +38,12 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage }) => {
 
             <div>
                 {isLoggedIn ? (
-                    <button className="btn btn-light" onClick={handleLogout}>
+                    <button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`} onClick={handleLogout}>
                         Logout
                     </button>
                 ) : (
                     location.pathname !== "/login" && (
-                        <Link to="/login" className="btn btn-light">
+                        <Link to="/login" className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}>
                             Login
                         </Link>
                     )
