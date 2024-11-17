@@ -14,7 +14,7 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
             {isHomePage && isLoggedIn && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <LinkButton msg="Add Document" link="/add" />
-                    <LinkButton msg="List documents" link="/" />
+                    <LinkButton msg="List documents" link="/list" />
                 </div>
             )}
             {location.pathname === "/add" && (
@@ -38,6 +38,29 @@ const Footer = ({ isHomePage, isLoggedIn, location }) => {
                     </Button>
                 </div>
             )}
+
+            {location.pathname === "/list" && (
+                <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
+                <Button
+                    onClick={() => navigate("/")}
+                    className="btn btn-danger d-flex align-items-center justify-content-center"
+                    style={{
+                        width: "3rem",
+                        height: "3rem",
+                        borderRadius: "50%",
+                        color: "white",
+                        transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
+                        position: "relative",
+                    }}
+                >
+                    <i
+                        className="bi bi-x"
+                        style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
+                    ></i>
+                </Button>
+            </div>
+            )}
+
             <ConfirmationModal
                 show={showCloseConfirmation}
                 onClose={() => setShowCloseConfirmation(false)}
