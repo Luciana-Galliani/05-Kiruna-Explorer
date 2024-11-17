@@ -1,19 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const LinkButton = ({ msg, link }) => {
+const LinkButton = ({ msg, link, color }) => {
     
     const icon = link === "/add" ? "bi bi-plus" : "bi bi-list";
 
     return (
         <Link to={link}
-            className="btn d-flex align-items-center justify-content-center"
+            className={`btn d-flex align-items-center justify-content-center`}
             style={{
                 width: "3rem",
                 height: "3rem",
-                backgroundColor: "#212529",
+                backgroundColor: `${color ? "white" : "black"}`,
                 borderRadius: "50%",
-                color: "white",
+                color: `${color ? "black" : "white"}`,
                 transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
                 position: "relative",
             }}

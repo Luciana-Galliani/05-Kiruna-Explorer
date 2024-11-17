@@ -25,6 +25,13 @@ function App() {
 
     const [allDocuments, setAllDocuments] = useState([]);
 
+    const [isSatelliteView, setIsSatelliteView] = useState(true);
+
+    // Handler for deactivating/activating the satellite view
+    const handleSatelliteView = () => {
+        setIsSatelliteView(!isSatelliteView);
+    };
+
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
@@ -70,6 +77,7 @@ function App() {
                 handleLogout={() => setShowLogoutModal(true)}
                 headerClass={headerClass}
                 isHomePage={isHomePage}
+                isSatelliteView={isSatelliteView}
             />
 
             {/* Routes */}
@@ -78,6 +86,8 @@ function App() {
                 handleCoordinatesSelected={handleCoordinatesSelected}
                 allDocuments={allDocuments}
                 setAllDocuments={setAllDocuments}
+                isSatelliteView={isSatelliteView}
+                handleSatelliteView={handleSatelliteView}
             />
             <Routes>
                 <Route
@@ -102,7 +112,9 @@ function App() {
             </Routes>
 
             {/* Buttons for the home page */}
-            <Footer isHomePage={isHomePage} isLoggedIn={isLoggedIn} location={location} />
+            <Footer isHomePage={isHomePage} isLoggedIn={isLoggedIn} location={location}
+                isSatelliteView={isSatelliteView}
+                handleSatelliteView={handleSatelliteView} />
 
             {/* Modale di conferma logout */}
             <ConfirmationModal
