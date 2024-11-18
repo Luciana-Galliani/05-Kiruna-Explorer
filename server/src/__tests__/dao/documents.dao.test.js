@@ -321,8 +321,8 @@ describe("DocumentsDAO", () => {
                 pages: 10,
                 description: "A sample document",
                 allMunicipality: false,
-                latitude: 45.12345,
-                longitude: 7.12345,
+                latitude: 69,
+                longitude: 20,
                 stakeholders: [{ id: 1 }, { id: 2 }],
                 connections: [{ documentId: 2, relationship: "related" }],
             };

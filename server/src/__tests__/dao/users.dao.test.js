@@ -24,10 +24,7 @@ describe("UsersDAO", () => {
             };
             sequelize.models.User.create.mockResolvedValue(mockUser);
 
-            const result = await usersDAO.createUser(
-                "testUser",
-                "hashedPassword"
-            );
+            const result = await usersDAO.createUser("testUser", "hashedPassword");
 
             expect(sequelize.models.User.create).toHaveBeenCalledWith({
                 username: "testUser",
@@ -38,13 +35,25 @@ describe("UsersDAO", () => {
 
         it("should throw an error if user creation fails", async () => {
             const errorMessage = "Failed to create user";
-            sequelize.models.User.create.mockRejectedValue(
-                new Error(errorMessage)
-            );
+            sequelize.models.User.create.mockRejectedValue(new Error(errorMessage));
 
-            await expect(
-                usersDAO.createUser("testUser", "hashedPassword")
-            ).rejects.toThrow(errorMessage);
+            await expect(usersDAO.createUser("testUser", "hashedPassword")).rejects.toThrow(
+                errorMessage
+            );
+            expect(sequelize.models.User.create).toHaveBeenCalledWith({
+                username: "testUser",
+                password: "hashedPassword",
+            });
+        });
+        it("should throw a special error if username already exists", async () => {
+            const errorMessage = "Username already exists";
+            const validationError = new Error(errorMessage);
+            validationError.name = "SequelizeUniqueConstraintError";
+            sequelize.models.User.create.mockRejectedValue(validationError);
+
+            await expect(usersDAO.createUser("testUser", "hashedPassword")).rejects.toThrow(
+                errorMessage
+            );
             expect(sequelize.models.User.create).toHaveBeenCalledWith({
                 username: "testUser",
                 password: "hashedPassword",
@@ -82,13 +91,9 @@ describe("UsersDAO", () => {
 
         it("should throw an error if findOne fails", async () => {
             const errorMessage = "Error finding user";
-            sequelize.models.User.findOne.mockRejectedValue(
-                new Error(errorMessage)
-            );
+            sequelize.models.User.findOne.mockRejectedValue(new Error(errorMessage));
 
-            await expect(
-                usersDAO.getUserByUsername("testUser")
-            ).rejects.toThrow(errorMessage);
+            await expect(usersDAO.getUserByUsername("testUser")).rejects.toThrow(errorMessage);
             expect(sequelize.models.User.findOne).toHaveBeenCalledWith({
                 where: { username: "testUser" },
             });
