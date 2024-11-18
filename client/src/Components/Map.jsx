@@ -22,8 +22,12 @@ import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 import { none } from "ol/centerconstraint";
 
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
-
+const CityMap = ({
+    isSelectingCoordinates,
+    handleCoordinatesSelected,
+    allDocuments,
+    setAllDocuments,
+}) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
 
@@ -31,20 +35,20 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
     const latitude = 67.85572;
 
     // Define bounding coordinates for latitude and longitude
-    const MIN_LAT = 67.5;
-    const MAX_LAT = 68.17;
-    const MIN_LNG = 19.09;
-    const MAX_LNG = 21.3;
+    const MIN_LAT = 67.21;
+    const MAX_LAT = 69.3;
+    const MIN_LNG = 17.53;
+    const MAX_LNG = 23.17;
 
     const iconMap = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
         "Prescriptive Document": prescriptiveIcon,
         "Technical Document": technicalIcon,
-        "Agreement": agreementIcon,
-        "Conflict": conflictIcon,
-        "Consultation": consultationIcon,
-        "Action": actionIcon,
+        Agreement: agreementIcon,
+        Conflict: conflictIcon,
+        Consultation: consultationIcon,
+        Action: actionIcon,
     };
 
     useEffect(() => {
@@ -75,14 +79,13 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 new TileLayer({
                     source: new OSM({
                         url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+                    }),
                 }),
-                }),
-                
             ],
             view: new View({
                 center: cityCenter,
                 zoom: 14,
-                minZoom: 12,
+                minZoom: 7,
                 maxZoom: 20,
                 extent: extent,
             }),
@@ -93,44 +96,44 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         return () => {
             map.setTarget(null);
         };
-        
     }, []);
 
     useEffect(() => {
         if (!allDocuments || allDocuments.length === 0) return;
 
         const features = allDocuments
-        .filter((doc) => doc.longitude !== null && doc.latitude !== null)
-        .map((doc) => {
-            const { longitude, latitude, stakeholders } = doc;
-            const location = fromLonLat([longitude, latitude]);
+            .filter((doc) => doc.longitude !== null && doc.latitude !== null)
+            .map((doc) => {
+                const { longitude, latitude, stakeholders } = doc;
+                const location = fromLonLat([longitude, latitude]);
 
-            const feature = new Feature({
-                geometry: new Point(location),
-                documentId: doc.id,
-            });
+                const feature = new Feature({
+                    geometry: new Point(location),
+                    documentId: doc.id,
+                });
 
-            let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
-            
-            const img = new Image();
-            img.src = iconMap[doc.type];
+                let colorIcon =
+                    stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
 
-            img.onload = () => {
-                feature.setStyle([
-                    new Style({
-                        image: new Icon({
-                            anchor: [0.5, 0.5],
-                            img: img,
-                            imgSize: [img.width, img.height],
-                            scale: 0.4,
-                            color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
+                const img = new Image();
+                img.src = iconMap[doc.type];
+
+                img.onload = () => {
+                    feature.setStyle([
+                        new Style({
+                            image: new Icon({
+                                anchor: [0.5, 0.5],
+                                img: img,
+                                imgSize: [img.width, img.height],
+                                scale: 0.4,
+                                color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
+                            }),
                         }),
-                    })
-                ]);
-            };
+                    ]);
+                };
 
-            return feature;
-        });
+                return feature;
+            });
 
         const vectorSource = new VectorSource({
             features: features,

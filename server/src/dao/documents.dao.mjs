@@ -110,22 +110,19 @@ class DocumentsDAO {
     async createDocument(documentData) {
         const transaction = await sequelize.transaction();
 
-        const MIN_LAT = 67.5;
-        const MAX_LAT = 68.5;
-        const MIN_LNG = 20;
-        const MAX_LNG = 21.5;
-
         if (
             documentData.latitude &&
-            (documentData.latitude < MIN_LAT || documentData.latitude > MAX_LAT)
+            (documentData.latitude < process.env.MIN_LAT ||
+                documentData.latitude > process.env.MAX_LAT)
         ) {
-            throw new Error("Latitude must be between 67.5 and 68.5 for Kiruna.");
+            throw new Error("Latitude must be between 67.21 and 69.3 for Kiruna.");
         }
         if (
             documentData.longitude &&
-            (documentData.longitude < MIN_LNG || documentData.longitude > MAX_LNG)
+            (documentData.longitude < process.env.MIN_LNG ||
+                documentData.longitude > process.env.MAX_LNG)
         ) {
-            throw new Error("Longitude must be between 20 and 21.5 for Kiruna.");
+            throw new Error("Longitude must be between 17.53 and 23.17 for Kiruna.");
         }
 
         try {

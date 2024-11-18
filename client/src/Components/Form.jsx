@@ -4,16 +4,24 @@ import API from "../API/API.mjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, existingDocument, className  }) {
+export function DescriptionForm({
+    isLoggedIn,
+    coordinates,
+    handleChooseInMap,
+    documentOptions,
+    setDocumentOptions,
+    existingDocument,
+    className,
+}) {
     const navigate = useNavigate();
 
     let date = "";
-    if(existingDocument && existingDocument.document.issuanceDate.includes('-')){
-        date = existingDocument.document.issuanceDate.split('-');
-        if(date.length == 1){
+    if (existingDocument && existingDocument.document.issuanceDate.includes("-")) {
+        date = existingDocument.document.issuanceDate.split("-");
+        if (date.length == 1) {
             date.push("00");
             date.push("00");
-        }else if(date.length == 2){
+        } else if (date.length == 2) {
             date.push("00");
         }
     }
@@ -217,15 +225,15 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
 
         if (
             documentData.latitude &&
-            (documentData.latitude < 67.5 || documentData.latitude > 68.5)
+            (documentData.latitude < 67.21 || documentData.latitude > 69.3)
         ) {
-            showNotification("Latitude must be between 67.5 and 68.5 for Kiruna.", "error");
+            showNotification("Latitude must be between 67.21 and 69.3 for Kiruna.", "error");
             return;
         } else if (
             documentData.longitude &&
-            (documentData.longitude < 20 || documentData.longitude > 21.5)
+            (documentData.longitude < 17.53 || documentData.longitude > 23.17)
         ) {
-            showNotification("Longitude must be between 20 and 21.5 for Kiruna.", "error");
+            showNotification("Longitude must be between 17.53 and 23.17 for Kiruna.", "error");
             return;
         }
 
@@ -279,12 +287,12 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         }
 
         try {
-            if(existingDocument){
+            if (existingDocument) {
                 await API.updateDocument(existingDocument.document.id, documentData);
                 showNotification("Document modified successfully!", "success");
                 setDocumentOptions([...documentOptions, documentData]);
                 navigate("/"); // Redirect to home page
-            }else{
+            } else {
                 await API.createDocument(documentData);
                 showNotification("Document saved successfully!", "success");
                 setDocumentOptions([...documentOptions, documentData]);
@@ -626,7 +634,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key= {document.id}
+                                    key={document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -662,7 +670,11 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
-                                                        (existingDocument ? connection.targetDocument.id === document : connection.document.id === document) &&
+                                                        (existingDocument
+                                                            ? connection.targetDocument.id ===
+                                                              document
+                                                            : connection.document.id ===
+                                                              document) &&
                                                         connection.relationship === option
                                                 );
                                             return !isOptionAlreadyConnected; // Escludi le opzioni già connesse
@@ -731,7 +743,10 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong> {existingDocument ? connection.targetDocument.title : connection.document.title}
+                                        <strong>Document:</strong>{" "}
+                                        {existingDocument
+                                            ? connection.targetDocument.title
+                                            : connection.document.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
@@ -794,7 +809,14 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
     );
 }
 
-export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, className }) {
+export function EditDocumentForm({
+    isLoggedIn,
+    coordinates,
+    handleChooseInMap,
+    documentOptions,
+    setDocumentOptions,
+    className,
+}) {
     //const { docId } = useParams(); //Get the document ID
     const docId = 11;
     const navigate = useNavigate();
@@ -807,7 +829,7 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
         }
     }, [isLoggedIn, navigate]);
 
-    useEffect ( () => {
+    useEffect(() => {
         const fetchDocumentById = async () => {
             try {
                 const resp = await API.getDocument(docId);
@@ -819,9 +841,9 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
         };
 
         fetchDocumentById();
-    },[]);
+    }, []);
 
-    if(!loading && existingDocument){
+    if (!loading && existingDocument) {
         return (
             <DescriptionForm
                 isLoggedIn={isLoggedIn}
@@ -833,15 +855,15 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
                 className={className}
             />
         );
-    }else{
-        return(
+    } else {
+        return (
             <div className="position-absolute top-50 start-50 translate-middle w-25">
-            <Card className="shadow-sm">
-                <Card.Body>
-                    <p className="text-center mb-4">Document not found!</p>
-                </Card.Body>
-            </Card>
-        </div>
+                <Card className="shadow-sm">
+                    <Card.Body>
+                        <p className="text-center mb-4">Document not found!</p>
+                    </Card.Body>
+                </Card>
+            </div>
         );
     }
 }
