@@ -108,7 +108,8 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'54.7\"N 20°18'17.2\"E",
+                    latitude: 67.848417,
+                    longitude: 20.30477,
                     description:
                         "After two extensions of the land acquisition agreement, necessary because this document in Sweden is valid for only two years, construction of the hotel finally began in 2019.",
                 },
@@ -119,7 +120,8 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    coordinates: "67°51'09.0\"N 20°13'20.8\"E",
+                    latitude: 67.852500,
+                    longitude: 20.222444,
                     description:
                         'After the construction of the new town hall was completed, the old building, nicknamed "The Igloo," was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building.',
                 },
@@ -130,7 +132,8 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'57.0\"N 20°18'15.8\"E",
+                    latitude: 67.849167,
+                    longitude: 20.304389,
                     description:
                         "Shortly after the construction of the Scandic hotel began, work on the Aurora Center also started, a multifunctional complex that includes the municipal library of Kiruna. The two buildings are close to each other and connected by a skywalk, just like in the old town center.",
                 },
@@ -141,7 +144,8 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'54.8\"N 20°18'01.2\"E",
+                    latitude: 67.848500,
+                    longitude: 20.300333,
                     description:
                         "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town.",
                 },
@@ -152,40 +156,44 @@ export default async function populateDB(sequelize) {
         await documents[0].setStakeholders([stakeholders[1].id, stakeholders[4].id]);
         await documents[1].setStakeholders(stakeholders[1]);
         await documents[2].setStakeholders([stakeholders[1], stakeholders[3]]);
-        /*
-                await documents[3].setStakeholders(stakeholders[0]);
-                await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
-                await documents[5].setStakeholders(stakeholders[1]);
-                await documents[6].setStakeholders(stakeholders[0]);
-                await documents[7].setStakeholders(stakeholders[0]);
-                await documents[8].setStakeholders(stakeholders[0]);
-                await documents[9].setStakeholders(stakeholders[0]);*/
+
+        await documents[3].setStakeholders(stakeholders[0]);
+        await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
+        await documents[5].setStakeholders(stakeholders[1]);
+        await documents[6].setStakeholders(stakeholders[0]);
+        await documents[7].setStakeholders(stakeholders[0]);
+        await documents[8].setStakeholders(stakeholders[0]);
+        await documents[9].setStakeholders(stakeholders[0]);
 
         await Connection.bulkCreate([
             {
                 sourceDocumentId: documents[0].id,
-                targetDocumentId: documents[1].id,
-                relationship: "Update",
+                targetDocumentId: documents[4].id,
             },
             {
-                sourceDocumentId: documents[1].id,
-                targetDocumentId: documents[0].id,
-                relationship: "Update",
-            },
-            {
-                sourceDocumentId: documents[1].id,
+                sourceDocumentId: documents[3].id,
                 targetDocumentId: documents[2].id,
-                relationship: "Collateral Consequence",
             },
             {
-                sourceDocumentId: documents[2].id,
+                sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[1].id,
-                relationship: "Collateral Consequence",
+            },
+            {
+                sourceDocumentId: documents[5].id,
+                targetDocumentId: documents[6].id,
+            },
+            {
+                sourceDocumentId: documents[5].id,
+                targetDocumentId: documents[7].id,
+            },
+            {
+                sourceDocumentId: documents[8].id,
+                targetDocumentId: documents[9].id,
             },
         ]);
 
-        console.log("Database populated successfully.");
-    } catch (error) {
-        console.error("Unable to connect to the database:", error);
+        console.log("Database populated successfully!");
+    } catch (err) {
+        console.error("Error populating the database:", err);
     }
 }
