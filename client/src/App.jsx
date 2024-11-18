@@ -1,16 +1,18 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import DescriptionForm from "./Components/Form";
+import { DescriptionForm, EditDocumentForm } from "./Components/Form";
 import HomePage from "./Components/HomePage";
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
-import Header from "./Components/Header";
+import Header from "./components/Header";
 import Footer from "./Components/Footer";
+import ListDocuments from "./Components/List";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
+
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -20,6 +22,15 @@ function App() {
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
+
+    const [allDocuments, setAllDocuments] = useState([]);
+
+    const [isSatelliteView, setIsSatelliteView] = useState(true);
+
+    // Handler for deactivating/activating the satellite view
+    const handleSatelliteView = () => {
+        setIsSatelliteView(!isSatelliteView);
+    };
 
     // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
@@ -66,12 +77,17 @@ function App() {
                 handleLogout={() => setShowLogoutModal(true)}
                 headerClass={headerClass}
                 isHomePage={isHomePage}
+                isSatelliteView={isSatelliteView}
             />
 
             {/* Routes */}
             <HomePage
                 isSelectingCoordinates={isSelectingCoordinates}
                 handleCoordinatesSelected={handleCoordinatesSelected}
+                allDocuments={allDocuments}
+                setAllDocuments={setAllDocuments}
+                isSatelliteView={isSatelliteView}
+                handleSatelliteView={handleSatelliteView}
             />
             <Routes>
                 <Route
@@ -81,6 +97,22 @@ function App() {
                             isLoggedIn={isLoggedIn}
                             coordinates={coordinates}
                             handleChooseInMap={handleChooseInMap}
+                            documentOptions={allDocuments}
+                            setDocumentOptions={setAllDocuments}
+                            className={isSelectingCoordinates ? "d-none" : "d-block"}
+                        />
+                    }
+                />
+                <Route 
+                    //path="edit/:documentId" 
+                    path="edit"
+                    element={
+                        <EditDocumentForm
+                            isLoggedIn={isLoggedIn}
+                            coordinates={coordinates}
+                            handleChooseInMap={handleChooseInMap}
+                            documentOptions={allDocuments}
+                            setDocumentOptions={setAllDocuments}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />
                     }
@@ -90,10 +122,14 @@ function App() {
                     path="/registration"
                     element={<RegistrationForm handleLogin={handleLogin} />}
                 />
+                <Route path="/allDocuments" element={<ListDocuments condition={false}/>} />
+                <Route path="/municipality" element={<ListDocuments condition={true}/>} />
             </Routes>
 
             {/* Buttons for the home page */}
-            <Footer isHomePage={isHomePage} isLoggedIn={isLoggedIn} location={location} />
+            <Footer isHomePage={isHomePage} isLoggedIn={isLoggedIn} location={location}
+                isSatelliteView={isSatelliteView}
+                handleSatelliteView={handleSatelliteView} />
 
             {/* Modale di conferma logout */}
             <ConfirmationModal

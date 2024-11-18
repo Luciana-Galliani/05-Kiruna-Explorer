@@ -67,7 +67,7 @@ const getDocuments = async () => {
 };
 
 const getDocument = async (documentId) => {
-    const response = await fetch(`${baseURL}/api/services/${documentId}`, {
+    const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "GET",
         headers: authHeaders(),
     });
