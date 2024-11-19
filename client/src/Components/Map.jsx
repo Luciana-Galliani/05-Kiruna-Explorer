@@ -161,7 +161,6 @@ const CityMap = ({
             map.on("click", (event) => {
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
                     const documentTitle = feature.get("documentTitle");
-                    console.log(documentTitle);
                     const matchedDocument = allDocuments.find((doc) => doc.title === documentTitle);
                     setSelectedDocument(matchedDocument);
                 });

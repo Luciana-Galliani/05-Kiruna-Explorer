@@ -117,6 +117,10 @@ const createDocument = async (documentData, files) => {
 };
 
 const updateDocument = async (documentId, documentData) => {
+    documentData.connections = documentData.connections.map((connection) => ({
+        documentId: connection.document.id,
+        relationship: connection.relationship,
+    }));
     const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
         headers: authHeaders(),

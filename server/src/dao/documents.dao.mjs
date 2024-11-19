@@ -42,7 +42,6 @@ class DocumentsDAO {
             },
             transaction,
         });
-
         // Establish new or modified connections
         for (const connection of connections) {
             await this._connectDocuments(
@@ -155,7 +154,7 @@ class DocumentsDAO {
 
         try {
             // Find the document by ID with transaction
-            const document = await sequelize.models.Document.findByPk(id, {
+            const document = await sequelize.models.Document.findByPk(Number(id), {
                 transaction,
             });
             if (!document) {

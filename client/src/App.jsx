@@ -105,8 +105,7 @@ function App() {
                     }
                 />
                 <Route
-                    //path="edit/:documentId" 
-                    path="edit"
+                    path="edit/:documentId"
                     element={
                         <EditDocumentForm
                             isLoggedIn={isLoggedIn}
