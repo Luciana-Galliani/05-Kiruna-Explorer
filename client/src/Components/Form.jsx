@@ -22,8 +22,8 @@ export function DescriptionForm({
     }, [isLoggedIn, navigate]);
 
     let date = "";
-    if (existingDocument && existingDocument.document.issuanceDate.includes('-')) {
-        date = existingDocument.document.issuanceDate.split('-');
+    if (existingDocument && existingDocument.document.issuanceDate.includes("-")) {
+        date = existingDocument.document.issuanceDate.split("-");
         if (date.length == 1) {
             date.push("00");
             date.push("00");
@@ -145,7 +145,9 @@ export function DescriptionForm({
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const isSelected = prev.stakeholders.some((item) => item.id === selectedStakeholder.id);
+                const isSelected = prev.stakeholders.some(
+                    (item) => item.id === selectedStakeholder.id
+                );
                 const stakeholders = isSelected
                     ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
                     : [...prev.stakeholders, selectedStakeholder];
@@ -154,9 +156,6 @@ export function DescriptionForm({
         } else {
             setInputValues((prev) => ({ ...prev, [activeField]: value }));
         }
-
-        console.log(inputValues.stakeholders);
-        console.log(stakeholderOptions);
     };
 
     const handleModalClose = () => {
@@ -305,14 +304,21 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
-                await API.updateDocument(existingDocument.document.id, documentData);
+                const updateResponse = await API.updateDocument(
+                    existingDocument.document.id,
+                    documentData
+                );
                 showNotification("Document modified successfully!", "success");
-                setDocumentOptions([...documentOptions, documentData]);
+                // Update document in the list
+                const updatedDocumentOptions = documentOptions.map((doc) =>
+                    doc.id === existingDocument.document.id ? updateResponse.document : doc
+                );
+                setDocumentOptions(updatedDocumentOptions);
                 navigate("/"); // Redirect to home page
             } else {
-                await API.createDocument(documentData);
+                const createResponse = await API.createDocument(documentData);
                 showNotification("Document saved successfully!", "success");
-                setDocumentOptions([...documentOptions, documentData]);
+                setDocumentOptions([...documentOptions, createResponse.document]);
                 navigate("/"); // Redirect to home page
             }
         } catch (error) {
@@ -651,11 +657,12 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key={existingDocument ? existingDocument.document.id : document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
-                                    <option value="">Select a document</option>
+                                    <option key="0" value="">
+                                        Select a document
+                                    </option>
                                     {documentOptions.map((doc) => (
                                         <option key={doc.id} value={doc.id}>
                                             {doc.title}
@@ -688,9 +695,9 @@ export function DescriptionForm({
                                                     (connection) =>
                                                         (existingDocument
                                                             ? connection.targetDocument.id ===
-                                                            document
+                                                              document
                                                             : connection.document.id ===
-                                                            document) &&
+                                                              document) &&
                                                         connection.relationship === option
                                                 );
                                             return !isOptionAlreadyConnected;
@@ -743,13 +750,11 @@ export function DescriptionForm({
                             multiple
                             onChange={handleFileChange}
                         />
-                        <Form.Text className="text-muted">
-                            You can add one or more files.
-                        </Form.Text>
+                        <Form.Text className="text-muted">You can add one or more files.</Form.Text>
                     </Form.Group>
 
                     {selectedFiles.length > 0 && (
-                        <ListGroup className="mb-3 overflow-y-auto " style={{ maxHeight: '100px' }}>
+                        <ListGroup className="mb-3 overflow-y-auto " style={{ maxHeight: "100px" }}>
                             {selectedFiles.map((file, index) => (
                                 <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
                             ))}
@@ -818,7 +823,9 @@ export function DescriptionForm({
                                         id={option.id}
                                         label={option.name}
                                         value={option.name}
-                                        checked={inputValues.stakeholders.some((stakeholder) => stakeholder.id === option.id)} // Check if object is in array
+                                        checked={inputValues.stakeholders.some(
+                                            (stakeholder) => stakeholder.id === option.id
+                                        )} // Check if object is in array
                                         onChange={handleInputChange}
                                         style={{ width: "35%" }}
                                     />

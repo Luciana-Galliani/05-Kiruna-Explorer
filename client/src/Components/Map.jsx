@@ -24,16 +24,18 @@ import { none } from "ol/centerconstraint";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 
-
-
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments, isLoggedIn }) => {
+const CityMap = ({
+    isSelectingCoordinates,
+    handleCoordinatesSelected,
+    allDocuments,
+    setAllDocuments,
+    isLoggedIn,
+}) => {
     const location = useLocation();
-
 
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
-
 
     const longitude = 20.22513;
     const latitude = 67.85572;
@@ -49,10 +51,10 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         "Informative Document": informativeIcon,
         "Prescriptive Document": prescriptiveIcon,
         "Technical Document": technicalIcon,
-        "Agreement": agreementIcon,
-        "Conflict": conflictIcon,
-        "Consultation": consultationIcon,
-        "Action": actionIcon,
+        Agreement: agreementIcon,
+        Conflict: conflictIcon,
+        Consultation: consultationIcon,
+        Action: actionIcon,
     };
 
     useEffect(() => {
@@ -85,7 +87,6 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                         url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
                     }),
                 }),
-
             ],
             view: new View({
                 center: cityCenter,
@@ -101,7 +102,6 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         return () => {
             map.setTarget(null);
         };
-
     }, []);
 
     useEffect(() => {
@@ -116,10 +116,11 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 const feature = new Feature({
                     geometry: new Point(location),
                     documentId: doc.id,
-                    documentTitle: doc.title
+                    documentTitle: doc.title,
                 });
 
-                let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
+                let colorIcon =
+                    stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
 
                 const img = new Image();
                 img.src = iconMap[doc.type];
@@ -134,7 +135,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                                 scale: 0.4,
                                 color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
                             }),
-                        })
+                        }),
                     ]);
                 };
 
@@ -162,10 +163,8 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
                     const documentTitle = feature.get("documentTitle");
                     console.log(documentTitle);
-                    const matchedDocument = allDocuments.find(doc => doc.title === documentTitle);
+                    const matchedDocument = allDocuments.find((doc) => doc.title === documentTitle);
                     setSelectedDocument(matchedDocument);
-                    console.log(matchedDocument);
-
                 });
             });
         }
@@ -202,7 +201,6 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected]);
 
-
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
             <div style={{ height: "100%" }}>
@@ -219,6 +217,5 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         </div>
     );
 };
-
 
 export default CityMap;

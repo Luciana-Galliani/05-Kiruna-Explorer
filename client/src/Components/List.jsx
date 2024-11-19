@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import API from '../API/API.mjs';
-import DetailsPanel from './DetailsPanel';
+import React, { useState, useEffect } from "react";
+import API from "../API/API.mjs";
+import DetailsPanel from "./DetailsPanel";
 
 const List = ({ condition, isLoggedIn }) => {
-    console.log(isLoggedIn);
-    const [documents, setDocuments] = useState([]);
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
-    const location = useLocation();
 
     useEffect(() => {
         const fetchDocuments = async () => {
             const response = await API.getDocuments();
-            setDocuments(response.documents);
             if (condition === "true") {
-                setDocumentsToShow(response.documents.filter(document => document.allMunicipality === condition));
+                setDocumentsToShow(
+                    response.documents.filter((document) => document.allMunicipality === condition)
+                );
             } else {
                 setDocumentsToShow(response.documents);
             }
@@ -51,7 +49,9 @@ const List = ({ condition, isLoggedIn }) => {
                     {documentsToShow.map((document) => (
                         <li
                             key={document.id}
-                            className={`list-group-item ${hoveredItem === document.id ? "active" : ""}`}
+                            className={`list-group-item ${
+                                hoveredItem === document.id ? "active" : ""
+                            }`}
                             onMouseEnter={() => setHoveredItem(document.id)}
                             onMouseLeave={() => setHoveredItem(null)}
                             onClick={() => setSelectedDocument(document)}
@@ -71,10 +71,8 @@ const List = ({ condition, isLoggedIn }) => {
                     />
                 </div>
             )}
-
         </div>
     );
-
 };
 
 export default List;
