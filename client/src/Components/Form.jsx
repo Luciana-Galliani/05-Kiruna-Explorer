@@ -316,7 +316,7 @@ export function DescriptionForm({
                 setDocumentOptions(updatedDocumentOptions);
                 navigate("/"); // Redirect to home page
             } else {
-                const createResponse = await API.createDocument(documentData);
+                const createResponse = await API.createDocument(documentData, selectedFiles);
                 showNotification("Document saved successfully!", "success");
                 setDocumentOptions([...documentOptions, createResponse.document]);
                 navigate("/"); // Redirect to home page
@@ -695,9 +695,9 @@ export function DescriptionForm({
                                                     (connection) =>
                                                         (existingDocument
                                                             ? connection.targetDocument.id ===
-                                                              document
+                                                            document
                                                             : connection.document.id ===
-                                                              document) &&
+                                                            document) &&
                                                         connection.relationship === option
                                                 );
                                             return !isOptionAlreadyConnected;
@@ -760,10 +760,6 @@ export function DescriptionForm({
                             ))}
                         </ListGroup>
                     )}
-
-                    <Button variant="primary" type="submit">
-                        Invia
-                    </Button>
                     <p style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                         Connections :
                     </p>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import API from "../API/API.mjs";
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(doc);
@@ -16,6 +15,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             </div>
         );
     }
+    console.log(document);
+    const stakeholdersList = document.stakeholders
+        ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
+        : "N/A";
 
     return (
         <div className="details-panel-container">
@@ -27,7 +30,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                         <strong>Type:</strong> {document.type || "N/A"}
                     </li>
                     <li>
-                        <strong>Scale Type:</strong> {document.scaleType || "N/A"}
+                        <strong>Scale:</strong>{" "}
+                        {document.scaleType === "Plan"
+                            ? document.scaleValue || "N/A"
+                            : document.scaleType || "N/A"}
                     </li>
                     <li>
                         <strong>Issuance Date:</strong> {document.issuanceDate || "N/A"}
@@ -39,12 +45,18 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                         <strong>Pages:</strong> {document.pages || "N/A"}
                     </li>
                     <li>
+                        <strong>Number of Connections:</strong> {document.connections.length || "0"}
+                    </li>
+                    <li>
+                        <strong>Stakeholders:</strong> {stakeholdersList}
+                    </li>
+                    <li>
                         <strong>Description:</strong> {document.description || "N/A"}
                     </li>
                 </ul>
 
                 <div className="d-flex justify-content-center gap-3 mt-4">
-                    {isLoggedIn == true && (
+                    {isLoggedIn && (
                         <button
                             className="btn btn-primary px-4"
                             onClick={() => alert("Modify clicked")}
@@ -62,7 +74,6 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             </div>
         </div>
     );
-
 };
 
 DetailsPanel.propTypes = {
