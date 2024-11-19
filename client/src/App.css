@@ -2,8 +2,10 @@
 
 /* Change the position of the default zoom control */
 .ol-zoom {
-    top: auto !important; /* Remove default top positioning */
-    bottom: 0.5rem; /* Set to bottom */
+    top: auto !important;
+    /* Remove default top positioning */
+    bottom: 0.5rem;
+    /* Set to bottom */
 }
 
 /* Form */
@@ -12,9 +14,12 @@
     border-radius: 5px;
     margin-bottom: 1rem;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 4px;
-    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background*/
-    backdrop-filter: blur(2px); /* Apply blur effect*/
-    --webkit-backdrop-filter: blur(2px); /* And for Safari*/
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Semi-transparent background*/
+    backdrop-filter: blur(2px);
+    /* Apply blur effect*/
+    --webkit-backdrop-filter: blur(2px);
+    /* And for Safari*/
 }
 
 .legend {
@@ -40,4 +45,27 @@
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #bbb;
+}
+
+.details-panel-container {
+    position: absolute;
+    top: 60px;
+    /* Altezza dell'header */
+    bottom: 80px;
+    /* Distanza dal footer */
+    left: 0;
+    width: 25%;
+    background-color: #f8f9fa;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.details-panel-container .d-flex {
+    position: absolute;
+    bottom: 30px;
+    /* Distanza dal fondo del pannello */
+    left: 50%;
+    /* Centra orizzontalmente */
+    transform: translateX(-50%);
+    /* Centra esattamente */
 }

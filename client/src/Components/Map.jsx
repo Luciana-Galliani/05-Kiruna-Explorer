@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -21,11 +21,19 @@ import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 import { none } from "ol/centerconstraint";
+import DetailsPanel from "./DetailsPanel";
+import { useLocation } from "react-router-dom";
 
-const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments}) => {
+
+
+const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocuments, setAllDocuments, isLoggedIn }) => {
+    const location = useLocation();
+
 
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+
 
     const longitude = 20.22513;
     const latitude = 67.85572;
@@ -75,9 +83,9 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 new TileLayer({
                     source: new OSM({
                         url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+                    }),
                 }),
-                }),
-                
+
             ],
             view: new View({
                 center: cityCenter,
@@ -93,44 +101,44 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         return () => {
             map.setTarget(null);
         };
-        
+
     }, []);
 
     useEffect(() => {
         if (!allDocuments || allDocuments.length === 0) return;
 
         const features = allDocuments
-        .filter((doc) => doc.longitude !== null && doc.latitude !== null)
-        .map((doc) => {
-            const { longitude, latitude, stakeholders } = doc;
-            const location = fromLonLat([longitude, latitude]);
+            .filter((doc) => doc.longitude !== null && doc.latitude !== null)
+            .map((doc) => {
+                const { longitude, latitude, stakeholders } = doc;
+                const location = fromLonLat([longitude, latitude]);
 
-            const feature = new Feature({
-                geometry: new Point(location),
-                documentId: doc.id,
+                const feature = new Feature({
+                    geometry: new Point(location),
+                    documentId: doc.id,
+                });
+
+                let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
+
+                const img = new Image();
+                img.src = iconMap[doc.type];
+
+                img.onload = () => {
+                    feature.setStyle([
+                        new Style({
+                            image: new Icon({
+                                anchor: [0.5, 0.5],
+                                img: img,
+                                imgSize: [img.width, img.height],
+                                scale: 0.4,
+                                color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
+                            }),
+                        })
+                    ]);
+                };
+
+                return feature;
             });
-
-            let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
-            
-            const img = new Image();
-            img.src = iconMap[doc.type];
-
-            img.onload = () => {
-                feature.setStyle([
-                    new Style({
-                        image: new Icon({
-                            anchor: [0.5, 0.5],
-                            img: img,
-                            imgSize: [img.width, img.height],
-                            scale: 0.4,
-                            color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
-                        }),
-                    })
-                ]);
-            };
-
-            return feature;
-        });
 
         const vectorSource = new VectorSource({
             features: features,
@@ -149,6 +157,17 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         const map = mapInstanceRef.current;
         if (map) {
             map.addLayer(vectorLayer);
+            map.on("click", (event) => {
+                map.forEachFeatureAtPixel(event.pixel, (feature) => {
+                    const documentId = feature.get("documentId");
+                    if (documentId) {
+                        console.log("Selected Document ID:", documentId);
+                        setSelectedDocument(documentId);
+                    } else {
+                        console.log("No documentId found on clicked feature");
+                    }
+                });
+            });
         }
 
         return () => {
@@ -183,11 +202,23 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected]);
 
+
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
-            <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+            <div style={{ height: "100%" }}>
+                <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+
+                {selectedDocument && location.pathname == "/" && (
+                    <DetailsPanel
+                        id={selectedDocument}
+                        onClose={() => setSelectedDocument(null)} // Close the details panel
+                        isLoggedIn
+                    />
+                )}
+            </div>
         </div>
     );
 };
+
 
 export default CityMap;

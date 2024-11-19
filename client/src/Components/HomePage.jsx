@@ -10,14 +10,15 @@ const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, allDocume
         }}>
             <div className="overlay position-absolute w-100 h-100" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
         </div>*/
-        <CityMap 
-        isSelectingCoordinates={isSelectingCoordinates} 
-        handleCoordinatesSelected={handleCoordinatesSelected} 
-        allDocuments={allDocuments} 
-        setAllDocuments={setAllDocuments} 
-        isSatelliteView={isSatelliteView} 
-        handleSatelliteView={handleSatelliteView}
-         />
+        <CityMap
+            isSelectingCoordinates={isSelectingCoordinates}
+            handleCoordinatesSelected={handleCoordinatesSelected}
+            allDocuments={allDocuments}
+            setAllDocuments={setAllDocuments}
+            isSatelliteView={isSatelliteView}
+            handleSatelliteView={handleSatelliteView}
+            isLoggedIn
+        />
     );
 };
 
