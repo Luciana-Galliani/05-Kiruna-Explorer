@@ -50,6 +50,9 @@ export const updateDocument = async (req, res) => {
             language: req.body.language,
             pages: req.body.pages,
             description: req.body.description,
+            allMunicipality: req.body.allMunicipality,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude,
             stakeholders: req.body.stakeholders,
             connections: req.body.connections,
         };

@@ -25,19 +25,18 @@ Content-Type: application/json
 ### UPDATE DOCUMENT
 PUT http://localhost:3001/api/documents/11 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzMxNjY4NjUzLCJleHAiOjE3MzE2NzIyNTN9.JoQHWyuRx9HpaJX6pwHs4qbGuWyneiQWqSdwm9Z-L4Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzMyMDIyOTA3LCJleHAiOjE3MzIwMjY1MDd9.KNByA56WTRBos-bFmNbtzWhNTf90-oz8HL3ggvS6bho
         
         {
-                "id": 11,
-                "title": "CASA",
+                "title": "PROVA",
                 "scaleType": "Text",
                 "scaleValue": null,
                 "issuanceDate": "1900-01-01",
                 "type": "Design Document",
                 "language": "",
                 "pages": "",
-                "description": "vb",
-                "allMunicipality": false,
+                "description": "Controllare georeference, add a connection",
+                "allMunicipality": true,
                 "latitude": "67.85812179",
                 "longitude": "20.20992477",
                 "stakeholders": [

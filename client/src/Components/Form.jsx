@@ -153,9 +153,6 @@ export function DescriptionForm({
         } else {
             setInputValues((prev) => ({ ...prev, [activeField]: value }));
         }
-
-        console.log(inputValues.stakeholders);
-        console.log(stakeholderOptions);
     };
 
     const handleModalClose = () => {
@@ -301,7 +298,10 @@ export function DescriptionForm({
             if (existingDocument) {
                 await API.updateDocument(existingDocument.document.id, documentData);
                 showNotification("Document modified successfully!", "success");
-                setDocumentOptions([...documentOptions, documentData]);
+                const updatedOptions = documentOptions.filter(
+                    (option) => option.id !== existingDocument.document.id
+                );
+                setDocumentOptions([...updatedOptions, documentData]);
                 navigate("/"); // Redirect to home page
             } else {
                 await API.createDocument(documentData);
@@ -646,7 +646,7 @@ export function DescriptionForm({
                                 <Form.Control
                                     as="select"
                                     key= {existingDocument ? existingDocument.document.id : document.id}
-                                    value={document}
+                                    value={existingDocument ? existingDocument.document : document}
                                     onChange={handleDocumentChange}
                                 >
                                     <option value="">Select a document</option>
