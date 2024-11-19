@@ -177,14 +177,6 @@ const CityMap = ({
     }, [allDocuments]);
 
     useEffect(() => {
-        // Change cursor style based on isSelectingCoordinates
-        const targetElement = mapRef.current;
-        if (isSelectingCoordinates) {
-            targetElement.style.cursor = "pointer";
-        } else {
-            targetElement.style.cursor = "default";
-        }
-
         const handleMapClick = (event) => {
             if (isSelectingCoordinates) {
                 const clickedCoordinate = event.coordinate;
@@ -196,6 +188,20 @@ const CityMap = ({
         const map = mapInstanceRef.current;
         if (!map) return;
         map.on("click", handleMapClick);
+        // Add pointer event listeners to change the cursor
+        map.on("pointermove", (event) => {
+            const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+
+            if (featureAtPixel) {
+                // Change cursor to pointer
+                map.getTargetElement().style.cursor = "pointer";
+            } else {
+                // Reset to default cursor
+                map.getTargetElement().style.cursor = isSelectingCoordinates
+                    ? "pointer"
+                    : "default";
+            }
+        });
         return () => {
             map.un("click", handleMapClick);
         };
