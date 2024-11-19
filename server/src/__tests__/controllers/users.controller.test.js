@@ -65,6 +65,18 @@ describe("User Controller", () => {
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ error: error.message });
         });
+
+        it("should return 400 if username already exists", async () => {
+            req.body = { username: "existingUsername", password: "password123" };
+            const error = new Error("Username already exists");
+            bcrypt.hash.mockResolvedValue("hashedPassword123");
+            usersDAO.createUser.mockRejectedValue(error);
+
+            await registerUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ error: error.message });
+        });
     });
 
     describe("loginUser", () => {
