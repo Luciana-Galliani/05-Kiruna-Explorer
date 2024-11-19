@@ -2,21 +2,12 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import API from "../API/API.mjs";
 
-const DetailsPanel = ({ id, onClose, isLoggedIn }) => {
-    const [document, setDocument] = useState(null);
+const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
+    const [document, setDocument] = useState(doc);
 
     useEffect(() => {
-        const fetchDocument = async () => {
-            try {
-                const response = await API.getDocument(id);
-                setDocument(response.document);
-            } catch (err) {
-                console.error("Failed to fetch document:", err.message);
-            }
-        };
-
-        fetchDocument();
-    }, [id]);
+        setDocument(doc);
+    }, [doc]);
 
     if (!document) {
         return (
@@ -53,9 +44,7 @@ const DetailsPanel = ({ id, onClose, isLoggedIn }) => {
                 </li>
             </ul>
 
-            {/* Pulsanti */}
             <div className="d-flex justify-content-center gap-3 mt-4">
-                {/* Mostra "Modify" solo se isLoggedIn è true */}
                 {isLoggedIn && (
                     <button
                         className="btn btn-primary px-4"
@@ -73,6 +62,12 @@ const DetailsPanel = ({ id, onClose, isLoggedIn }) => {
             </div>
         </div>
     );
+};
+
+DetailsPanel.propTypes = {
+    doc: PropTypes.object,
+    onClose: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default DetailsPanel;

@@ -116,6 +116,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                 const feature = new Feature({
                     geometry: new Point(location),
                     documentId: doc.id,
+                    documentTitle: doc.title
                 });
 
                 let colorIcon = stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
@@ -159,13 +160,12 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
             map.addLayer(vectorLayer);
             map.on("click", (event) => {
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
-                    const documentId = feature.get("documentId");
-                    if (documentId) {
-                        console.log("Selected Document ID:", documentId);
-                        setSelectedDocument(documentId);
-                    } else {
-                        console.log("No documentId found on clicked feature");
-                    }
+                    const documentTitle = feature.get("documentTitle");
+                    console.log(documentTitle);
+                    const matchedDocument = allDocuments.find(doc => doc.title === documentTitle);
+                    setSelectedDocument(matchedDocument);
+                    console.log(matchedDocument);
+
                 });
             });
         }
@@ -210,7 +210,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
 
                 {selectedDocument && location.pathname == "/" && (
                     <DetailsPanel
-                        id={selectedDocument}
+                        doc={selectedDocument}
                         onClose={() => setSelectedDocument(null)} // Close the details panel
                         isLoggedIn
                     />
