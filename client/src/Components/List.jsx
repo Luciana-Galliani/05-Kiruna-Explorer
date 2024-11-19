@@ -3,7 +3,7 @@ import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 
-const List = ({ condition }) => {
+const List = ({ condition, isLoggedIn }) => {
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
