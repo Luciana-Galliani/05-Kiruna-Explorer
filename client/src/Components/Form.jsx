@@ -46,8 +46,8 @@ export function DescriptionForm({
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
         type: existingDocument ? existingDocument.document.type : "",
-        language: existingDocument ? existingDocument.document.language : "",
-        pages: existingDocument ? existingDocument.document.pages : "",
+        language: existingDocument && existingDocument.document.language !== "-" ? existingDocument.document.language : "",
+        pages: existingDocument && existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
         description: existingDocument ? existingDocument.document.description : "",
         scale: existingDocument ? existingDocument.document.scaleType : "",
         planScale: existingDocument ? existingDocument.document.scaleValue : "",
@@ -690,16 +690,9 @@ export function DescriptionForm({
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            const isOptionAlreadyConnected =
-                                                inputValues.connections.some(
-                                                    (connection) =>
-                                                        (existingDocument
-                                                            ? connection.targetDocument.id ===
-                                                            document
-                                                            : connection.document.id ===
-                                                            document) &&
-                                                        connection.relationship === option
-                                                );
+                                            const isOptionAlreadyConnected = inputValues.connections.some(
+                                                (connection) => connection.targetDocument.id === document && connection.relationship === option
+                                            );
                                             return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
@@ -784,10 +777,7 @@ export function DescriptionForm({
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong>{" "}
-                                        {existingDocument
-                                            ? connection.targetDocument.title
-                                            : connection.document.title}
+                                        <strong>Document:</strong> {connection.targetDocument.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
@@ -861,7 +851,7 @@ export function EditDocumentForm({
     className,
 }) {
     //const { docId } = useParams(); //Get the document ID
-    const docId = 11;
+    const docId = 8;
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
     const [loading, setLoading] = useState(true); // Loading status

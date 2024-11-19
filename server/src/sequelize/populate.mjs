@@ -52,6 +52,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Text",
                     issuanceDate: "2007",
                     type: "Informative Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     description:
                         "This document is a compilation of the responses to the survey 'What is your impression of Kiruna?' From the citizens' responses to this last part of the survey, it is evident that certain buildings, such as the Kiruna Church, the Hjalmar Lundbohmsgården, and the Town Hall, are considered of significant value to the population. The municipality views the experience of this survey positively, to the extent that over the years it will propose various consultation opportunities.",
@@ -62,6 +63,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:8.000",
                     issuanceDate: "2010-10-20",
                     type: "Prescriptive Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1-32",
                     description:
@@ -73,6 +75,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2014-03-17",
                     type: "Design Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "111",
                     description:
@@ -84,6 +87,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:12.500",
                     issuanceDate: "2014-12",
                     type: "Technical Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -96,6 +100,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2015",
                     type: "Design Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -107,6 +112,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:1.000",
                     issuanceDate: "2016-06-22",
                     type: "Prescriptive Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1-43",
                     description:
@@ -117,6 +123,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
                     latitude: 67.848417,
@@ -129,6 +136,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
                     latitude: 67.8525,
@@ -141,6 +149,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-05",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
                     latitude: 67.849167,
@@ -153,6 +162,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-06",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
                     latitude: 67.8485,

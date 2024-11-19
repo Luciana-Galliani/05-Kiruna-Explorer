@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(doc);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setDocument(doc);
@@ -15,7 +17,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             </div>
         );
     }
-    console.log(document);
+
     const stakeholdersList = document.stakeholders
         ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
         : "N/A";
@@ -59,15 +61,12 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                     {isLoggedIn && (
                         <button
                             className="btn btn-primary px-4"
-                            onClick={() => alert("Modify clicked")}
+                            onClick={() => navigate(`/edit/${document.id}`)}
                         >
                             Modify
                         </button>
                     )}
-                    <button
-                        className="btn btn-danger px-4"
-                        onClick={onClose}
-                    >
+                    <button className="btn btn-danger px-4" onClick={onClose}>
                         Close
                     </button>
                 </div>
