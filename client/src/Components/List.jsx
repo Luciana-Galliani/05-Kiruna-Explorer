@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import API from '../API/API.mjs';
 
 const List = ({ condition }) => {
@@ -8,19 +9,21 @@ const List = ({ condition }) => {
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
 
+    const location = useLocation();
+
     useEffect(() => {
         const fetchDocuments = async () => {
             const response = await API.getDocuments();
             setDocuments(response.documents);
             if(condition === "true") {
-                setDocumentsToShow(response.documents.filter(document => document.allMunicipality === condition));
+                setDocumentsToShow(response.documents.filter(document => document.allMunicipality == true));
             } else {
                 setDocumentsToShow(response.documents);
             }
         };
 
         fetchDocuments();
-    }, []);
+    }, [location.pathname]);
 
     return (
         <div

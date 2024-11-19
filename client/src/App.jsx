@@ -122,8 +122,8 @@ function App() {
                     path="/registration"
                     element={<RegistrationForm handleLogin={handleLogin} />}
                 />
-                <Route path="/allDocuments" element={<ListDocuments condition={false}/>} />
-                <Route path="/municipality" element={<ListDocuments condition={true}/>} />
+                <Route path="/allDocuments" element={<ListDocuments condition="false"/>} />
+                <Route path="/municipality" element={<ListDocuments condition="true"/>} />
             </Routes>
 
             {/* Buttons for the home page */}
