@@ -27,6 +27,7 @@ const CityMap = ({
     handleCoordinatesSelected,
     allDocuments,
     setAllDocuments,
+    isSatelliteView
 }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
@@ -63,6 +64,7 @@ const CityMap = ({
 
         fetchAllDocuments();
     }, []);
+    
 
     useEffect(() => {
         // Transform extent to the map projection
@@ -73,14 +75,22 @@ const CityMap = ({
         );
         const cityCenter = fromLonLat([longitude, latitude]);
 
+        const satelliteLayer = new TileLayer({
+            source: new OSM({
+                url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+            }),
+        })
+
+        const standardLayer = new TileLayer({
+            source: new OSM(),
+        });
+
+        const currentView = isSatelliteView ? satelliteLayer : standardLayer;
+
         const map = new Map({
             target: mapRef.current,
             layers: [
-                new TileLayer({
-                    source: new OSM({
-                        url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-                    }),
-                }),
+                currentView,
             ],
             view: new View({
                 center: cityCenter,
@@ -96,7 +106,7 @@ const CityMap = ({
         return () => {
             map.setTarget(null);
         };
-    }, []);
+    }, [isSatelliteView]);
 
     useEffect(() => {
         if (!allDocuments || allDocuments.length === 0) return;
