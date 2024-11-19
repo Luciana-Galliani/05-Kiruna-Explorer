@@ -2,7 +2,7 @@
 version: '3.8'
 
 services:
-  client:
+  app:
     build:
       context: ./client
     volumes:
@@ -38,6 +38,25 @@ services:
     networks:
       - app-network
     command: ["nodemon", "--watch", ".", "--exec", "node", "./src/index.mjs"]
+
+  test:
+    build:
+      context: ./server
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=mysql
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=kiruna_db_test
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+    command: ["npm", "run", "test"]
 
   mysql:
     image: mysql:8.0

@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
+RUN npm install -g node-pre-gyp
 RUN npm install --no-bin-links
 
 # Install bcrypt specifically within Docker

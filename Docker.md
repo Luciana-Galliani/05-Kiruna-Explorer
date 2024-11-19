@@ -45,7 +45,11 @@ In order to run the application it is needed this few command:
 - First, on the server folder run `npm uninstall bcrypt` (this is needed for the different installation of the packet on windows or linux env)
 - Return on the main folder of the project and run the followin command in order
   - `docker-compose build` is needed to create a fresh image from the Dockerfiles (server and client)
-  - `docker-compose up` is the command that allow to start the entire application
+  - `docker-compose up app server` is the command that allow to start the entire application
+
+### Test environment
+
+If you want to run the **UNIT TEST**, you need to run the command `docker-compose run test`
 
 **IMPORTANT**: every time you do change on the code, you need to re-build the application, in order to do this is needed to run the command build. There is an alternative command `docker-compose up --build` (this command do the run command and additionally re-build a new image of the application)
 

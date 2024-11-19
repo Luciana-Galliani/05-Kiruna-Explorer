@@ -4,8 +4,22 @@ import API from "../API/API.mjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, existingDocument, className }) {
+export function DescriptionForm({
+    isLoggedIn,
+    coordinates,
+    handleChooseInMap,
+    documentOptions,
+    setDocumentOptions,
+    existingDocument,
+    className,
+}) {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate]);
 
     let date = "";
     if (existingDocument && existingDocument.document.issuanceDate.includes('-')) {
@@ -18,15 +32,16 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         }
     }
 
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate("/login");
-        }
-    }, [isLoggedIn, navigate]);
+    let stakeholdersArray = [];
+    if (existingDocument && existingDocument.document.stakeholders.length != 0) {
+        stakeholdersArray = existingDocument.document.stakeholders.map(
+            (item) => new Stakeholder(item.id, item.name, item.color)
+        );
+    }
 
     const [inputValues, setInputValues] = useState({
         title: existingDocument ? existingDocument.document.title : "",
-        stakeholders: existingDocument ? existingDocument.document.stakeholders : [],
+        stakeholders: existingDocument ? stakeholdersArray : [],
         issuanceYear: existingDocument ? date[0] : "",
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
@@ -130,14 +145,18 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const stakeholders = prev.stakeholders.includes(selectedStakeholder)
-                    ? prev.stakeholders.filter((item) => item !== selectedStakeholder)
+                const isSelected = prev.stakeholders.some((item) => item.id === selectedStakeholder.id);
+                const stakeholders = isSelected
+                    ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
                     : [...prev.stakeholders, selectedStakeholder];
                 return { ...prev, stakeholders };
             });
         } else {
-            setInputValues({ ...inputValues, [activeField]: value });
+            setInputValues((prev) => ({ ...prev, [activeField]: value }));
         }
+
+        console.log(inputValues.stakeholders);
+        console.log(stakeholderOptions);
     };
 
     const handleModalClose = () => {
@@ -223,15 +242,15 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
 
         if (
             documentData.latitude &&
-            (documentData.latitude < 67.5 || documentData.latitude > 68.5)
+            (documentData.latitude < 67.21 || documentData.latitude > 69.3)
         ) {
-            showNotification("Latitude must be between 67.5 and 68.5 for Kiruna.", "error");
+            showNotification("Latitude must be between 67.21 and 69.3 for Kiruna.", "error");
             return;
         } else if (
             documentData.longitude &&
-            (documentData.longitude < 20 || documentData.longitude > 21.5)
+            (documentData.longitude < 17.53 || documentData.longitude > 23.17)
         ) {
-            showNotification("Longitude must be between 20 and 21.5 for Kiruna.", "error");
+            showNotification("Longitude must be between 17.53 and 23.17 for Kiruna.", "error");
             return;
         }
 
@@ -632,7 +651,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key={document.id}
+                                    key={existingDocument ? existingDocument.document.id : document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -667,7 +686,11 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
-                                                        (existingDocument ? connection.targetDocument.id === document : connection.document.id === document) &&
+                                                        (existingDocument
+                                                            ? connection.targetDocument.id ===
+                                                            document
+                                                            : connection.document.id ===
+                                                            document) &&
                                                         connection.relationship === option
                                                 );
                                             return !isOptionAlreadyConnected;
@@ -760,7 +783,10 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong> {existingDocument ? connection.targetDocument.title : connection.document.title}
+                                        <strong>Document:</strong>{" "}
+                                        {existingDocument
+                                            ? connection.targetDocument.title
+                                            : connection.document.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
@@ -792,7 +818,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                         id={option.id}
                                         label={option.name}
                                         value={option.name}
-                                        checked={inputValues.stakeholders.includes(option)} // Check if object is in array
+                                        checked={inputValues.stakeholders.some((stakeholder) => stakeholder.id === option.id)} // Check if object is in array
                                         onChange={handleInputChange}
                                         style={{ width: "35%" }}
                                     />
@@ -823,7 +849,14 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
     );
 }
 
-export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, className }) {
+export function EditDocumentForm({
+    isLoggedIn,
+    coordinates,
+    handleChooseInMap,
+    documentOptions,
+    setDocumentOptions,
+    className,
+}) {
     //const { docId } = useParams(); //Get the document ID
     const docId = 11;
     const navigate = useNavigate();

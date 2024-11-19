@@ -1,7 +1,4 @@
-import {
-    registerUser,
-    loginUser,
-} from "../../controllers/users.controller.mjs";
+import { registerUser, loginUser } from "../../controllers/users.controller.mjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import usersDAO from "../../dao/users.dao.mjs";
@@ -50,10 +47,7 @@ describe("User Controller", () => {
             await registerUser(req, res);
 
             expect(bcrypt.hash).toHaveBeenCalledWith("password123", 10);
-            expect(usersDAO.createUser).toHaveBeenCalledWith(
-                "testUser",
-                hashedPassword
-            );
+            expect(usersDAO.createUser).toHaveBeenCalledWith("testUser", hashedPassword);
             expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalledWith({
                 message: "User created",
@@ -71,6 +65,18 @@ describe("User Controller", () => {
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ error: error.message });
         });
+
+        it("should return 400 if username already exists", async () => {
+            req.body = { username: "existingUsername", password: "password123" };
+            const error = new Error("Username already exists");
+            bcrypt.hash.mockResolvedValue("hashedPassword123");
+            usersDAO.createUser.mockRejectedValue(error);
+
+            await registerUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ error: error.message });
+        });
     });
 
     describe("loginUser", () => {
@@ -80,9 +86,7 @@ describe("User Controller", () => {
 
             await loginUser(req, res);
 
-            expect(usersDAO.getUserByUsername).toHaveBeenCalledWith(
-                "unknownUser"
-            );
+            expect(usersDAO.getUserByUsername).toHaveBeenCalledWith("unknownUser");
             expect(res.status).toHaveBeenCalledWith(404);
             expect(res.json).toHaveBeenCalledWith({ error: "User not found" });
         });
@@ -97,10 +101,7 @@ describe("User Controller", () => {
 
             await loginUser(req, res);
 
-            expect(bcrypt.compare).toHaveBeenCalledWith(
-                "wrongPassword",
-                "hashedPassword"
-            );
+            expect(bcrypt.compare).toHaveBeenCalledWith("wrongPassword", "hashedPassword");
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
                 error: "Invalid password",
@@ -122,15 +123,10 @@ describe("User Controller", () => {
 
             await loginUser(req, res);
 
-            expect(bcrypt.compare).toHaveBeenCalledWith(
-                "password123",
-                "hashedPassword"
-            );
-            expect(jwt.sign).toHaveBeenCalledWith(
-                { id: mockUser.id },
-                process.env.JWT_SECRET,
-                { expiresIn: "1h" }
-            );
+            expect(bcrypt.compare).toHaveBeenCalledWith("password123", "hashedPassword");
+            expect(jwt.sign).toHaveBeenCalledWith({ id: mockUser.id }, process.env.JWT_SECRET, {
+                expiresIn: "1h",
+            });
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
                 message: "Login successful",
