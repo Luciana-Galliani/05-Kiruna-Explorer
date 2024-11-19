@@ -1,33 +1,44 @@
 export default async function populateDB(sequelize) {
     console.log("Populating the database...");
-    const { Document, Stakeholder, Connection } = sequelize.models;
+    const { Document, Stakeholder, Connection, User } = sequelize.models;
     try {
+        // Create users
+        await User.bulkCreate(
+            [
+                {
+                    username: "urbanPlanner1",
+                    password: "$2b$10$SHN3nqGw3nqBGiUzlHPopukqztXbCMrWZVxeDFqPL4jAvVrp74CSS",
+                },
+            ],
+            { validate: true }
+        );
+
         // Create stakeholders
         const stakeholders = await Stakeholder.bulkCreate(
             [
                 {
                     name: "LKAB",
-                    color: "#000000",
+                    color: "#428243",
                 },
                 {
                     name: "Municipality",
-                    color: "#FF0000",
+                    color: "#8C6760",
                 },
                 {
                     name: "Norrbotten County",
-                    color: "#00FF00",
+                    color: "#6B282E",
                 },
                 {
                     name: "Architecture firms",
-                    color: "#0000FF",
+                    color: "#B6AD9D",
                 },
                 {
                     name: "Citizens",
-                    color: "#FFFF00",
+                    color: "#B3D0D3",
                 },
                 {
                     name: "Others",
-                    color: "#00FFFF",
+                    color: "#8CA2A4",
                 },
             ],
             { validate: true }
@@ -120,7 +131,7 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    latitude: 67.852500,
+                    latitude: 67.8525,
                     longitude: 20.222444,
                     description:
                         'After the construction of the new town hall was completed, the old building, nicknamed "The Igloo," was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building.',
@@ -144,7 +155,7 @@ export default async function populateDB(sequelize) {
                     type: "Action",
                     language: "-",
                     pages: "-",
-                    latitude: 67.848500,
+                    latitude: 67.8485,
                     longitude: 20.300333,
                     description:
                         "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town.",

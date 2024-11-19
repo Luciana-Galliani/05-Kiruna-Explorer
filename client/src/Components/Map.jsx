@@ -118,12 +118,11 @@ const CityMap = ({
                     documentId: doc.id,
                     documentTitle: doc.title,
                 });
+                const img = new Image();
+                img.src = iconMap[doc.type];
 
                 let colorIcon =
                     stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
-
-                const img = new Image();
-                img.src = iconMap[doc.type];
 
                 img.onload = () => {
                     feature.setStyle([
@@ -131,9 +130,9 @@ const CityMap = ({
                             image: new Icon({
                                 anchor: [0.5, 0.5],
                                 img: img,
-                                imgSize: [img.width, img.height],
                                 scale: 0.4,
-                                color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
+                                imgSize: [img.width, img.height],
+                                color: colorIcon,
                             }),
                         }),
                     ]);
