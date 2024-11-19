@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
+import { useLocation } from "react-router-dom";
 
-const List = ({ condition, isLoggedIn }) => {
+const List = ({ condition }) => {
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
+
+    const location = useLocation();
 
     useEffect(() => {
         const fetchDocuments = async () => {
             const response = await API.getDocuments();
             if (condition === "true") {
                 setDocumentsToShow(
-                    response.documents.filter((document) => document.allMunicipality === condition)
+                    response.documents.filter((document) => document.allMunicipality == true)
                 );
             } else {
                 setDocumentsToShow(response.documents);
@@ -20,7 +23,7 @@ const List = ({ condition, isLoggedIn }) => {
         };
 
         fetchDocuments();
-    }, [condition]);
+    }, [location.pathname]);
 
     return (
         <div
