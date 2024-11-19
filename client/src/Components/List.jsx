@@ -1,18 +1,21 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import API from '../API/API.mjs';
+import DetailsPanel from './DetailsPanel';
 
-const List = ({ condition }) => {
-    
+const List = ({ condition, isLoggedIn }) => {
+    console.log(isLoggedIn);
     const [documents, setDocuments] = useState([]);
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
         const fetchDocuments = async () => {
             const response = await API.getDocuments();
             setDocuments(response.documents);
-            if(condition === "true") {
+            if (condition === "true") {
                 setDocumentsToShow(response.documents.filter(document => document.allMunicipality === condition));
             } else {
                 setDocumentsToShow(response.documents);
@@ -20,7 +23,7 @@ const List = ({ condition }) => {
         };
 
         fetchDocuments();
-    }, []);
+    }, [condition]);
 
     return (
         <div
@@ -30,7 +33,7 @@ const List = ({ condition }) => {
                 backgroundColor: "#f8f9fa",
                 alignItems: "flex-start",
             }}
-            >
+        >
             <div
                 className={"container position-relative "}
                 style={{
@@ -47,17 +50,32 @@ const List = ({ condition }) => {
                 <h1>Documents</h1>
                 <ul className="list-group">
                     {documentsToShow.map((document) => (
-                        <li key={document.id}
+                        <li
+                            key={document.id}
                             className={`list-group-item ${hoveredItem === document.id ? "active" : ""}`}
                             onMouseEnter={() => setHoveredItem(document.id)}
-                            onAbort={() => setHoveredItem(null)}
-                            >
-                            {document.title}</li>
+                            onMouseLeave={() => setHoveredItem(null)}
+                            onClick={() => setSelectedDocument(document)}
+                        >
+                            {document.title}
+                        </li>
                     ))}
                 </ul>
             </div>
+
+            {selectedDocument && (
+                <div className="details-panel-container">
+                    <DetailsPanel
+                        doc={selectedDocument}
+                        onClose={() => setSelectedDocument(null)}
+                        isLoggedIn={isLoggedIn}
+                    />
+                </div>
+            )}
+
         </div>
     );
+
 };
 
 export default List;

@@ -48,24 +48,16 @@
 }
 
 .details-panel-container {
-    position: absolute;
-    top: 60px;
-    /* Altezza dell'header */
-    bottom: 80px;
-    /* Distanza dal footer */
-    left: 0;
-    width: 25%;
-    background-color: #f8f9fa;
-    padding: 15px;
+    position: fixed;
+    top: 10%;
+    right: 5%;
+    width: 30%;
+    max-height: 80vh;
     overflow-y: auto;
-}
-
-.details-panel-container .d-flex {
-    position: absolute;
-    bottom: 30px;
-    /* Distanza dal fondo del pannello */
-    left: 50%;
-    /* Centra orizzontalmente */
-    transform: translateX(-50%);
-    /* Centra esattamente */
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    z-index: 2000;
+    padding: 20px;
 }

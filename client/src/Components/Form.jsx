@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Card, ListGroup } from "react-bootstrap";
 import API from "../API/API.mjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
 
-export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, existingDocument, className  }) {
+export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, documentOptions, setDocumentOptions, existingDocument, className }) {
     const navigate = useNavigate();
 
     let date = "";
-    if(existingDocument && existingDocument.document.issuanceDate.includes('-')){
+    if (existingDocument && existingDocument.document.issuanceDate.includes('-')) {
         date = existingDocument.document.issuanceDate.split('-');
-        if(date.length == 1){
+        if (date.length == 1) {
             date.push("00");
             date.push("00");
-        }else if(date.length == 2){
+        } else if (date.length == 2) {
             date.push("00");
         }
     }
@@ -47,6 +47,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
@@ -180,6 +181,11 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         }
     };
 
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files); // Convert FileList to array
+        setSelectedFiles(files);
+    };
+
     const handleSaveForm = async () => {
         let issuanceDate = inputValues.issuanceDate;
 
@@ -279,12 +285,12 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
         }
 
         try {
-            if(existingDocument){
+            if (existingDocument) {
                 await API.updateDocument(existingDocument.document.id, documentData);
                 showNotification("Document modified successfully!", "success");
                 setDocumentOptions([...documentOptions, documentData]);
                 navigate("/"); // Redirect to home page
-            }else{
+            } else {
                 await API.createDocument(documentData);
                 showNotification("Document saved successfully!", "success");
                 setDocumentOptions([...documentOptions, documentData]);
@@ -626,7 +632,7 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key= {document.id}
+                                    key={document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -658,14 +664,13 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            // Verifica se la connessione con quel tipo di relazione è già presente
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
                                                         (existingDocument ? connection.targetDocument.id === document : connection.document.id === document) &&
                                                         connection.relationship === option
                                                 );
-                                            return !isOptionAlreadyConnected; // Escludi le opzioni già connesse
+                                            return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
                                             <option key={index} value={option}>
@@ -707,6 +712,30 @@ export function DescriptionForm({ isLoggedIn, coordinates, handleChooseInMap, do
                             />
                         </div>
                     </Form.Group>
+                    <Form.Group controlId="resourceFiles" className="mb-3">
+                        <Form.Label>Add resources</Form.Label>
+                        <Form.Control
+                            type="file"
+                            name="resourceFiles"
+                            multiple
+                            onChange={handleFileChange}
+                        />
+                        <Form.Text className="text-muted">
+                            You can add one or more files.
+                        </Form.Text>
+                    </Form.Group>
+
+                    {selectedFiles.length > 0 && (
+                        <ListGroup className="mb-3 overflow-y-auto " style={{ maxHeight: '100px' }}>
+                            {selectedFiles.map((file, index) => (
+                                <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    )}
+
+                    <Button variant="primary" type="submit">
+                        Invia
+                    </Button>
                     <p style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                         Connections :
                     </p>
@@ -807,7 +836,7 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
         }
     }, [isLoggedIn, navigate]);
 
-    useEffect ( () => {
+    useEffect(() => {
         const fetchDocumentById = async () => {
             try {
                 const resp = await API.getDocument(docId);
@@ -819,9 +848,9 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
         };
 
         fetchDocumentById();
-    },[]);
+    }, []);
 
-    if(!loading && existingDocument){
+    if (!loading && existingDocument) {
         return (
             <DescriptionForm
                 isLoggedIn={isLoggedIn}
@@ -833,15 +862,15 @@ export function EditDocumentForm({ isLoggedIn, coordinates, handleChooseInMap, d
                 className={className}
             />
         );
-    }else{
-        return(
+    } else {
+        return (
             <div className="position-absolute top-50 start-50 translate-middle w-25">
-            <Card className="shadow-sm">
-                <Card.Body>
-                    <p className="text-center mb-4">Document not found!</p>
-                </Card.Body>
-            </Card>
-        </div>
+                <Card className="shadow-sm">
+                    <Card.Body>
+                        <p className="text-center mb-4">Document not found!</p>
+                    </Card.Body>
+                </Card>
+            </div>
         );
     }
 }

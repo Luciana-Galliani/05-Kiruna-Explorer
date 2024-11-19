@@ -212,7 +212,7 @@ const CityMap = ({ isSelectingCoordinates, handleCoordinatesSelected, allDocumen
                     <DetailsPanel
                         doc={selectedDocument}
                         onClose={() => setSelectedDocument(null)} // Close the details panel
-                        isLoggedIn
+                        isLoggedIn={isLoggedIn}
                     />
                 )}
             </div>

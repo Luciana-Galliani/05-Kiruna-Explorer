@@ -88,7 +88,7 @@ function App() {
                 setAllDocuments={setAllDocuments}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
-                isLoggedIn
+                isLoggedIn={isLoggedIn}
             />
             <Routes>
                 <Route
@@ -123,8 +123,8 @@ function App() {
                     path="/registration"
                     element={<RegistrationForm handleLogin={handleLogin} />}
                 />
-                <Route path="/allDocuments" element={<ListDocuments condition={false} />} />
-                <Route path="/municipality" element={<ListDocuments condition={true} />} />
+                <Route path="/allDocuments" element={<ListDocuments condition={false} isLoggedIn={isLoggedIn} />} />
+                <Route path="/municipality" element={<ListDocuments condition={true} isLoggedIn={isLoggedIn} />} />
             </Routes>
 
             {/* Buttons for the home page */}

@@ -1,6 +1,6 @@
 import React from 'react';
 import CityMap from './Map.jsx';
-const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, allDocuments, setAllDocuments, isSatelliteView, handleSatelliteView }) => {
+const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, allDocuments, setAllDocuments, isSatelliteView, handleSatelliteView, isLoggedIn }) => {
     return (
         /*<div className="homepage text-center text-white position-relative" style={{
             backgroundImage: 'url("../../This_is_Kiruna.jpg")',
@@ -17,7 +17,7 @@ const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, allDocume
             setAllDocuments={setAllDocuments}
             isSatelliteView={isSatelliteView}
             handleSatelliteView={handleSatelliteView}
-            isLoggedIn
+            isLoggedIn={isLoggedIn}
         />
     );
 };
