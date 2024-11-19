@@ -39,6 +39,13 @@ export function DescriptionForm({
         );
     }
 
+    let connectionsArray = [];
+    if (existingDocument && existingDocument.document.connections.length != 0) {
+        connectionsArray = existingDocument.document.connections.map(
+            (item) => new Connection(item.targetDocument, item.relationship)
+        );
+    }
+
     const [inputValues, setInputValues] = useState({
         title: existingDocument ? existingDocument.document.title : "",
         stakeholders: existingDocument ? stakeholdersArray : [],
@@ -54,7 +61,7 @@ export function DescriptionForm({
         allMunicipality: existingDocument ? existingDocument.document.allMunicipality : false,
         latitude: existingDocument ? existingDocument.document.latitude : null,
         longitude: existingDocument ? existingDocument.document.longitude : null,
-        connections: existingDocument ? existingDocument.document.connections : [],
+        connections: existingDocument ? connectionsArray : [],
     });
 
     const [showModal, setShowModal] = useState(false);
@@ -167,12 +174,10 @@ export function DescriptionForm({
     };
 
     const removeConnection = (index) => {
-        console.log(inputValues.connections);
         setInputValues((prev) => ({
             ...prev,
             connections: prev.connections.filter((_, i) => i !== index),
         }));
-        console.log(inputValues.connections);
     };
 
     const addConnection = () => {
@@ -645,8 +650,8 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key= {existingDocument ? existingDocument.document.id : document.id}
-                                    value={existingDocument ? existingDocument.document : document}
+                                    key= {existingDocument ? existingDocument.id : document.id}
+                                    value={existingDocument ? existingDocument : document}
                                     onChange={handleDocumentChange}
                                 >
                                     <option value="">Select a document</option>
@@ -681,10 +686,7 @@ export function DescriptionForm({
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
-                                                        (existingDocument
-                                                            ? connection.targetDocument.id ===
-                                                              document
-                                                            : connection.document.id ===
+                                                        (connection.document.id ===
                                                               document) &&
                                                         connection.relationship === option
                                                 );
@@ -755,9 +757,7 @@ export function DescriptionForm({
                                 <Card.Body>
                                     <Card.Text>
                                         <strong>Document:</strong>{" "}
-                                        {existingDocument
-                                            ? connection.targetDocument.title
-                                            : connection.document.title}
+                                        {connection.document.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
