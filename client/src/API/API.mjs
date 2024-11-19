@@ -3,7 +3,6 @@ const getAuthToken = () => localStorage.getItem("authToken");
 const baseURL = "http://localhost:3001";
 
 const authHeaders = () => ({
-    "Content-Type": "application/json",
     Authorization: `Bearer ${getAuthToken()}`,
 });
 
@@ -80,19 +79,19 @@ const getDocument = async (documentId) => {
     }
 };
 
-
 const createDocument = async (documentData, files) => {
-
     const formData = new FormData();
 
-    formData.append("documentData", JSON.stringify({
-        ...documentData,
-        connections: documentData.connections.map((connection) => ({
-            documentId: connection.document.id,
-            relationship: connection.relationship,
-        })),
-    }));
-
+    formData.append(
+        "documentData",
+        JSON.stringify({
+            ...documentData,
+            connections: documentData.connections.map((connection) => ({
+                documentId: connection.document.id,
+                relationship: connection.relationship,
+            })),
+        })
+    );
 
     if (files && files.length > 0) {
         for (const file of files) {
@@ -101,7 +100,8 @@ const createDocument = async (documentData, files) => {
     }
     for (const [key, value] of formData.entries()) {
         console.log(key, value);
-    } const response = await fetch(`${baseURL}/api/documents`, {
+    }
+    const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
         headers: authHeaders(false),
         body: formData,
