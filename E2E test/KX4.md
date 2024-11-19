@@ -19,7 +19,7 @@ Expected Result: The map displays icons for all available georeferenced document
 Precondition: The user is on the map page, and markers for georeferenced documents are displayed.
 Steps:
 1. The user clicks on a document marker on the map.
-Expected Result: A side panel appears, showing details of the selected document, including its title, description, and other attributes.
+Expected Result: A panel appears, showing details of the selected document, including its title, description, and other attributes.
 ```
 
 ---
@@ -30,7 +30,7 @@ Expected Result: A side panel appears, showing details of the selected document,
 Precondition: The user is on the map page, and "All municipality" documents exist.
 Steps:
 1. The user click on the "All municipality" button.
-Expected Result: A menu with all the "all municipality" documents appears.
+Expected Result: A list with all the "all municipality" documents appears.
 ```
 
 ---
