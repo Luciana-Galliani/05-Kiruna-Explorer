@@ -15,6 +15,12 @@ export function DescriptionForm({
 }) {
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate]);
+
     let date = "";
     if (existingDocument && existingDocument.document.issuanceDate.includes("-")) {
         date = existingDocument.document.issuanceDate.split("-");
@@ -26,15 +32,16 @@ export function DescriptionForm({
         }
     }
 
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate("/login");
-        }
-    }, [isLoggedIn, navigate]);
+    let stakeholdersArray = [];
+    if (existingDocument && existingDocument.document.stakeholders.length != 0) {
+        stakeholdersArray = existingDocument.document.stakeholders.map(
+            (item) => new Stakeholder(item.id, item.name, item.color)
+        );
+    }
 
     const [inputValues, setInputValues] = useState({
         title: existingDocument ? existingDocument.document.title : "",
-        stakeholders: existingDocument ? existingDocument.document.stakeholders : [],
+        stakeholders: existingDocument ? stakeholdersArray : [],
         issuanceYear: existingDocument ? date[0] : "",
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
@@ -137,14 +144,18 @@ export function DescriptionForm({
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const stakeholders = prev.stakeholders.includes(selectedStakeholder)
-                    ? prev.stakeholders.filter((item) => item !== selectedStakeholder)
+                const isSelected = prev.stakeholders.some((item) => item.id === selectedStakeholder.id);
+                const stakeholders = isSelected
+                ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
                     : [...prev.stakeholders, selectedStakeholder];
                 return { ...prev, stakeholders };
             });
         } else {
-            setInputValues({ ...inputValues, [activeField]: value });
+            setInputValues((prev) => ({ ...prev, [activeField]: value }));
         }
+
+        console.log(inputValues.stakeholders);
+        console.log(stakeholderOptions);
     };
 
     const handleModalClose = () => {
@@ -634,7 +645,7 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key={document.id}
+                                    key= {existingDocument ? existingDocument.document.id : document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -778,7 +789,7 @@ export function DescriptionForm({
                                         id={option.id}
                                         label={option.name}
                                         value={option.name}
-                                        checked={inputValues.stakeholders.includes(option)} // Check if object is in array
+                                        checked={inputValues.stakeholders.some((stakeholder) => stakeholder.id === option.id)} // Check if object is in array
                                         onChange={handleInputChange}
                                         style={{ width: "35%" }}
                                     />
