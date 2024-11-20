@@ -33,25 +33,21 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
         );
     }
 
+    console.log(document.originalResources);
     const stakeholdersList = document.stakeholders
         ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
         : "N/A";
 
-    const resources = [
-        { name: "file1.pdf" },
-        { name: "image.jpg" },
-        { name: "file2.docx" }
-    ];
-
-    const processedResources = resources.map(resource => {
-        const fileType = getFileType(resource.name);
+    const processedResources = document.originalResources.map(fileName => {
+        const fileType = getFileType(fileName);
         return {
-            name: resource.name,
+            name: fileName,
             fileType,
-            baseName: resource.name.split('.').slice(0, -1).join('.'),
-            extension: resource.name.split('.').pop()
+            baseName: fileName.split('.').slice(0, -1).join('.'),
+            extension: fileName.split('.').pop()
         };
     });
+
 
     const getIconForFileType = (fileType) => {
         switch (fileType) {
@@ -101,27 +97,25 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                     <li>
                         <strong>Description:</strong> {document.description || "N/A"}
                     </li>
-                    {processedResources && processedResources.length > 0 && (
-                        <div className="mt-4">
-                            <h5>Original resources</h5>
-                            <ul className="list-unstyled">
-                                {processedResources.map((resource, index) => {
-                                    const icon = getIconForFileType(resource.fileType);
-                                    return (
-                                        <li key={index} className="mb-2">
-                                            <button
-                                                className="btn btn-outline-primary"
-                                                onClick={() => window.open(`http://localhost:5000/document_resources/11/original_resources/${resource.name}`, "_blank")}
-                                            >
-                                                <FontAwesomeIcon icon={icon} className="me-2" />
-                                                See {resource.baseName}.{resource.extension}
-                                            </button>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                    )}
+                    {processedResources.map((resource, index) => {
+                        const icon = getIconForFileType(resource.fileType);
+                        return (
+                            <li key={index} className="mb-2">
+                                <button
+                                    className="btn btn-outline-primary"
+                                    onClick={() =>
+                                        window.open(
+                                            `http://localhost:3001/${document.id}/original_resources/${resource.name}`,
+                                            "_blank"
+                                        )
+                                    }
+                                >
+                                    <FontAwesomeIcon icon={icon} className="me-2" />
+                                    See {resource.baseName}.{resource.extension}
+                                </button>
+                            </li>
+                        );
+                    })}
                 </ul>
 
                 <div className="d-flex justify-content-center gap-3 mt-4">
