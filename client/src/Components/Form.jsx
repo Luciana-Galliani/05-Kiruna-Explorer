@@ -80,7 +80,6 @@ export function DescriptionForm({
                     ? parseFloat(existingDocument.document.longitude)
                     : null,
                 connections: existingDocument.document.connections || [],
-                fileNames: existingDocument.document.originalResources || [],
             });
         }
     }, [existingDocument]);
@@ -154,6 +153,38 @@ export function DescriptionForm({
         fetchRelationshipOptions();
         fetchStakeholders();
     }, []);
+
+    useEffect(() => {
+        const fetchFiles = async () => {
+            if (!existingDocument || !existingDocument.document.originalResources) return;
+
+            const documentId = existingDocument.document.id;
+            const resources = existingDocument.document.originalResources;
+
+            try {
+                const filePromises = resources.map(async (resourceName) => {
+                    const url = `http://localhost:3001/${documentId}/original_resources/${resourceName}`;
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`Errore durante il download del file ${resourceName}`);
+                    }
+
+                    const blob = await response.blob();
+                    const objectUrl = URL.createObjectURL(blob);
+
+                    return { name: resourceName, url: objectUrl };
+                });
+
+                const files = await Promise.all(filePromises);
+                setSelectedFiles(files);
+            } catch (error) {
+                console.error("Errore durante il download dei file:", error);
+            }
+        };
+
+        fetchFiles();
+    }, [existingDocument]);
 
     useEffect(() => {
         if (coordinates) {
@@ -231,14 +262,13 @@ export function DescriptionForm({
         }
     };
 
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files); // Converte FileList in array
-        const newFileNames = files.map(file => file.name); // Estrai i nomi dei file
-        setInputValues(prevState => ({
-            ...prevState, // Mantieni tutte le altre proprietà
-            fileNames: [...prevState.fileNames, ...newFileNames] // Aggiungi i nuovi nomi alla lista esistente
-        }));
-        setSelectedFiles(files); // Puoi mantenere i file completi per altri utilizzi
+    const handleFileChange = (e) => {
+        const newFiles = Array.from(e.target.files);
+        setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    };
+
+    const removeFile = (index) => {
+        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     };
 
 
@@ -782,10 +812,19 @@ export function DescriptionForm({
                         <Form.Text className="text-muted">You can add one or more files.</Form.Text>
                     </Form.Group>
 
-                    {inputValues.fileNames.length > 0 && (
+                    {selectedFiles.length > 0 && (
                         <ListGroup className="mb-3 overflow-y-auto" style={{ maxHeight: "100px" }}>
-                            {inputValues.fileNames.map((fileName, index) => (
-                                <ListGroup.Item key={index}>{fileName}</ListGroup.Item>
+                            {selectedFiles.map((file, index) => (
+                                <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                                    <span>{file.name}</span>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => removeFile(index)}
+                                    >
+                                        x
+                                    </button>
+                                </ListGroup.Item>
                             ))}
                         </ListGroup>
                     )}
