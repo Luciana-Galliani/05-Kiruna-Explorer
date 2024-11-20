@@ -166,8 +166,8 @@ const CityMap = ({
             map.addLayer(vectorLayer);
             map.on("click", (event) => {
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
-                    const documentTitle = feature.get("documentTitle");
-                    const matchedDocument = allDocuments.find((doc) => doc.title === documentTitle);
+                    const documentId = feature.get("documentId");
+                    const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
                     setSelectedDocument(matchedDocument);
                 });
             });
