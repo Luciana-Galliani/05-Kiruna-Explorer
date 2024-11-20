@@ -115,17 +115,32 @@ const createDocument = async (documentData, files) => {
     }
 };
 
-const updateDocument = async (documentId, documentData) => {
-    documentData.connections = documentData.connections.map((connection) => ({
-        documentId: connection.targetDocument.id,
-        relationship: connection.relationship,
-    }));
-    console.log(documentData);
+const updateDocument = async (documentId, documentData, selectedFiles) => {
+    const formData = new FormData();
+
+    formData.append(
+        "documentData",
+        JSON.stringify({
+            ...documentData,
+            connections: documentData.connections.map((connection) => ({
+                documentId: connection.targetDocument.id,
+                relationship: connection.relationship,
+            })),
+        })
+    );
+
+    if (selectedFiles && selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+            formData.append("files", file);
+        }
+    }
+
     const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
         headers: authHeaders(false),
-        body: documentData,
+        body: formData,
     });
+
     if (response.ok) {
         const doc = await response.json();
         return doc;
@@ -134,6 +149,7 @@ const updateDocument = async (documentId, documentData) => {
         throw errDetails;
     }
 };
+
 
 
 const getConnections = async () => {

@@ -308,7 +308,7 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
-                const updateResponse = await API.updateDocument(existingDocument.document.id, documentData);
+                const updateResponse = await API.updateDocument(existingDocument.document.id, documentData, selectedFiles);
                 showNotification("Document modified successfully!", "success");
                 // Update document in the list
                 const updatedDocumentOptions = documentOptions.map((doc) =>
