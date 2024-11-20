@@ -1,11 +1,25 @@
-import path from "path";
-import fs from "fs";
 import documentsDAO from "../dao/documents.dao.mjs";
+import {
+    findOriginalResources,
+    createOriginalResources,
+    deleteOriginalResources,
+} from "../utils/manageResources.mjs";
 
 export const getDocuments = async (req, res) => {
     try {
         const documents = await documentsDAO.getDocuments();
-        res.status(200).json({ documents: documents });
+
+        // Add original resources in parallel
+        const documentsWithResources = await Promise.all(
+            documents.map(async (document) => {
+                const originalResources = await findOriginalResources(document.id);
+                return {
+                    ...(await document.toJSON()),
+                    originalResources,
+                };
+            })
+        );
+        res.status(200).json({ documents: documentsWithResources });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -15,7 +29,8 @@ export const getDocumentById = async (req, res) => {
     try {
         const documentId = req.params.id;
 
-        const document = await documentsDAO.getDocumentById(documentId);
+        const document = (await documentsDAO.getDocumentById(documentId)).toJSON();
+        document.originalResources = await findOriginalResources(documentId);
 
         res.status(200).json({ document: document });
     } catch (error) {
@@ -32,23 +47,11 @@ export const createDocument = async (req, res) => {
         const documentData = JSON.parse(req.body.documentData);
         const files = req.files;
 
-        const newDocument = await documentsDAO.createDocument(documentData);
+        const newDocument = (await documentsDAO.createDocument(documentData)).toJSON();
 
-        // Create directory for document resources
-        const documentDir = path.join(
-            process.cwd(),
-            `document_resources/${newDocument.id}/original_resources`
-        );
-        if (!fs.existsSync(documentDir)) {
-            fs.mkdirSync(documentDir, { recursive: true });
-        }
-
-        // Move uploaded files to document directory
-        files.forEach((file) => {
-            const targetPath = path.join(documentDir, file.originalname);
-            fs.copyFileSync(file.path, targetPath);
-            fs.unlinkSync(file.path);
-        });
+        deleteOriginalResources(newDocument.id);
+        createOriginalResources(newDocument.id, files);
+        newDocument.originalResources = await findOriginalResources(newDocument.id);
 
         res.status(201).json({ document: newDocument });
     } catch (error) {
@@ -63,23 +66,15 @@ export const createDocument = async (req, res) => {
 export const updateDocument = async (req, res) => {
     try {
         const documentId = req.params.id;
-        const documentData = {
-            title: req.body.title,
-            scaleType: req.body.scaleType,
-            scaleValue: req.body.scaleValue,
-            issuanceDate: req.body.issuanceDate,
-            type: req.body.type,
-            language: req.body.language,
-            pages: req.body.pages,
-            description: req.body.description,
-            allMunicipality: req.body.allMunicipality,
-            latitude: req.body.latitude,
-            longitude: req.body.longitude,
-            stakeholders: req.body.stakeholders,
-            connections: req.body.connections,
-        };
+        const documentData = JSON.parse(req.body.documentData);
 
-        const updatedDocument = await documentsDAO.updateDocument(documentId, documentData);
+        const updatedDocument = (
+            await documentsDAO.updateDocument(documentId, documentData)
+        ).toJSON();
+
+        deleteOriginalResources(documentId);
+        createOriginalResources(documentId, req.files);
+        updatedDocument.originalResources = await findOriginalResources(updatedDocument.id);
 
         res.status(200).json({ document: updatedDocument });
     } catch (error) {

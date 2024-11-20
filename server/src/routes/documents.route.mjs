@@ -15,6 +15,6 @@ router.get("/", getDocuments);
 router.get("/:id", getDocumentById);
 // Authenticated routes
 router.post("/", authMiddleware, upload.array("files"), createDocument);
-router.put("/:id", authMiddleware, updateDocument);
+router.put("/:id", authMiddleware, upload.array("files"), updateDocument);
 
 export default router;
