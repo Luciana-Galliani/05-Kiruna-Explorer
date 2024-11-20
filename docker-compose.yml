@@ -5,6 +5,7 @@ services:
   app:
     build:
       context: ./client
+    image: lucaferro3101/kiruna-client:latest
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -21,6 +22,7 @@ services:
   server:
     build:
       context: ./server
+    image: lucaferro3101/kiruna-server:latest
     volumes:
       - ./server:/app
       - /app/node_modules
