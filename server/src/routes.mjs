@@ -6,10 +6,8 @@ import connectionsRoutes from "./routes/connections.route.mjs";
 import stakeholdersRoutes from "./routes/stakeholders.route.mjs";
 
 export default (app) => {
-    // Resolve the absolute path to the document_resources folder
+    // Serve static files from document_resources
     const documentResourcesPath = path.resolve(process.cwd(), "document_resources");
-    // Serve the static files from the resolved folder
-    console.log("Serving static files from:", documentResourcesPath);
     app.use(express.static(documentResourcesPath));
 
     app.use("/api/users", express.json(), usersRoutes);
