@@ -20,7 +20,6 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
-import { none } from "ol/centerconstraint";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 
@@ -218,7 +217,7 @@ const CityMap = ({
 
                 {selectedDocument && location.pathname == "/" && (
                     <DetailsPanel
-                        doc={selectedDocument}
+                        doc={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)} // Close the details panel
                         isLoggedIn={isLoggedIn}
                     />

@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Modal, Button, Form, Row, Col, Card, ListGroup } from "react-bootstrap";
 import API from "../API/API.mjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
+import { RefreshContext } from "../App.jsx";
 
 export function DescriptionForm({
     isLoggedIn,
@@ -14,6 +15,7 @@ export function DescriptionForm({
     className,
 }) {
     const navigate = useNavigate();
+    const [needRefresh, setNeedRefresh] = useContext(RefreshContext);
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -26,10 +28,10 @@ export function DescriptionForm({
         date = existingDocument.document.issuanceDate.split("-");
 
         while (date.length < 3) {
-            date.push("00");
+            date.push("");
         }
     } else {
-        date = ["00", "00", "00"];
+        date = ["", "", ""];
     }
 
     let stakeholdersArray = [];
@@ -67,8 +69,12 @@ export function DescriptionForm({
                 issuanceMonth: date[1] || "",
                 issuanceDay: date[2] || "",
                 type: existingDocument.document.type || "",
-                language: existingDocument.document.language !== "-" ? existingDocument.document.language : "",
-                pages: existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
+                language:
+                    existingDocument.document.language !== "-"
+                        ? existingDocument.document.language
+                        : "",
+                pages:
+                    existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
                 description: existingDocument.document.description || "",
                 scale: existingDocument.document.scaleType || "",
                 planScale: existingDocument.document.scaleValue || "",
@@ -84,14 +90,12 @@ export function DescriptionForm({
         }
     }, [existingDocument]);
 
-
     const [showModal, setShowModal] = useState(false);
     const [activeField, setActiveField] = useState("");
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
-
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
@@ -115,8 +119,6 @@ export function DescriptionForm({
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: "", type: "" }), 3000);
     };
-
-
 
     useEffect(() => {
         const fetchStakeholders = async () => {
@@ -271,7 +273,6 @@ export function DescriptionForm({
         setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     };
 
-
     const handleSaveForm = async () => {
         let issuanceDate = inputValues.issuanceDate;
 
@@ -372,13 +373,18 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
-                const updateResponse = await API.updateDocument(existingDocument.document.id, documentData, selectedFiles);
+                const updateResponse = await API.updateDocument(
+                    existingDocument.document.id,
+                    documentData,
+                    selectedFiles
+                );
                 showNotification("Document modified successfully!", "success");
                 // Update document in the list
                 const updatedDocumentOptions = documentOptions.map((doc) =>
                     doc.id === existingDocument.document.id ? updateResponse.document : doc
                 );
                 setDocumentOptions(updatedDocumentOptions);
+                setNeedRefresh(true);
                 navigate("/"); // Redirect to home page
             } else {
                 const createResponse = await API.createDocument(documentData, selectedFiles);
@@ -756,9 +762,12 @@ export function DescriptionForm({
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            const isOptionAlreadyConnected = inputValues.connections.some(
-                                                (connection) => connection.targetDocument.id === document && connection.relationship === option
-                                            );
+                                            const isOptionAlreadyConnected =
+                                                inputValues.connections.some(
+                                                    (connection) =>
+                                                        connection.targetDocument.id === document &&
+                                                        connection.relationship === option
+                                                );
                                             return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
@@ -815,7 +824,10 @@ export function DescriptionForm({
                     {selectedFiles.length > 0 && (
                         <ListGroup className="mb-3 overflow-y-auto" style={{ maxHeight: "100px" }}>
                             {selectedFiles.map((file, index) => (
-                                <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                                <ListGroup.Item
+                                    key={index}
+                                    className="d-flex justify-content-between align-items-center"
+                                >
                                     <span>{file.name}</span>
                                     <button
                                         type="button"

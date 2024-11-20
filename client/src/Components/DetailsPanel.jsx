@@ -1,29 +1,50 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilePdf, faFileImage, faFileWord, faFileExcel, faFile } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+    faFilePdf,
+    faFileImage,
+    faFileWord,
+    faFileExcel,
+    faFile,
+} from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { RefreshContext } from "../App.jsx";
+import API from "../API/API.mjs";
 
 const getFileType = (fileName) => {
-    const ext = fileName.split('.').pop().toLowerCase();
-    if (['pdf'].includes(ext)) {
-        return 'pdf';
-    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-        return 'image';
-    } else if (['docx', 'doc'].includes(ext)) {
-        return 'word';
-    } else if (['xlsx'].includes(ext)) {
-        return 'excel';
+    const ext = fileName.split(".").pop().toLowerCase();
+    if (["pdf"].includes(ext)) {
+        return "pdf";
+    } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+        return "image";
+    } else if (["docx", "doc"].includes(ext)) {
+        return "word";
+    } else if (["xlsx"].includes(ext)) {
+        return "excel";
     }
-    return 'generic';
+    return "generic";
 };
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
-    const [document, setDocument] = useState(doc);
+    const [document, setDocument] = useState(null);
+    const [needRefresh, setNeedRefresh] = useContext(RefreshContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        setDocument(doc);
-    }, [doc]);
+        const fetchDocumentById = async () => {
+            try {
+                const resp = await API.getDocument(doc);
+                setDocument(resp.document);
+                setNeedRefresh(false);
+            } catch (error) {
+                console.error("Error fetching document:", error);
+            }
+        };
+
+        if (!document || needRefresh) {
+            fetchDocumentById();
+        }
+    }, [doc, needRefresh]);
 
     if (!document) {
         return (
@@ -37,26 +58,25 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
         ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
         : "N/A";
 
-    const processedResources = document.originalResources.map(fileName => {
+    const processedResources = document.originalResources.map((fileName) => {
         const fileType = getFileType(fileName);
         return {
             name: fileName,
             fileType,
-            baseName: fileName.split('.').slice(0, -1).join('.'),
-            extension: fileName.split('.').pop()
+            baseName: fileName.split(".").slice(0, -1).join("."),
+            extension: fileName.split(".").pop(),
         };
     });
 
-
     const getIconForFileType = (fileType) => {
         switch (fileType) {
-            case 'pdf':
+            case "pdf":
                 return faFilePdf;
-            case 'image':
+            case "image":
                 return faFileImage;
-            case 'word':
+            case "word":
                 return faFileWord;
-            case 'excel':
+            case "excel":
                 return faFileExcel;
             default:
                 return faFile;
@@ -96,12 +116,24 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                     <li>
                         <strong>Description:</strong> {document.description || "N/A"}
                     </li>
+                </ul>
+                <div
+                    style={{
+                        margin: "auto",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "max-content",
+                        maxWidth: "100%",
+                        justifyContent: "center",
+                        alignItems: "stretch",
+                    }}
+                >
                     {processedResources.map((resource, index) => {
                         const icon = getIconForFileType(resource.fileType);
                         return (
-                            <li key={index} className="mb-2">
+                            <div key={index} className="mb-2">
                                 <button
-                                    className="btn btn-outline-primary"
+                                    className="btn btn-outline-primary w-100"
                                     onClick={() =>
                                         window.open(
                                             `http://localhost:3001/${document.id}/original_resources/${resource.name}`,
@@ -112,10 +144,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                                     <FontAwesomeIcon icon={icon} className="me-2" />
                                     See {resource.baseName}.{resource.extension}
                                 </button>
-                            </li>
+                            </div>
                         );
                     })}
-                </ul>
+                </div>
 
                 <div className="d-flex justify-content-center gap-3 mt-4">
                     {isLoggedIn && (

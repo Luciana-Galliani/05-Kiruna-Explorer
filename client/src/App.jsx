@@ -13,7 +13,10 @@ import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
 
+export const RefreshContext = React.createContext();
+
 function App() {
+    const [needRefresh, setNeedRefresh] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState("Do you really want to logout?");
@@ -81,56 +84,58 @@ function App() {
             />
 
             {/* Routes */}
-            <HomePage
-                isSelectingCoordinates={isSelectingCoordinates}
-                handleCoordinatesSelected={handleCoordinatesSelected}
-                allDocuments={allDocuments}
-                setAllDocuments={setAllDocuments}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                isLoggedIn={isLoggedIn}
-            />
-            <Routes>
-                <Route
-                    path="/add"
-                    element={
-                        <DescriptionForm
-                            isLoggedIn={isLoggedIn}
-                            coordinates={coordinates}
-                            handleChooseInMap={handleChooseInMap}
-                            documentOptions={allDocuments}
-                            setDocumentOptions={setAllDocuments}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                        />
-                    }
+            <RefreshContext.Provider value={[needRefresh, setNeedRefresh]}>
+                <HomePage
+                    isSelectingCoordinates={isSelectingCoordinates}
+                    handleCoordinatesSelected={handleCoordinatesSelected}
+                    allDocuments={allDocuments}
+                    setAllDocuments={setAllDocuments}
+                    isSatelliteView={isSatelliteView}
+                    handleSatelliteView={handleSatelliteView}
+                    isLoggedIn={isLoggedIn}
                 />
-                <Route
-                    path="edit/:documentId"
-                    element={
-                        <EditDocumentForm
-                            isLoggedIn={isLoggedIn}
-                            coordinates={coordinates}
-                            handleChooseInMap={handleChooseInMap}
-                            documentOptions={allDocuments}
-                            setDocumentOptions={setAllDocuments}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                        />
-                    }
-                />
-                <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
-                <Route
-                    path="/registration"
-                    element={<RegistrationForm handleLogin={handleLogin} />}
-                />
-                <Route
-                    path="/allDocuments"
-                    element={<ListDocuments condition="false" isLoggedIn={isLoggedIn} />}
-                />
-                <Route
-                    path="/municipality"
-                    element={<ListDocuments condition="true" isLoggedIn={isLoggedIn} />}
-                />
-            </Routes>
+                <Routes>
+                    <Route
+                        path="/add"
+                        element={
+                            <DescriptionForm
+                                isLoggedIn={isLoggedIn}
+                                coordinates={coordinates}
+                                handleChooseInMap={handleChooseInMap}
+                                documentOptions={allDocuments}
+                                setDocumentOptions={setAllDocuments}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                            />
+                        }
+                    />
+                    <Route
+                        path="edit/:documentId"
+                        element={
+                            <EditDocumentForm
+                                isLoggedIn={isLoggedIn}
+                                coordinates={coordinates}
+                                handleChooseInMap={handleChooseInMap}
+                                documentOptions={allDocuments}
+                                setDocumentOptions={setAllDocuments}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                            />
+                        }
+                    />
+                    <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
+                    <Route
+                        path="/registration"
+                        element={<RegistrationForm handleLogin={handleLogin} />}
+                    />
+                    <Route
+                        path="/allDocuments"
+                        element={<ListDocuments condition="false" isLoggedIn={isLoggedIn} />}
+                    />
+                    <Route
+                        path="/municipality"
+                        element={<ListDocuments condition="true" isLoggedIn={isLoggedIn} />}
+                    />
+                </Routes>
+            </RefreshContext.Provider>
 
             {/* Buttons for the home page */}
             <Footer

@@ -47,7 +47,7 @@ const List = ({ condition, isLoggedIn }) => {
                     zIndex: 1,
                 }}
             >
-                <h1>Documents</h1>
+                <h1>{condition == "true" ? "All Municipality Documents" : "Documents"}</h1>
                 <ul className="list-group">
                     {documentsToShow.map((document) => (
                         <li
@@ -68,7 +68,7 @@ const List = ({ condition, isLoggedIn }) => {
             {selectedDocument && (
                 <div className="details-panel-container">
                     <DetailsPanel
-                        doc={selectedDocument}
+                        doc={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
                     />
