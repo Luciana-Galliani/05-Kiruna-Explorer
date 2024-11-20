@@ -33,7 +33,6 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
         );
     }
 
-    console.log(document.originalResources);
     const stakeholdersList = document.stakeholders
         ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
         : "N/A";

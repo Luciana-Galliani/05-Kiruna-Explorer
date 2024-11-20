@@ -59,7 +59,12 @@ export function DescriptionForm({
             : null,
 
         connections: existingDocument ? existingDocument.document.connections : [],
+        fileNames: existingDocument && existingDocument.document.originalResources ? existingDocument.document.originalResources : []
     });
+    console.log(inputValues);
+    console.log(existingDocument);
+    console.log(existingDocument.originalResources);
+
 
     const [showModal, setShowModal] = useState(false);
     const [activeField, setActiveField] = useState("");
@@ -67,6 +72,7 @@ export function DescriptionForm({
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
+
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
@@ -90,6 +96,8 @@ export function DescriptionForm({
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: "", type: "" }), 3000);
     };
+
+
 
     useEffect(() => {
         const fetchStakeholders = async () => {
@@ -204,9 +212,15 @@ export function DescriptionForm({
     };
 
     const handleFileChange = (event) => {
-        const files = Array.from(event.target.files); // Convert FileList to array
-        setSelectedFiles(files);
+        const files = Array.from(event.target.files); // Converte FileList in array
+        const newFileNames = files.map(file => file.name); // Estrai i nomi dei file
+        setInputValues(prevState => ({
+            ...prevState, // Mantieni tutte le altre proprietà
+            fileNames: [...prevState.fileNames, ...newFileNames] // Aggiungi i nuovi nomi alla lista esistente
+        }));
+        setSelectedFiles(files); // Puoi mantenere i file completi per altri utilizzi
     };
+
 
     const handleSaveForm = async () => {
         let issuanceDate = inputValues.issuanceDate;
@@ -747,13 +761,14 @@ export function DescriptionForm({
                         <Form.Text className="text-muted">You can add one or more files.</Form.Text>
                     </Form.Group>
 
-                    {selectedFiles.length > 0 && (
-                        <ListGroup className="mb-3 overflow-y-auto " style={{ maxHeight: "100px" }}>
-                            {selectedFiles.map((file, index) => (
-                                <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
+                    {inputValues.fileNames.length > 0 && (
+                        <ListGroup className="mb-3 overflow-y-auto" style={{ maxHeight: "100px" }}>
+                            {inputValues.fileNames.map((fileName, index) => (
+                                <ListGroup.Item key={index}>{fileName}</ListGroup.Item>
                             ))}
                         </ListGroup>
                     )}
+
                     <p style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                         Connections :
                     </p>
