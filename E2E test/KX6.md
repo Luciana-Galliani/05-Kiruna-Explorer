@@ -1,4 +1,3 @@
-Ecco la versione aggiornata con i titoli mancanti per gli **E2E Test Scenarios** relativi alla User Story KX6:
 
 ---
 

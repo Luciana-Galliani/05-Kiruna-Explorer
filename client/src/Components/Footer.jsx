@@ -47,7 +47,7 @@ const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatel
                 </div>
             )}
 
-            {(location.pathname === "/allDocuments" || isEditPage) ? (
+            {(location.pathname === "/allDocuments" || isEditPage || location.pathname === "/municipality") ? (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => navigate("/")}
