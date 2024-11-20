@@ -122,14 +122,24 @@ function App() {
                     path="/registration"
                     element={<RegistrationForm handleLogin={handleLogin} />}
                 />
-                <Route path="/allDocuments" element={<ListDocuments condition="false" isLoggedIn={isLoggedIn} />} />
-                <Route path="/municipality" element={<ListDocuments condition="true" isLoggedIn={isLoggedIn} />} />
+                <Route
+                    path="/allDocuments"
+                    element={<ListDocuments condition="false" isLoggedIn={isLoggedIn} />}
+                />
+                <Route
+                    path="/municipality"
+                    element={<ListDocuments condition="true" isLoggedIn={isLoggedIn} />}
+                />
             </Routes>
 
             {/* Buttons for the home page */}
-            <Footer isHomePage={isHomePage} isLoggedIn={isLoggedIn} location={location}
+            <Footer
+                isHomePage={isHomePage}
+                isLoggedIn={isLoggedIn}
+                location={location}
                 isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView} />
+                handleSatelliteView={handleSatelliteView}
+            />
 
             {/* Modale di conferma logout */}
             <ConfirmationModal

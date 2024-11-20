@@ -46,8 +46,14 @@ export function DescriptionForm({
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
         type: existingDocument ? existingDocument.document.type : "",
-        language: existingDocument && existingDocument.document.language !== "-" ? existingDocument.document.language : "",
-        pages: existingDocument && existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
+        language:
+            existingDocument && existingDocument.document.language !== "-"
+                ? existingDocument.document.language
+                : "",
+        pages:
+            existingDocument && existingDocument.document.pages !== "-"
+                ? existingDocument.document.pages
+                : "",
         description: existingDocument ? existingDocument.document.description : "",
         scale: existingDocument ? existingDocument.document.scaleType : "",
         planScale: existingDocument ? existingDocument.document.scaleValue : "",
@@ -145,17 +151,17 @@ export function DescriptionForm({
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const isSelected = prev.stakeholders.some(
-                    (item) => item.id === selectedStakeholder.id
-                );
-                const stakeholders = isSelected
-                    ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
+                const stakeholders = prev.stakeholders.includes(selectedStakeholder)
+                    ? prev.stakeholders.filter((item) => item !== selectedStakeholder)
                     : [...prev.stakeholders, selectedStakeholder];
                 return { ...prev, stakeholders };
             });
         } else {
             setInputValues((prev) => ({ ...prev, [activeField]: value }));
         }
+
+        console.log(inputValues.stakeholders);
+        console.log(stakeholderOptions);
     };
 
     const handleModalClose = () => {
@@ -657,6 +663,7 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
+                                    key={document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -690,9 +697,12 @@ export function DescriptionForm({
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            const isOptionAlreadyConnected = inputValues.connections.some(
-                                                (connection) => connection.targetDocument.id === document && connection.relationship === option
-                                            );
+                                            const isOptionAlreadyConnected =
+                                                inputValues.connections.some(
+                                                    (connection) =>
+                                                        connection.targetDocument.id === document &&
+                                                        connection.relationship === option
+                                                );
                                             return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
@@ -777,7 +787,10 @@ export function DescriptionForm({
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong> {connection.targetDocument.title}
+                                        <strong>Document:</strong>{" "}
+                                        {existingDocument
+                                            ? connection.targetDocument.title
+                                            : connection.document.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}

@@ -30,9 +30,9 @@ const CityMap = ({
     allDocuments,
     setAllDocuments,
     isLoggedIn,
+    isSatelliteView,
 }) => {
     const location = useLocation();
-
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -41,10 +41,10 @@ const CityMap = ({
     const latitude = 67.85572;
 
     // Define bounding coordinates for latitude and longitude
-    const MIN_LAT = 67.5;
-    const MAX_LAT = 68.17;
-    const MIN_LNG = 19.09;
-    const MAX_LNG = 21.3;
+    const MIN_LAT = 67.21;
+    const MAX_LAT = 69.3;
+    const MIN_LNG = 17.53;
+    const MAX_LNG = 23.17;
 
     const iconMap = {
         "Design Document": designIcon,
@@ -79,19 +79,25 @@ const CityMap = ({
         );
         const cityCenter = fromLonLat([longitude, latitude]);
 
+        const satelliteLayer = new TileLayer({
+            source: new OSM({
+                url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+            }),
+        });
+
+        const standardLayer = new TileLayer({
+            source: new OSM(),
+        });
+
+        const currentView = isSatelliteView ? satelliteLayer : standardLayer;
+
         const map = new Map({
             target: mapRef.current,
-            layers: [
-                new TileLayer({
-                    source: new OSM({
-                        url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-                    }),
-                }),
-            ],
+            layers: [currentView],
             view: new View({
                 center: cityCenter,
                 zoom: 14,
-                minZoom: 12,
+                minZoom: 7,
                 maxZoom: 20,
                 extent: extent,
             }),
@@ -102,7 +108,7 @@ const CityMap = ({
         return () => {
             map.setTarget(null);
         };
-    }, []);
+    }, [isSatelliteView]);
 
     useEffect(() => {
         if (!allDocuments || allDocuments.length === 0) return;
