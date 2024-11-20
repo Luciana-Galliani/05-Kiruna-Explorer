@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Card, ListGroup } from "react-bootstrap";
 import API from "../API/API.mjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stakeholder, Connection } from "../models.mjs";
@@ -53,8 +53,14 @@ export function DescriptionForm({
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
         type: existingDocument ? existingDocument.document.type : "",
-        language: existingDocument ? existingDocument.document.language : "",
-        pages: existingDocument ? existingDocument.document.pages : "",
+        language:
+            existingDocument && existingDocument.document.language !== "-"
+                ? existingDocument.document.language
+                : "",
+        pages:
+            existingDocument && existingDocument.document.pages !== "-"
+                ? existingDocument.document.pages
+                : "",
         description: existingDocument ? existingDocument.document.description : "",
         scale: existingDocument ? existingDocument.document.scaleType : "",
         planScale: existingDocument ? existingDocument.document.scaleValue : "",
@@ -69,6 +75,7 @@ export function DescriptionForm({
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     const tempRef = useRef(null);
     const [notification, setNotification] = useState({ message: "", type: "" });
@@ -151,9 +158,8 @@ export function DescriptionForm({
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const isSelected = prev.stakeholders.some((item) => item.id === selectedStakeholder.id);
-                const stakeholders = isSelected
-                ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
+                const stakeholders = prev.stakeholders.includes(selectedStakeholder)
+                    ? prev.stakeholders.filter((item) => item !== selectedStakeholder)
                     : [...prev.stakeholders, selectedStakeholder];
                 return { ...prev, stakeholders };
             });
@@ -199,6 +205,11 @@ export function DescriptionForm({
         } else {
             showNotification("Please fill in both document and type.", "error");
         }
+    };
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files); // Convert FileList to array
+        setSelectedFiles(files);
     };
 
     const handleSaveForm = async () => {
@@ -301,17 +312,21 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
-                await API.updateDocument(existingDocument.document.id, documentData);
-                showNotification("Document modified successfully!", "success");
-                const updatedOptions = documentOptions.filter(
-                    (option) => option.id !== existingDocument.document.id
+                const updateResponse = await API.updateDocument(
+                    existingDocument.document.id,
+                    documentData
                 );
-                setDocumentOptions([...updatedOptions, documentData]);
+                showNotification("Document modified successfully!", "success");
+                // Update document in the list
+                const updatedDocumentOptions = documentOptions.map((doc) =>
+                    doc.id === existingDocument.document.id ? updateResponse.document : doc
+                );
+                setDocumentOptions(updatedDocumentOptions);
                 navigate("/"); // Redirect to home page
             } else {
-                await API.createDocument(documentData);
+                const createResponse = await API.createDocument(documentData, selectedFiles);
                 showNotification("Document saved successfully!", "success");
-                setDocumentOptions([...documentOptions, documentData]);
+                setDocumentOptions([...documentOptions, createResponse.document]);
                 navigate("/"); // Redirect to home page
             }
         } catch (error) {
@@ -650,11 +665,13 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key= {existingDocument ? existingDocument.id : document.id}
-                                    value={existingDocument ? existingDocument : document}
+                                    key={document.id}
+                                    value={document}
                                     onChange={handleDocumentChange}
                                 >
-                                    <option value="">Select a document</option>
+                                    <option key="0" value="">
+                                        Select a document
+                                    </option>
                                     {documentOptions.map((doc) => (
                                         <option key={doc.id} value={doc.id}>
                                             {doc.title}
@@ -682,15 +699,13 @@ export function DescriptionForm({
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            // Verifica se la connessione con quel tipo di relazione è già presente
                                             const isOptionAlreadyConnected =
                                                 inputValues.connections.some(
                                                     (connection) =>
-                                                        (connection.document.id ===
-                                                              document) &&
+                                                        connection.targetDocument.id === document &&
                                                         connection.relationship === option
                                                 );
-                                            return !isOptionAlreadyConnected; // Escludi le opzioni già connesse
+                                            return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
                                             <option key={index} value={option}>
@@ -732,6 +747,24 @@ export function DescriptionForm({
                             />
                         </div>
                     </Form.Group>
+                    <Form.Group controlId="resourceFiles" className="mb-3">
+                        <Form.Label>Add resources</Form.Label>
+                        <Form.Control
+                            type="file"
+                            name="resourceFiles"
+                            multiple
+                            onChange={handleFileChange}
+                        />
+                        <Form.Text className="text-muted">You can add one or more files.</Form.Text>
+                    </Form.Group>
+
+                    {selectedFiles.length > 0 && (
+                        <ListGroup className="mb-3 overflow-y-auto " style={{ maxHeight: "100px" }}>
+                            {selectedFiles.map((file, index) => (
+                                <ListGroup.Item key={index}>{file.name}</ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    )}
                     <p style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}>
                         Connections :
                     </p>
@@ -789,7 +822,9 @@ export function DescriptionForm({
                                         id={option.id}
                                         label={option.name}
                                         value={option.name}
-                                        checked={inputValues.stakeholders.some((stakeholder) => stakeholder.id === option.id)} // Check if object is in array
+                                        checked={inputValues.stakeholders.some(
+                                            (stakeholder) => stakeholder.id === option.id
+                                        )} // Check if object is in array
                                         onChange={handleInputChange}
                                         style={{ width: "35%" }}
                                     />
@@ -829,7 +864,7 @@ export function EditDocumentForm({
     className,
 }) {
     //const { docId } = useParams(); //Get the document ID
-    const docId = 11;
+    const docId = 8;
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
     const [loading, setLoading] = useState(true); // Loading status

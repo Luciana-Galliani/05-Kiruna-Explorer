@@ -1,5 +1,6 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddlewares.mjs";
+import { upload } from "../middlewares/multer.mjs";
 import {
     getDocuments,
     getDocumentById,
@@ -13,7 +14,7 @@ const router = express.Router();
 router.get("/", getDocuments);
 router.get("/:id", getDocumentById);
 // Authenticated routes
-router.post("/", authMiddleware, createDocument);
+router.post("/", authMiddleware, upload.array("files"), createDocument);
 router.put("/:id", authMiddleware, updateDocument);
 
 export default router;

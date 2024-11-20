@@ -3,7 +3,6 @@ const getAuthToken = () => localStorage.getItem("authToken");
 const baseURL = "http://localhost:3001";
 
 const authHeaders = () => ({
-    "Content-Type": "application/json",
     Authorization: `Bearer ${getAuthToken()}`,
 });
 
@@ -80,16 +79,34 @@ const getDocument = async (documentId) => {
     }
 };
 
-const createDocument = async (documentData) => {
-    documentData.connections = documentData.connections.map((connection) => ({
-        documentId: connection.document.id,
-        relationship: connection.relationship,
-    }));
+const createDocument = async (documentData, files) => {
+    const formData = new FormData();
+
+    formData.append(
+        "documentData",
+        JSON.stringify({
+            ...documentData,
+            connections: documentData.connections.map((connection) => ({
+                documentId: connection.document.id,
+                relationship: connection.relationship,
+            })),
+        })
+    );
+
+    if (files && files.length > 0) {
+        for (const file of files) {
+            formData.append("files", file);
+        }
+    }
+    for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
     const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(documentData),
+        headers: authHeaders(false),
+        body: formData,
     });
+
     if (response.ok) {
         const doc = await response.json();
         return doc;
@@ -100,6 +117,10 @@ const createDocument = async (documentData) => {
 };
 
 const updateDocument = async (documentId, documentData) => {
+    documentData.connections = documentData.connections.map((connection) => ({
+        documentId: connection.document.id,
+        relationship: connection.relationship,
+    }));
     const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
         headers: authHeaders(),
