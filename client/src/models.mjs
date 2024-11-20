@@ -7,8 +7,8 @@ export class Stakeholder {
 }
 
 export class Connection {
-    constructor(document, relationship) {
-        this.document = document;
+    constructor(targetDocument, relationship) {
+        this.targetDocument = targetDocument;
         this.relationship = relationship;
     }
 }

@@ -1,5 +1,4 @@
 # my-node-app/docker-compose.yml
-version: '3.8'
 
 services:
   app:
@@ -28,10 +27,10 @@ services:
       - "3001:3001"  # Map host port 5000 to server container port
     environment:
       - NODE_ENV=development
-      - DB_HOST=mysql  # Set MySQL hostname to service name
-      - DB_USER=user
-      - DB_PASSWORD=password
-      - DB_NAME=kiruna_db
+      - MYSQL_HOST=mysql  # Set MySQL hostname to service name
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_NAME=kiruna_db
     depends_on:
       mysql:
         condition: service_healthy

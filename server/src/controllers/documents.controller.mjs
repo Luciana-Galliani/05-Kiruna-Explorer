@@ -1,3 +1,5 @@
+import path from "path";
+import fs from "fs";
 import documentsDAO from "../dao/documents.dao.mjs";
 
 export const getDocuments = async (req, res) => {
@@ -27,7 +29,27 @@ export const getDocumentById = async (req, res) => {
 
 export const createDocument = async (req, res) => {
     try {
-        const newDocument = await documentsDAO.createDocument(req.body);
+        const documentData = JSON.parse(req.body.documentData);
+        const files = req.files;
+
+        const newDocument = await documentsDAO.createDocument(documentData);
+
+        // Create directory for document resources
+        const documentDir = path.join(
+            process.cwd(),
+            `document_resources/${newDocument.id}/original_resources`
+        );
+        if (!fs.existsSync(documentDir)) {
+            fs.mkdirSync(documentDir, { recursive: true });
+        }
+
+        // Move uploaded files to document directory
+        files.forEach((file) => {
+            const targetPath = path.join(documentDir, file.originalname);
+            fs.copyFileSync(file.path, targetPath);
+            fs.unlinkSync(file.path);
+        });
+
         res.status(201).json({ document: newDocument });
     } catch (error) {
         console.error("Error in createDocument controller:", error);
@@ -57,10 +79,7 @@ export const updateDocument = async (req, res) => {
             connections: req.body.connections,
         };
 
-        const updatedDocument = await documentsDAO.updateDocument(
-            documentId,
-            documentData
-        );
+        const updatedDocument = await documentsDAO.updateDocument(documentId, documentData);
 
         res.status(200).json({ document: updatedDocument });
     } catch (error) {

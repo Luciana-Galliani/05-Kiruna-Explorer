@@ -1,33 +1,44 @@
 export default async function populateDB(sequelize) {
     console.log("Populating the database...");
-    const { Document, Stakeholder, Connection } = sequelize.models;
+    const { Document, Stakeholder, Connection, User } = sequelize.models;
     try {
+        // Create users
+        await User.bulkCreate(
+            [
+                {
+                    username: "urbanPlanner1",
+                    password: "$2b$10$SHN3nqGw3nqBGiUzlHPopukqztXbCMrWZVxeDFqPL4jAvVrp74CSS",
+                },
+            ],
+            { validate: true }
+        );
+
         // Create stakeholders
         const stakeholders = await Stakeholder.bulkCreate(
             [
                 {
                     name: "LKAB",
-                    color: "#000000",
+                    color: "#428243",
                 },
                 {
                     name: "Municipality",
-                    color: "#FF0000",
+                    color: "#8C6760",
                 },
                 {
                     name: "Norrbotten County",
-                    color: "#00FF00",
+                    color: "#6B282E",
                 },
                 {
                     name: "Architecture firms",
-                    color: "#0000FF",
+                    color: "#B6AD9D",
                 },
                 {
                     name: "Citizens",
-                    color: "#FFFF00",
+                    color: "#B3D0D3",
                 },
                 {
                     name: "Others",
-                    color: "#00FFFF",
+                    color: "#8CA2A4",
                 },
             ],
             { validate: true }
@@ -41,6 +52,7 @@ export default async function populateDB(sequelize) {
                     scaleType: "Text",
                     issuanceDate: "2007",
                     type: "Informative Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     description:
                         "This document is a compilation of the responses to the survey 'What is your impression of Kiruna?' From the citizens' responses to this last part of the survey, it is evident that certain buildings, such as the Kiruna Church, the Hjalmar Lundbohmsgården, and the Town Hall, are considered of significant value to the population. The municipality views the experience of this survey positively, to the extent that over the years it will propose various consultation opportunities.",
@@ -51,6 +63,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:8.000",
                     issuanceDate: "2010-10-20",
                     type: "Prescriptive Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1-32",
                     description:
@@ -62,6 +75,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2014-03-17",
                     type: "Design Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "111",
                     description:
@@ -73,6 +87,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:12.500",
                     issuanceDate: "2014-12",
                     type: "Technical Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -85,6 +100,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2015",
                     type: "Design Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -96,6 +112,7 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:1.000",
                     issuanceDate: "2016-06-22",
                     type: "Prescriptive Document",
+                    allMunicipality: true,
                     language: "Swedish",
                     pages: "1-43",
                     description:
@@ -106,9 +123,11 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'54.7\"N 20°18'17.2\"E",
+                    latitude: 67.848417,
+                    longitude: 20.30477,
                     description:
                         "After two extensions of the land acquisition agreement, necessary because this document in Sweden is valid for only two years, construction of the hotel finally began in 2019.",
                 },
@@ -117,9 +136,11 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-04",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
-                    coordinates: "67°51'09.0\"N 20°13'20.8\"E",
+                    latitude: 67.8525,
+                    longitude: 20.222444,
                     description:
                         'After the construction of the new town hall was completed, the old building, nicknamed "The Igloo," was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building.',
                 },
@@ -128,9 +149,11 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-05",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'57.0\"N 20°18'15.8\"E",
+                    latitude: 67.849167,
+                    longitude: 20.304389,
                     description:
                         "Shortly after the construction of the Scandic hotel began, work on the Aurora Center also started, a multifunctional complex that includes the municipal library of Kiruna. The two buildings are close to each other and connected by a skywalk, just like in the old town center.",
                 },
@@ -139,9 +162,11 @@ export default async function populateDB(sequelize) {
                     scaleType: "Blueprints/actions",
                     issuanceDate: "2019-06",
                     type: "Action",
+                    allMunicipality: false,
                     language: "-",
                     pages: "-",
-                    coordinates: "67°50'54.8\"N 20°18'01.2\"E",
+                    latitude: 67.8485,
+                    longitude: 20.300333,
                     description:
                         "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town.",
                 },
@@ -152,40 +177,44 @@ export default async function populateDB(sequelize) {
         await documents[0].setStakeholders([stakeholders[1].id, stakeholders[4].id]);
         await documents[1].setStakeholders(stakeholders[1]);
         await documents[2].setStakeholders([stakeholders[1], stakeholders[3]]);
-        /*
-                await documents[3].setStakeholders(stakeholders[0]);
-                await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
-                await documents[5].setStakeholders(stakeholders[1]);
-                await documents[6].setStakeholders(stakeholders[0]);
-                await documents[7].setStakeholders(stakeholders[0]);
-                await documents[8].setStakeholders(stakeholders[0]);
-                await documents[9].setStakeholders(stakeholders[0]);*/
+
+        await documents[3].setStakeholders(stakeholders[0]);
+        await documents[4].setStakeholders([stakeholders[1], stakeholders[3]]);
+        await documents[5].setStakeholders(stakeholders[1]);
+        await documents[6].setStakeholders(stakeholders[0]);
+        await documents[7].setStakeholders(stakeholders[0]);
+        await documents[8].setStakeholders(stakeholders[0]);
+        await documents[9].setStakeholders(stakeholders[0]);
 
         await Connection.bulkCreate([
             {
                 sourceDocumentId: documents[0].id,
-                targetDocumentId: documents[1].id,
-                relationship: "Update",
+                targetDocumentId: documents[4].id,
             },
             {
-                sourceDocumentId: documents[1].id,
-                targetDocumentId: documents[0].id,
-                relationship: "Update",
-            },
-            {
-                sourceDocumentId: documents[1].id,
+                sourceDocumentId: documents[3].id,
                 targetDocumentId: documents[2].id,
-                relationship: "Collateral Consequence",
             },
             {
-                sourceDocumentId: documents[2].id,
+                sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[1].id,
-                relationship: "Collateral Consequence",
+            },
+            {
+                sourceDocumentId: documents[5].id,
+                targetDocumentId: documents[6].id,
+            },
+            {
+                sourceDocumentId: documents[5].id,
+                targetDocumentId: documents[7].id,
+            },
+            {
+                sourceDocumentId: documents[8].id,
+                targetDocumentId: documents[9].id,
             },
         ]);
 
-        console.log("Database populated successfully.");
-    } catch (error) {
-        console.error("Unable to connect to the database:", error);
+        console.log("Database populated successfully!");
+    } catch (err) {
+        console.error("Error populating the database:", err);
     }
 }

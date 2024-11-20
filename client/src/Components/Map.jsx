@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -21,16 +21,21 @@ import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 import { none } from "ol/centerconstraint";
+import DetailsPanel from "./DetailsPanel";
+import { useLocation } from "react-router-dom";
 
 const CityMap = ({
     isSelectingCoordinates,
     handleCoordinatesSelected,
     allDocuments,
     setAllDocuments,
-    isSatelliteView
+    isLoggedIn,
+    isSatelliteView,
 }) => {
+    const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
 
     const longitude = 20.22513;
     const latitude = 67.85572;
@@ -64,7 +69,6 @@ const CityMap = ({
 
         fetchAllDocuments();
     }, []);
-    
 
     useEffect(() => {
         // Transform extent to the map projection
@@ -79,7 +83,7 @@ const CityMap = ({
             source: new OSM({
                 url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
             }),
-        })
+        });
 
         const standardLayer = new TileLayer({
             source: new OSM(),
@@ -89,9 +93,7 @@ const CityMap = ({
 
         const map = new Map({
             target: mapRef.current,
-            layers: [
-                currentView,
-            ],
+            layers: [currentView],
             view: new View({
                 center: cityCenter,
                 zoom: 14,
@@ -120,13 +122,13 @@ const CityMap = ({
                 const feature = new Feature({
                     geometry: new Point(location),
                     documentId: doc.id,
+                    documentTitle: doc.title,
                 });
+                const img = new Image();
+                img.src = iconMap[doc.type];
 
                 let colorIcon =
                     stakeholders && stakeholders.length === 1 ? stakeholders[0].color : "purple";
-
-                const img = new Image();
-                img.src = iconMap[doc.type];
 
                 img.onload = () => {
                     feature.setStyle([
@@ -134,9 +136,9 @@ const CityMap = ({
                             image: new Icon({
                                 anchor: [0.5, 0.5],
                                 img: img,
-                                imgSize: [img.width, img.height],
                                 scale: 0.4,
-                                color: stakeholders[0].name !== "LKAB" ? colorIcon : "white",
+                                imgSize: [img.width, img.height],
+                                color: colorIcon,
                             }),
                         }),
                     ]);
@@ -162,6 +164,13 @@ const CityMap = ({
         const map = mapInstanceRef.current;
         if (map) {
             map.addLayer(vectorLayer);
+            map.on("click", (event) => {
+                map.forEachFeatureAtPixel(event.pixel, (feature) => {
+                    const documentTitle = feature.get("documentTitle");
+                    const matchedDocument = allDocuments.find((doc) => doc.title === documentTitle);
+                    setSelectedDocument(matchedDocument);
+                });
+            });
         }
 
         return () => {
@@ -172,14 +181,6 @@ const CityMap = ({
     }, [allDocuments]);
 
     useEffect(() => {
-        // Change cursor style based on isSelectingCoordinates
-        const targetElement = mapRef.current;
-        if (isSelectingCoordinates) {
-            targetElement.style.cursor = "pointer";
-        } else {
-            targetElement.style.cursor = "default";
-        }
-
         const handleMapClick = (event) => {
             if (isSelectingCoordinates) {
                 const clickedCoordinate = event.coordinate;
@@ -191,6 +192,20 @@ const CityMap = ({
         const map = mapInstanceRef.current;
         if (!map) return;
         map.on("click", handleMapClick);
+        // Add pointer event listeners to change the cursor
+        map.on("pointermove", (event) => {
+            const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+
+            if (featureAtPixel) {
+                // Change cursor to pointer
+                map.getTargetElement().style.cursor = "pointer";
+            } else {
+                // Reset to default cursor
+                map.getTargetElement().style.cursor = isSelectingCoordinates
+                    ? "pointer"
+                    : "default";
+            }
+        });
         return () => {
             map.un("click", handleMapClick);
         };
@@ -198,7 +213,17 @@ const CityMap = ({
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
-            <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+            <div style={{ height: "100%" }}>
+                <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+
+                {selectedDocument && location.pathname == "/" && (
+                    <DetailsPanel
+                        doc={selectedDocument}
+                        onClose={() => setSelectedDocument(null)} // Close the details panel
+                        isLoggedIn={isLoggedIn}
+                    />
+                )}
+            </div>
         </div>
     );
 };
