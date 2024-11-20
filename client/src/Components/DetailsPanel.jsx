@@ -59,12 +59,20 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
 
                 <div className="d-flex justify-content-center gap-3 mt-4">
                     {isLoggedIn && (
-                        <button
-                            className="btn btn-primary px-4"
-                            onClick={() => navigate(`/edit/${document.id}`)}
-                        >
-                            Modify
-                        </button>
+                        <>
+                            <button
+                                className="btn btn-primary px-4"
+                                onClick={() => navigate(`/edit/${document.id}`)}
+                            >
+                                Modify
+                            </button>
+                            <button
+                                className="btn btn-secondary px-4"
+                                onClick={() => alert('Download done')}
+                            >
+                                Download file
+                            </button>
+                        </>
                     )}
                     <button className="btn btn-danger px-4" onClick={onClose}>
                         Close
