@@ -97,9 +97,6 @@ const createDocument = async (documentData, files) => {
             formData.append("files", file);
         }
     }
-    for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
     const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
         headers: authHeaders(false),

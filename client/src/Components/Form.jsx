@@ -39,31 +39,51 @@ export function DescriptionForm({
         );
     }
     const [inputValues, setInputValues] = useState({
-        title: existingDocument ? existingDocument.document.title : "",
-        stakeholders: existingDocument ? stakeholdersArray : [],
-        issuanceYear: existingDocument ? date[0] : "",
-        issuanceMonth: existingDocument ? date[1] : "",
-        issuanceDay: existingDocument ? date[2] : "",
-        type: existingDocument ? existingDocument.document.type : "",
-        language: existingDocument && existingDocument.document.language !== "-" ? existingDocument.document.language : "",
-        pages: existingDocument && existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
-        description: existingDocument ? existingDocument.document.description : "",
-        scale: existingDocument ? existingDocument.document.scaleType : "",
-        planScale: existingDocument ? existingDocument.document.scaleValue : "",
-        allMunicipality: existingDocument ? existingDocument.document.allMunicipality : false,
-        latitude: existingDocument && existingDocument.document.latitude
-            ? parseFloat(existingDocument.document.latitude)
-            : null,
-        longitude: existingDocument && existingDocument.document.longitude
-            ? parseFloat(existingDocument.document.longitude)
-            : null,
-
-        connections: existingDocument ? existingDocument.document.connections : [],
-        fileNames: existingDocument && existingDocument.document.originalResources ? existingDocument.document.originalResources : []
+        title: "",
+        stakeholders: [],
+        issuanceYear: "",
+        issuanceMonth: "",
+        issuanceDay: "",
+        type: "",
+        language: "",
+        pages: "",
+        description: "",
+        scale: "",
+        planScale: "",
+        allMunicipality: false,
+        latitude: null,
+        longitude: null,
+        connections: [],
+        fileNames: [],
     });
-    console.log(inputValues);
-    console.log(existingDocument);
-    console.log(existingDocument.originalResources);
+
+    // Synchronize inputValues with existingDocument
+    useEffect(() => {
+        if (existingDocument) {
+            setInputValues({
+                title: existingDocument.document.title || "",
+                stakeholders: existingDocument.document.stakeholders || [],
+                issuanceYear: date[0] || "",
+                issuanceMonth: date[1] || "",
+                issuanceDay: date[2] || "",
+                type: existingDocument.document.type || "",
+                language: existingDocument.document.language !== "-" ? existingDocument.document.language : "",
+                pages: existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
+                description: existingDocument.document.description || "",
+                scale: existingDocument.document.scaleType || "",
+                planScale: existingDocument.document.scaleValue || "",
+                allMunicipality: existingDocument.document.allMunicipality || false,
+                latitude: existingDocument.document.latitude
+                    ? parseFloat(existingDocument.document.latitude)
+                    : null,
+                longitude: existingDocument.document.longitude
+                    ? parseFloat(existingDocument.document.longitude)
+                    : null,
+                connections: existingDocument.document.connections || [],
+                fileNames: existingDocument.document.originalResources || [],
+            });
+        }
+    }, [existingDocument]);
 
 
     const [showModal, setShowModal] = useState(false);
@@ -598,16 +618,17 @@ export function DescriptionForm({
                                 type="checkbox"
                                 label="All Municipality"
                                 checked={inputValues.allMunicipality}
-                                onChange={(e) =>
-                                    setInputValues({
-                                        ...inputValues,
-                                        longitude: null,
-                                        latitude: null,
-                                        allMunicipality: e.target.checked,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setInputValues((prev) => ({
+                                        ...prev,
+                                        allMunicipality: isChecked,
+                                        ...(isChecked && { longitude: null, latitude: null }),
+                                    }));
+                                }}
                             />
                         </Form.Group>
+
                         <Form.Group controlId="formLatitude" className="mb-3">
                             <Form.Label
                                 style={{
