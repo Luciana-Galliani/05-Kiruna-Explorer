@@ -68,7 +68,7 @@ const CityMap = ({
         };
 
         fetchAllDocuments();
-    }, []);
+    }, [isSatelliteView]);
 
     useEffect(() => {
         // Transform extent to the map projection
