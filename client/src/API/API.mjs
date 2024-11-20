@@ -81,13 +81,12 @@ const getDocument = async (documentId) => {
 
 const createDocument = async (documentData, files) => {
     const formData = new FormData();
-
     formData.append(
         "documentData",
         JSON.stringify({
             ...documentData,
             connections: documentData.connections.map((connection) => ({
-                documentId: connection.document.id,
+                documentId: connection.targetDocument.id,
                 relationship: connection.relationship,
             })),
         })
@@ -118,13 +117,14 @@ const createDocument = async (documentData, files) => {
 
 const updateDocument = async (documentId, documentData) => {
     documentData.connections = documentData.connections.map((connection) => ({
-        documentId: connection.document.id,
+        documentId: connection.targetDocument.id,
         relationship: connection.relationship,
     }));
+    console.log(documentData);
     const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
-        headers: authHeaders(),
-        body: JSON.stringify(documentData),
+        headers: authHeaders(false),
+        body: documentData,
     });
     if (response.ok) {
         const doc = await response.json();
@@ -134,6 +134,7 @@ const updateDocument = async (documentId, documentData) => {
         throw errDetails;
     }
 };
+
 
 const getConnections = async () => {
     const response = await fetch(`${baseURL}/api/connections`, {

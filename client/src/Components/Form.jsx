@@ -21,15 +21,15 @@ export function DescriptionForm({
         }
     }, [isLoggedIn, navigate]);
 
-    let date = "";
-    if (existingDocument && existingDocument.document.issuanceDate.includes("-")) {
+    let date = [];
+    if (existingDocument && existingDocument.document.issuanceDate) {
         date = existingDocument.document.issuanceDate.split("-");
-        if (date.length == 1) {
-            date.push("00");
-            date.push("00");
-        } else if (date.length == 2) {
+
+        while (date.length < 3) {
             date.push("00");
         }
+    } else {
+        date = ["00", "00", "00"];
     }
 
     let stakeholdersArray = [];
@@ -38,14 +38,6 @@ export function DescriptionForm({
             (item) => new Stakeholder(item.id, item.name, item.color)
         );
     }
-
-    let connectionsArray = [];
-    if (existingDocument && existingDocument.document.connections.length != 0) {
-        connectionsArray = existingDocument.document.connections.map(
-            (item) => new Connection(item.targetDocument, item.relationship)
-        );
-    }
-
     const [inputValues, setInputValues] = useState({
         title: existingDocument ? existingDocument.document.title : "",
         stakeholders: existingDocument ? stakeholdersArray : [],
@@ -53,21 +45,20 @@ export function DescriptionForm({
         issuanceMonth: existingDocument ? date[1] : "",
         issuanceDay: existingDocument ? date[2] : "",
         type: existingDocument ? existingDocument.document.type : "",
-        language:
-            existingDocument && existingDocument.document.language !== "-"
-                ? existingDocument.document.language
-                : "",
-        pages:
-            existingDocument && existingDocument.document.pages !== "-"
-                ? existingDocument.document.pages
-                : "",
+        language: existingDocument && existingDocument.document.language !== "-" ? existingDocument.document.language : "",
+        pages: existingDocument && existingDocument.document.pages !== "-" ? existingDocument.document.pages : "",
         description: existingDocument ? existingDocument.document.description : "",
         scale: existingDocument ? existingDocument.document.scaleType : "",
         planScale: existingDocument ? existingDocument.document.scaleValue : "",
         allMunicipality: existingDocument ? existingDocument.document.allMunicipality : false,
-        latitude: existingDocument ? existingDocument.document.latitude : null,
-        longitude: existingDocument ? existingDocument.document.longitude : null,
-        connections: existingDocument ? connectionsArray : [],
+        latitude: existingDocument && existingDocument.document.latitude
+            ? parseFloat(existingDocument.document.latitude)
+            : null,
+        longitude: existingDocument && existingDocument.document.longitude
+            ? parseFloat(existingDocument.document.longitude)
+            : null,
+
+        connections: existingDocument ? existingDocument.document.connections : [],
     });
 
     const [showModal, setShowModal] = useState(false);
@@ -158,8 +149,11 @@ export function DescriptionForm({
         if (activeField === "stakeholders") {
             const selectedStakeholder = stakeholderOptions.find((option) => option.name === value);
             setInputValues((prev) => {
-                const stakeholders = prev.stakeholders.includes(selectedStakeholder)
-                    ? prev.stakeholders.filter((item) => item !== selectedStakeholder)
+                const isSelected = prev.stakeholders.some(
+                    (item) => item.id === selectedStakeholder.id
+                );
+                const stakeholders = isSelected
+                    ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
                     : [...prev.stakeholders, selectedStakeholder];
                 return { ...prev, stakeholders };
             });
@@ -180,10 +174,12 @@ export function DescriptionForm({
     };
 
     const removeConnection = (index) => {
+        console.log(inputValues.connections);
         setInputValues((prev) => ({
             ...prev,
             connections: prev.connections.filter((_, i) => i !== index),
         }));
+        console.log(inputValues.connections);
     };
 
     const addConnection = () => {
@@ -312,10 +308,7 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
-                const updateResponse = await API.updateDocument(
-                    existingDocument.document.id,
-                    documentData
-                );
+                const updateResponse = await API.updateDocument(existingDocument.document.id, documentData);
                 showNotification("Document modified successfully!", "success");
                 // Update document in the list
                 const updatedDocumentOptions = documentOptions.map((doc) =>
@@ -665,7 +658,6 @@ export function DescriptionForm({
                                 </Form.Label>
                                 <Form.Control
                                     as="select"
-                                    key={document.id}
                                     value={document}
                                     onChange={handleDocumentChange}
                                 >
@@ -699,12 +691,9 @@ export function DescriptionForm({
                                     <option value="">Select type</option>
                                     {relationshipOptions
                                         .filter((option) => {
-                                            const isOptionAlreadyConnected =
-                                                inputValues.connections.some(
-                                                    (connection) =>
-                                                        connection.targetDocument.id === document &&
-                                                        connection.relationship === option
-                                                );
+                                            const isOptionAlreadyConnected = inputValues.connections.some(
+                                                (connection) => connection.targetDocument.id === document && connection.relationship === option
+                                            );
                                             return !isOptionAlreadyConnected;
                                         })
                                         .map((option, index) => (
@@ -789,8 +778,7 @@ export function DescriptionForm({
                                 </button>
                                 <Card.Body>
                                     <Card.Text>
-                                        <strong>Document:</strong>{" "}
-                                        {connection.document.title}
+                                        <strong>Document:</strong> {connection.targetDocument.title}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Type:</strong> {connection.relationship}
@@ -863,8 +851,7 @@ export function EditDocumentForm({
     setDocumentOptions,
     className,
 }) {
-    //const { docId } = useParams(); //Get the document ID
-    const docId = 8;
+    const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
     const [loading, setLoading] = useState(true); // Loading status
@@ -878,7 +865,7 @@ export function EditDocumentForm({
     useEffect(() => {
         const fetchDocumentById = async () => {
             try {
-                const resp = await API.getDocument(docId);
+                const resp = await API.getDocument(documentId);
                 setExistingDocument(resp);
                 setLoading(false);
             } catch (error) {
