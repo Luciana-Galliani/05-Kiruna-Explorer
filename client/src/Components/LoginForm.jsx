@@ -18,8 +18,8 @@ function LoginForm({ handleLogin }) {
     };
 
     return (
-        <Container className="vh-100 d-flex align-items-center justify-content-center">
-            <Row className="w-100">
+        <div className="h-100 w-100 d-flex align-items-center justify-content-center position-absolute top-0">
+            <Row className="w-100 mw-1000px">
                 <Col xs={12} sm={10} md={8} lg={6} className="mx-auto">
                     <Card className="shadow-sm">
                         <Card.Body>
@@ -67,14 +67,15 @@ function LoginForm({ handleLogin }) {
                             </Form>
                             <div className="text-center mt-3">
                                 <small>
-                                    Don't have an account? <Link to="/registration">Register here</Link>
+                                    Don't have an account?{" "}
+                                    <Link to="/registration">Register here</Link>
                                 </small>
                             </div>
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 }
 

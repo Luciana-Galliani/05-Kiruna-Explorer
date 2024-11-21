@@ -28,8 +28,8 @@ function RegistrationForm({ handleLogin }) {
     };
 
     return (
-        <Container className="vh-100 d-flex align-items-center justify-content-center">
-            <Row className="w-100">
+        <div className="h-100 w-100 d-flex align-items-center justify-content-center position-absolute top-0">
+            <Row className="w-100 mw-1000px">
                 <Col xs={12} sm={10} md={8} lg={6} className="mx-auto">
                     <Card className="shadow-sm">
                         <Card.Body>
@@ -56,7 +56,9 @@ function RegistrationForm({ handleLogin }) {
                                         required
                                         minLength={6}
                                         placeholder="Enter your password"
-                                        className={password && password.length < 6 ? "is-invalid" : ""}
+                                        className={
+                                            password && password.length < 6 ? "is-invalid" : ""
+                                        }
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Password must be at least 6 characters long.
@@ -88,7 +90,9 @@ function RegistrationForm({ handleLogin }) {
                                         variant="primary"
                                         type="submit"
                                         className="mb-2"
-                                        disabled={!username || !password || confirmPassword !== password}
+                                        disabled={
+                                            !username || !password || confirmPassword !== password
+                                        }
                                     >
                                         Register
                                     </Button>
@@ -101,7 +105,7 @@ function RegistrationForm({ handleLogin }) {
                     </Card>
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 }
 

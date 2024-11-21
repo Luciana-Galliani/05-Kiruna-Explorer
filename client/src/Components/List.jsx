@@ -27,24 +27,27 @@ const List = ({ condition, isLoggedIn }) => {
 
     return (
         <div
-            className="d-flex"
+            className="d-flex position-absolute"
             style={{
-                height: "100vh",
-                backgroundColor: "#f8f9fa",
-                alignItems: "flex-start",
+                top: "70px",
+                margin: "0 20px",
+                maxWidth: "calc(100% - 40px)",
+                minHeight: "80%",
+                maxHeight: "calc(100% - 75px)",
             }}
         >
             <div
                 className={"container position-relative "}
                 style={{
                     padding: "20px",
-                    width: "90%",
-                    height: "90%",
+                    width: "max-content",
+                    maxWidth: "100%",
                     borderRadius: "0.375rem",
                     boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
                     background: "rgba(255, 255, 255, 0.9)",
                     color: "#333",
                     zIndex: 1,
+                    overflowY: "auto",
                 }}
             >
                 <h1>{condition == "true" ? "All Municipality Documents" : "Documents"}</h1>
