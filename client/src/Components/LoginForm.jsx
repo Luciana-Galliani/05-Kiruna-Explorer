@@ -31,6 +31,7 @@ function LoginForm({ handleLogin }) {
                                 value={username}
                                 onChange={(ev) => setUsername(ev.target.value)}
                                 required
+                                autoFocus
                                 placeholder="Enter your Username"
                                 autoComplete="on"
                             />

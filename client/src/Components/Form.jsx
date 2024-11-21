@@ -169,19 +169,18 @@ export function DescriptionForm({
                     const response = await fetch(url);
 
                     if (!response.ok) {
-                        throw new Error(`Errore durante il download del file ${resourceName}`);
+                        throw new Error(`Error while uploading file ${resourceName}`);
                     }
 
                     const blob = await response.blob();
-                    const objectUrl = URL.createObjectURL(blob);
-
-                    return { name: resourceName, url: objectUrl };
+                    const file = new File([blob], resourceName, { type: blob.type });
+                    return file;
                 });
 
                 const files = await Promise.all(filePromises);
                 setSelectedFiles(files);
             } catch (error) {
-                console.error("Errore durante il download dei file:", error);
+                console.error("Error while uploading files :", error);
             }
         };
 
@@ -373,6 +372,8 @@ export function DescriptionForm({
 
         try {
             if (existingDocument) {
+                console.log("Updating document:", existingDocument.document.title);
+                console.log("Files", selectedFiles);
                 const updateResponse = await API.updateDocument(
                     existingDocument.document.id,
                     documentData,
@@ -387,6 +388,8 @@ export function DescriptionForm({
                 setNeedRefresh(true);
                 navigate("/"); // Redirect to home page
             } else {
+                console.log("Updating document:", documentData.title);
+                console.log("Files", selectedFiles);
                 const createResponse = await API.createDocument(documentData, selectedFiles);
                 showNotification("Document saved successfully!", "success");
                 setDocumentOptions([...documentOptions, createResponse.document]);
@@ -811,7 +814,11 @@ export function DescriptionForm({
                         </div>
                     </Form.Group>
                     <Form.Group controlId="resourceFiles" className="mb-3">
-                        <Form.Label>Add resources</Form.Label>
+                        <Form.Label
+                            style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
+                        >
+                            Add resources
+                        </Form.Label>
                         <Form.Control
                             type="file"
                             name="resourceFiles"
