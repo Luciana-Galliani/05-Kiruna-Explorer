@@ -55,3 +55,9 @@ If you want to run the **UNIT TEST**, you need to run the command `docker-compos
 
 The set-up files (Dockerfiles and Docker-compose) are adjust for running correctly even if the mysql server is running on the host machine. In case of any problems on the port you can adjust the port number on this files.
 Additionally the **.env** file is changed allowing the correct connection between DB and server.
+
+
+### Deploy environment
+
+For run this project in a deploy environment without have the code need to use the `docker-compose.deploy.yml` file.
+The command for running are `docker-compose -f docker-compose.deploy.yml up -d`.
