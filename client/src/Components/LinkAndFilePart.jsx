@@ -108,9 +108,9 @@ export function LinkAndFilePart({
                         key={index}
                         className="mb-2 me-1 position-relative"
                         style={{
-                            maxWidth: "100%",  // Mantieni la larghezza massima
-                            maxHeight: "150px", // Limita l'altezza della card
-                            overflow: "hidden", // Nascondi il contenuto che supera l'altezza
+                            maxWidth: "100%",
+                            maxHeight: "150px",
+                            overflow: "hidden",
                         }}
                     >
                         <button
@@ -129,7 +129,7 @@ export function LinkAndFilePart({
                         >
                             ✖
                         </button>
-                        <Card.Body style={{ padding: "5px" }}> {/* Ridurre il padding interno della Card.Body */}
+                        <Card.Body style={{ padding: "5px" }}>
                             <Card.Text style={{ fontSize: "0.85rem", marginBottom: "2px" }}>
                                 <strong>Document:</strong> {connection.targetDocument.title}
                             </Card.Text>

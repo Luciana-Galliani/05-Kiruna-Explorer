@@ -125,7 +125,6 @@ const updateDocument = async (documentId, documentData, selectedFiles) => {
             })),
         })
     );
-    console.log(selectedFiles);
     if (selectedFiles && selectedFiles.length > 0) {
         for (const file of selectedFiles) {
             formData.append("files", file);

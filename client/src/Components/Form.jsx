@@ -14,7 +14,6 @@ import "react-step-progress-bar/styles.css";
 const initializeInputValues = (doc) => {
     const defaultDate = ["", "", ""];
     const dateParts = doc?.document?.issuanceDate?.split("-") || defaultDate;
-    console.log(doc);
 
     return {
         title: doc?.document?.title || "",
@@ -194,7 +193,6 @@ export function DescriptionForm({
     };
 
     const handleUpdateDocument = async (data) => {
-        console.log(existingDocument.document.id, data, selectedFiles);
         const response = await API.updateDocument(existingDocument.document.id, data, selectedFiles);
         showNotification("Document modified successfully!", "success");
         updateDocumentList(response.document);
@@ -202,7 +200,6 @@ export function DescriptionForm({
     };
 
     const handleCreateDocument = async (data) => {
-        console.log(data);
         const response = await API.createDocument(data, selectedFiles);
         showNotification("Document saved successfully!", "success");
         setDocumentOptions((prev) => [...prev, response.document]);
