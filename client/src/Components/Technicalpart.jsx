@@ -68,7 +68,7 @@ export function TechnicalPart({ inputValues, setInputValues }) {
                             </option>
                         ))}
                     </Form.Control>
-                    {inputValues.scale === "Plan" && (
+                    {inputValues.scaleType === "Plan" && (
                         <Form.Control
                             type="text"
                             value={inputValues.planScale}

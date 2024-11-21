@@ -5,22 +5,35 @@ export function GeoPart({ inputValues, setInputValues, handleChooseInMap }) {
     return (
         <Form>
             <h2>Georeference</h2>
+
+            {/* Row with checkbox and button */}
             <Form.Group controlId="formAllMunicipality" className="mb-3">
-                <Form.Check
-                    type="checkbox"
-                    label="All Municipality"
-                    checked={inputValues.allMunicipality}
-                    onChange={(e) => {
-                        const isChecked = e.target.checked;
-                        setInputValues((prev) => ({
-                            ...prev,
-                            allMunicipality: isChecked,
-                            ...(isChecked && { longitude: null, latitude: null }),
-                        }));
-                    }}
-                />
+                <div className="d-flex align-items-center justify-content-between">
+                    <Form.Check
+                        type="checkbox"
+                        label="All Municipality"
+                        checked={inputValues.allMunicipality}
+                        onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            setInputValues((prev) => ({
+                                ...prev,
+                                allMunicipality: isChecked,
+                                ...(isChecked && { longitude: null, latitude: null }),
+                            }));
+                        }}
+                        className="me-3"
+                    />
+                    <Button
+                        variant="dark"
+                        onClick={handleChooseInMap}
+                        disabled={inputValues.allMunicipality}
+                    >
+                        Choose on the Map
+                    </Button>
+                </div>
             </Form.Group>
 
+            {/* Latitude Input */}
             <Form.Group controlId="formLatitude" className="mb-3">
                 <Form.Label>Latitude</Form.Label>
                 <Form.Control
@@ -34,6 +47,7 @@ export function GeoPart({ inputValues, setInputValues, handleChooseInMap }) {
                 />
             </Form.Group>
 
+            {/* Longitude Input */}
             <Form.Group controlId="formLongitude" className="mb-3">
                 <Form.Label>Longitude</Form.Label>
                 <Form.Control
@@ -46,14 +60,6 @@ export function GeoPart({ inputValues, setInputValues, handleChooseInMap }) {
                     disabled={inputValues.allMunicipality}
                 />
             </Form.Group>
-            <Button
-                variant="primary"
-                onClick={handleChooseInMap}
-                disabled={inputValues.allMunicipality}
-                className="d-block mx-auto"
-            >
-                Choose on the Map
-            </Button>
         </Form>
     );
 }

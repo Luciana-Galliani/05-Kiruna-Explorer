@@ -5,7 +5,7 @@ import API from "../API/API.mjs";
 import { Stakeholder } from "../models.mjs";
 import { RefreshContext } from "../App.jsx";
 import { GeneralPart } from "./GeneralPart.jsx";
-import { TechnicalPart } from "./TechnicalPart.jsx";
+import { TechnicalPart } from "./Technicalpart.jsx";
 import { LinkAndFilePart } from "./LinkAndFilePart.jsx";
 import { GeoPart } from "./GeoPart.jsx"
 import { ProgressBar } from "react-step-progress-bar";
@@ -145,13 +145,14 @@ export function DescriptionForm({
     };
 
     const handleSaveForm = async () => {
-        const documentData = prepareDocumentData();
-        const validationMessage = validateForm(documentData);
-
+        const validationMessage = handleValidation(true); // Validate all steps
         if (validationMessage) {
             showNotification(validationMessage, "error");
             return;
         }
+
+        const documentData = prepareDocumentData();
+
 
         try {
             if (existingDocument) {
@@ -179,15 +180,33 @@ export function DescriptionForm({
         };
     };
 
-    const validateForm = (data) => {
-        if (!data.title || !data.issuanceDate || !data.type || !data.description) {
-            return "Please fill all mandatory fields.";
+
+    const handleValidation = (validateAllSteps = false) => {
+        if (validateAllSteps || currentStep === 1) {
+            if (!inputValues.title || !inputValues.stakeholders.length || !inputValues.description || !inputValues.issuanceYear) {
+                return "Please complete title, stakeholders, description, and issuance date.";
+            }
         }
-        if (data.latitude && (data.latitude < 67.21 || data.latitude > 69.3)) {
-            return "Latitude must be between 67.21 and 69.3 for Kiruna.";
+        if (validateAllSteps || currentStep === 2) {
+            if (!inputValues.type || !inputValues.scaleType) {
+                return "Please complete type and scale type.";
+            }
+            if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
+                return "Pages must be a number or a range (e.g., 1-32).";
+            }
         }
-        if (data.longitude && (data.longitude < 17.53 || data.longitude > 23.17)) {
-            return "Longitude must be between 17.53 and 23.17 for Kiruna.";
+        if (validateAllSteps || currentStep === 3) {
+            if (!inputValues.allMunicipality) {
+                if (!inputValues.latitude || !inputValues.longitude) {
+                    return "Please provide latitude and longitude.";
+                }
+                if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
+                    return "Latitude must be between 67.21 and 69.3 for Kiruna.";
+                }
+                if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
+                    return "Longitude must be between 17.53 and 23.17 for Kiruna.";
+                }
+            }
         }
         return null;
     };
@@ -217,7 +236,12 @@ export function DescriptionForm({
     };
 
     const handleNextStep = () => {
-        setCurrentStep((prev) => Math.min(prev + 1, 4));
+        const validationMessage = handleValidation();
+        if (validationMessage) {
+            showNotification(validationMessage, "error");
+        } else {
+            setCurrentStep((prev) => Math.min(prev + 1, 4));
+        }
     };
 
     const handlePreviousStep = () => {
@@ -242,20 +266,45 @@ export function DescriptionForm({
                         setInputValues={setInputValues}
                         stakeholderOptions={stakeholderOptions}
                     />
-                    <Button onClick={handleNextStep} className="ms-2">
-                        Next
-                    </Button>
+                    <div className="d-flex justify-content-end">
+                        <Button onClick={handleNextStep} className="ms-2">
+                            Next
+                        </Button>
+
+                        {existingDocument && (
+                            <Button
+                                className="save-button ms-2"
+                                onClick={handleSaveForm}
+                                variant="success"
+                            >
+                                Save Document
+                            </Button>
+                        )}
+                    </div>
                 </div>
             )}
             {currentStep === 2 && (
                 <div className={`step-content ${currentStep === 2 ? "visible" : "hidden"}`}>
                     <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} />
-                    <Button className="danger ms-2" onClick={handlePreviousStep}>
-                        Previous
-                    </Button>
-                    <Button onClick={handleNextStep} className="ms-2">
-                        Next
-                    </Button>
+                    <div className="d-flex justify-content-between">
+
+                        <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
+                            Previous
+                        </Button>
+                        <Button onClick={handleNextStep} className="ms-2">
+                            Next
+                        </Button>
+
+                        {existingDocument && (
+                            <Button
+                                className="save-button ms-2"
+                                onClick={handleSaveForm}
+                                variant="success"
+                            >
+                                Save Document
+                            </Button>
+                        )}
+                    </div>
                 </div>
             )}
             {currentStep === 3 && (
@@ -265,12 +314,25 @@ export function DescriptionForm({
                         setInputValues={setInputValues}
                         handleChooseInMap={handleChooseInMap}
                     />
-                    <Button className="danger ms-2" onClick={handlePreviousStep}>
-                        Previous
-                    </Button>
-                    <Button onClick={handleNextStep} className="ms-2">
-                        Next
-                    </Button>
+                    <div className="d-flex justify-content-between">
+
+                        <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
+                            Previous
+                        </Button>
+                        <Button onClick={handleNextStep} className="ms-2" >
+                            Next
+                        </Button>
+
+                        {existingDocument && (
+                            <Button
+                                className="save-button ms-2"
+                                onClick={handleSaveForm}
+                                variant="success"
+                            >
+                                Save Document
+                            </Button>
+                        )}
+                    </div>
                 </div>
             )}
             {currentStep === 4 && (
@@ -283,13 +345,13 @@ export function DescriptionForm({
                         relationshipOptions={relationshipOptions}
                         documentOptions={documentOptions}
                     />
-                    <Button className="danger ms-2" onClick={handlePreviousStep}>
+                    <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
                         Previous
                     </Button>
                     <Button
                         className="save-button ms-2"
-                        variant="primary"
                         onClick={handleSaveForm}
+                        variant="success"
                     >
                         Save Document
                     </Button>
