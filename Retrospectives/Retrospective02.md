@@ -1,4 +1,4 @@
-# TEMPLATE FOR RETROSPECTIVE (Team #5)
+# RETROSPECTIVE 2 (Team #5)
 
 The retrospective should include _at least_ the following
 sections:
@@ -57,7 +57,7 @@ sections:
     -   Total hours estimated : 1h45m
     -   Total hours spent : 1h45m
     -   Nr of automated unit test cases : 53
-    -   Coverage (if available) : 100% of the tested files (controllers, DAOs and middlewares)
+    -   Coverage (if available) : 100% of the tested files (controllers, DAOs, middlewares and utils functions) Only on the backend
 -   E2E testing:
     -   Total hours estimated :3h30m
     -   Total hours spent : 3h30m
@@ -69,16 +69,16 @@ sections:
 
 -   What caused your errors in estimation (if any)?
 
-    -   The form component become too big and we work on it we loose some time
+    -   The form component became too big and when we work on it we loose some time
 
 -   What lessons did you learn (both positive and negative) in this sprint?
 
-    -   Negative aspect: github organisation could be improved
+    -   Negative aspect: github branches organisation could be improved
     -   Positive aspect: well completed all the stories we were expected to do
 
 -   Which improvement goals set in the previous retrospective were you able to achieve?
     -   We have more equality in the hours for each person
-    -   We did more scrum meetings
+    -   We did more scrum meetings and a middle sprint demo to show the progress of the different tasks
 
 -   Which ones you were not able to achieve? Why?
 
@@ -87,7 +87,7 @@ sections:
 
 
 -   Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-    - When facing an issue and working on a blocking task, need to improve commumication of the problem, and assign people to help solving the issue instead of waiting
+    - When facing an unexpected issue and working on a blocking task, we need to improve commumication of the problem, and assign people to help solving the issue instead of waiting
     - On github, try to do more branches of smaller size to facilitate code review and problem solving
     -> at least one branch per story
 
