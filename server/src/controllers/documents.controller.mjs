@@ -72,11 +72,9 @@ export const updateDocument = async (req, res) => {
             await documentsDAO.updateDocument(documentId, documentData)
         ).toJSON();
 
-        await deleteOriginalResources(documentId);
+        deleteOriginalResources(documentId);
+        createOriginalResources(documentId, req.files);
 
-        if (req.files && req.files.length > 0) {
-            createOriginalResources(documentId, req.files);
-        }
         updatedDocument.originalResources = await findOriginalResources(updatedDocument.id);
 
         res.status(200).json({ document: updatedDocument });
