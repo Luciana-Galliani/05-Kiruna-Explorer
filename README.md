@@ -42,7 +42,13 @@
 
 ## Users Credentials
 
--   username and password
+- username and password
+
+## Deploy environment
+
+For run this project in a deploy environment without have the code need to use the `docker-compose.deploy.yml` file.
+The command for running are `docker-compose -f docker-compose.deploy.yml up -d`.
+The web-app run on **localhost:5173**
 
 ## License
 

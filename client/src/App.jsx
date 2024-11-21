@@ -6,7 +6,7 @@ import { DescriptionForm, EditDocumentForm } from "./Components/Form";
 import HomePage from "./Components/HomePage";
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
-import Header from "./components/Header";
+import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ListDocuments from "./Components/List";
 import API from "./API/API.mjs";
