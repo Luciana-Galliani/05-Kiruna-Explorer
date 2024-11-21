@@ -18,11 +18,18 @@ export async function findOriginalResources(id) {
     }
 }
 
-export function deleteOriginalResources(id) {
+export async function deleteOriginalResources(id) {
     const folderPath = path.join("document_resources", id.toString(), "original_resources");
-
-    if (fs.existsSync(folderPath)) {
-        fs.rmSync(folderPath, { recursive: true });
+    try {
+        if (fs.existsSync(folderPath)) {
+            await fs.promises.rm(folderPath, { recursive: true, force: true });
+            console.log("Folder deleted successfully:", folderPath);
+        } else {
+            console.log("Folder does not exist:", folderPath);
+        }
+    } catch (error) {
+        console.error("Error deleting folder:", error);
+        throw error;
     }
 }
 
