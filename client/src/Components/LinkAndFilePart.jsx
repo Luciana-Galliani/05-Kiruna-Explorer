@@ -102,16 +102,11 @@ export function LinkAndFilePart({
                 </Button>
             </fieldset>
             <p>Connections:</p>
-            <div className="connections overflow-y-auto" style={{ maxHeight: "100px", overflowY: "auto" }}>
+            <div className="connections overflow-y-auto" style={{ maxHeight: "80px", overflowY: "auto" }}>
                 {inputValues.connections.map((connection, index) => (
                     <Card
                         key={index}
                         className="mb-2 me-1 position-relative"
-                        style={{
-                            maxWidth: "100%",
-                            maxHeight: "150px",
-                            overflow: "hidden",
-                        }}
                     >
                         <button
                             onClick={() => removeConnection(index)}
@@ -155,7 +150,7 @@ export function LinkAndFilePart({
             </Form.Group>
 
             {selectedFiles.length > 0 && (
-                <ListGroup className="mb-3 files-list" style={{ maxHeight: "50px", overflowY: "auto" }}>
+                <ListGroup className="mb-3 files-list" style={{ maxHeight: "40px", overflowY: "auto" }}>
                     {selectedFiles.map((file, index) => (
                         <ListGroup.Item
                             key={index}
