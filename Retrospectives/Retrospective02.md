@@ -39,7 +39,7 @@ sections:
 
 -   Hours per task average, standard deviation (estimate and actual)
 
-    ESTIMATE: 6.23  -- ACTUAL: 6.27 //to do
+    ESTIMATE: 9.44  -- ACTUAL: 9.02
 
 -   Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
@@ -49,7 +49,7 @@ sections:
 -   Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
     $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
-    VALUE: 0.74% //to do
+    VALUE: 0.82%
 
 ## QUALITY MEASURES
 
