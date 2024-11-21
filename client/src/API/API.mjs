@@ -112,20 +112,20 @@ const createDocument = async (documentData, files) => {
     }
 };
 
-const updateDocument = async (documentId, data, selectedFiles) => {
+const updateDocument = async (documentId, documentData, selectedFiles) => {
     const formData = new FormData();
 
     formData.append(
-        "data",
+        "documentData",
         JSON.stringify({
-            ...data,
-            connections: data.connections.map((connection) => ({
+            ...documentData,
+            connections: documentData.connections.map((connection) => ({
                 documentId: connection.targetDocument.id,
                 relationship: connection.relationship,
             })),
         })
     );
-
+    console.log(selectedFiles);
     if (selectedFiles && selectedFiles.length > 0) {
         for (const file of selectedFiles) {
             formData.append("files", file);

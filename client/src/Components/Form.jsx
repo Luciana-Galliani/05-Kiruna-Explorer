@@ -35,6 +35,33 @@ const initializeInputValues = (doc) => {
     };
 };
 
+const fetchFiles = async (existingDocument) => {
+    if (!existingDocument || !existingDocument.document.originalResources) return;
+
+    const documentId = existingDocument.document.id;
+    const resources = existingDocument.document.originalResources;
+
+    try {
+        const filePromises = resources.map(async (resourceName) => {
+            const url = `http://localhost:3001/${documentId}/original_resources/${resourceName}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Error while uploading file ${resourceName}`);
+            }
+
+            const blob = await response.blob();
+            const file = new File([blob], resourceName, { type: blob.type });
+            return file;
+        });
+
+        const files = await Promise.all(filePromises);
+        setSelectedFiles(files);
+    } catch (error) {
+        console.error("Error while uploading files :", error);
+    }
+}
+
 export function DescriptionForm({
     isLoggedIn,
     coordinates,
@@ -59,6 +86,7 @@ export function DescriptionForm({
 
     useEffect(() => {
         fetchInitialData();
+        if (existingDocument) fetchFiles();
     }, []);
 
     useEffect(() => {
@@ -70,6 +98,33 @@ export function DescriptionForm({
             }));
         }
     }, [coordinates]);
+
+    const fetchFiles = async () => {
+        if (!existingDocument || !existingDocument.document.originalResources) return;
+
+        const documentId = existingDocument.document.id;
+        const resources = existingDocument.document.originalResources;
+
+        try {
+            const filePromises = resources.map(async (resourceName) => {
+                const url = `http://localhost:3001/${documentId}/original_resources/${resourceName}`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Error while uploading file ${resourceName}`);
+                }
+
+                const blob = await response.blob();
+                const file = new File([blob], resourceName, { type: blob.type });
+                return file;
+            });
+
+            const files = await Promise.all(filePromises);
+            setSelectedFiles(files);
+        } catch (error) {
+            console.error("Error while uploading files :", error);
+        }
+    };
 
     const fetchInitialData = async () => {
         try {
