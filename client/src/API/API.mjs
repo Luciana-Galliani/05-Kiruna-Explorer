@@ -112,14 +112,14 @@ const createDocument = async (documentData, files) => {
     }
 };
 
-const updateDocument = async (documentId, documentData, selectedFiles) => {
+const updateDocument = async (documentId, data, selectedFiles) => {
     const formData = new FormData();
 
     formData.append(
-        "documentData",
+        "data",
         JSON.stringify({
-            ...documentData,
-            connections: documentData.connections.map((connection) => ({
+            ...data,
+            connections: data.connections.map((connection) => ({
                 documentId: connection.targetDocument.id,
                 relationship: connection.relationship,
             })),
