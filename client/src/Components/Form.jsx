@@ -6,7 +6,7 @@ import { Stakeholder } from "../models.mjs";
 import { RefreshContext } from "../App.jsx";
 import { GeneralPart } from "./GeneralPart.jsx";
 import { TechnicalPart } from "./Technicalpart.jsx";
-import { LinkAndFilePart } from "./LinkAndFilePart.jsx";
+import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx"
 import { ProgressBar } from "react-step-progress-bar";
 import "react-step-progress-bar/styles.css";
@@ -34,33 +34,6 @@ const initializeInputValues = (doc) => {
     };
 };
 
-const fetchFiles = async (existingDocument) => {
-    if (!existingDocument || !existingDocument.document.originalResources) return;
-
-    const documentId = existingDocument.document.id;
-    const resources = existingDocument.document.originalResources;
-
-    try {
-        const filePromises = resources.map(async (resourceName) => {
-            const url = `http://localhost:3001/${documentId}/original_resources/${resourceName}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Error while uploading file ${resourceName}`);
-            }
-
-            const blob = await response.blob();
-            const file = new File([blob], resourceName, { type: blob.type });
-            return file;
-        });
-
-        const files = await Promise.all(filePromises);
-        setSelectedFiles(files);
-    } catch (error) {
-        console.error("Error while uploading files :", error);
-    }
-}
-
 export function DescriptionForm({
     isLoggedIn,
     coordinates,
@@ -77,7 +50,13 @@ export function DescriptionForm({
     const [relationshipOptions, setRelationshipOptions] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [notification, setNotification] = useState({ message: "", type: "" });
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(0);
+    const steps = [
+        <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} />,
+        <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} />,
+        <GeoPart inputValues={inputValues} setInputValues={setInputValues} handleChooseInMap={handleChooseInMap} />,
+        <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} documentOptions={documentOptions} />
+    ];
 
     useEffect(() => {
         if (!isLoggedIn) navigate("/login");
@@ -182,12 +161,12 @@ export function DescriptionForm({
 
 
     const handleValidation = (validateAllSteps = false) => {
-        if (validateAllSteps || currentStep === 1) {
+        if (validateAllSteps || currentStep === 0) {
             if (!inputValues.title || !inputValues.stakeholders.length || !inputValues.description || !inputValues.issuanceYear) {
                 return "Please complete title, stakeholders, description, and issuance date.";
             }
         }
-        if (validateAllSteps || currentStep === 2) {
+        if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
                 return "Please complete type and scale type.";
             }
@@ -195,7 +174,7 @@ export function DescriptionForm({
                 return "Pages must be a number or a range (e.g., 1-32).";
             }
         }
-        if (validateAllSteps || currentStep === 3) {
+        if (validateAllSteps || currentStep === 2) {
             if (!inputValues.allMunicipality) {
                 if (!inputValues.latitude || !inputValues.longitude) {
                     return "Please provide latitude and longitude.";
@@ -240,123 +219,49 @@ export function DescriptionForm({
         if (validationMessage) {
             showNotification(validationMessage, "error");
         } else {
-            setCurrentStep((prev) => Math.min(prev + 1, 4));
+            setCurrentStep((prev) => Math.min(prev + 1, steps.length));
         }
     };
 
     const handlePreviousStep = () => {
-        setCurrentStep((prev) => Math.max(prev - 1, 1));
+        setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
 
     return (
         <div className={`form-container position-relative ${className}`}>
             {notification.message && (
-                <div className={`notification ${notification.type}`}>
-                    {notification.message}
-                </div>
+                <div className={`notification ${notification.type}`}> {notification.message} </div>
             )}
             <ProgressBar
-                percent={Math.min(Math.max((currentStep / 4) * 100, 0), 100)}
+                percent={Math.min(Math.max((currentStep / (steps.length - 1)) * 100, 0), 100)}
                 filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
             />
-            {currentStep === 1 && (
-                <div className={`step-content ${currentStep === 1 ? "visible" : "hidden"}`}>
-                    <GeneralPart
-                        inputValues={inputValues}
-                        setInputValues={setInputValues}
-                        stakeholderOptions={stakeholderOptions}
-                    />
-                    <div className="d-flex justify-content-end">
-                        <Button onClick={handleNextStep} className="ms-2">
-                            Next
-                        </Button>
 
-                        {existingDocument && (
-                            <Button
-                                className="save-button ms-2"
-                                onClick={handleSaveForm}
-                                variant="success"
-                            >
-                                Save Document
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            )}
-            {currentStep === 2 && (
-                <div className={`step-content ${currentStep === 2 ? "visible" : "hidden"}`}>
-                    <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} />
-                    <div className="d-flex justify-content-between">
+            <div className={`step-content ${steps[currentStep]?.className || ""}`}>
+                {steps[currentStep]}
+            </div>
 
-                        <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
-                            Previous
-                        </Button>
-                        <Button onClick={handleNextStep} className="ms-2">
-                            Next
-                        </Button>
-
-                        {existingDocument && (
-                            <Button
-                                className="save-button ms-2"
-                                onClick={handleSaveForm}
-                                variant="success"
-                            >
-                                Save Document
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            )}
-            {currentStep === 3 && (
-                <div className={`step-content ${currentStep === 3 ? "visible" : "hidden"}`}>
-                    <GeoPart
-                        inputValues={inputValues}
-                        setInputValues={setInputValues}
-                        handleChooseInMap={handleChooseInMap}
-                    />
-                    <div className="d-flex justify-content-between">
-
-                        <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
-                            Previous
-                        </Button>
-                        <Button onClick={handleNextStep} className="ms-2" >
-                            Next
-                        </Button>
-
-                        {existingDocument && (
-                            <Button
-                                className="save-button ms-2"
-                                onClick={handleSaveForm}
-                                variant="success"
-                            >
-                                Save Document
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            )}
-            {currentStep === 4 && (
-                <div className={`step-content ${currentStep === 4 ? "visible" : "hidden"}`}>
-                    <LinkAndFilePart
-                        inputValues={inputValues}
-                        setInputValues={setInputValues}
-                        selectedFiles={selectedFiles}
-                        setSelectedFiles={setSelectedFiles}
-                        relationshipOptions={relationshipOptions}
-                        documentOptions={documentOptions}
-                    />
-                    <Button className="danger ms-2" onClick={handlePreviousStep} variant="danger">
+            <div className="d-flex justify-content-between mt-2">
+                {currentStep > 0 && (
+                    <Button type="button" className="danger ms-2" onClick={handlePreviousStep} variant="danger">
                         Previous
                     </Button>
+                )}
+
+                {currentStep < steps.length - 1 && (
                     <Button
-                        className="save-button ms-2"
-                        onClick={handleSaveForm}
-                        variant="success"
-                    >
+                        type="button" className="ms-2" onClick={handleNextStep} variant="primary">
+                        Next
+                    </Button>
+                )}
+
+                {(existingDocument || currentStep == steps.length - 1) && (
+                    <Button
+                        className="save-button ms-2" onClick={handleSaveForm} variant="success" >
                         Save Document
                     </Button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

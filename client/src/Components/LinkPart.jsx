@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Form, Button, Card, ListGroup } from "react-bootstrap";
+import { Form, Button, Card } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 
-export function LinkAndFilePart({
+export function LinkPart({
     inputValues,
     setInputValues,
-    selectedFiles,
-    setSelectedFiles,
     documentOptions,
     relationshipOptions
 }) {
@@ -18,15 +16,6 @@ export function LinkAndFilePart({
         const selectedDocId = e.target.value;
         setDocument(Number(selectedDocId));
         setIsTypeOfEnabled(selectedDocId !== "");
-    };
-
-    const handleFileChange = (e) => {
-        const newFiles = Array.from(e.target.files);
-        setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    };
-
-    const removeFile = (index) => {
-        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     };
 
     const removeConnection = (index) => {
@@ -102,7 +91,7 @@ export function LinkAndFilePart({
                 </Button>
             </fieldset>
             <p>Connections:</p>
-            <div className="connections overflow-y-auto" style={{ maxHeight: "80px", overflowY: "auto" }}>
+            <div className="connections overflow-y-auto" style={{ maxHeight: "150px", overflowY: "auto" }}>
                 {inputValues.connections.map((connection, index) => (
                     <Card
                         key={index}
@@ -125,10 +114,10 @@ export function LinkAndFilePart({
                             ✖
                         </button>
                         <Card.Body style={{ padding: "5px" }}>
-                            <Card.Text style={{ fontSize: "0.85rem", marginBottom: "2px" }}>
+                            <Card.Text style={{ fontSize: "1rem", marginBottom: "2px" }}>
                                 <strong>Document:</strong> {connection.targetDocument.title}
                             </Card.Text>
-                            <Card.Text style={{ fontSize: "0.85rem", marginBottom: "2px" }}>
+                            <Card.Text style={{ fontSize: "1rem", marginBottom: "2px" }}>
                                 <strong>Type:</strong> {connection.relationship}
                             </Card.Text>
                         </Card.Body>
@@ -136,39 +125,6 @@ export function LinkAndFilePart({
 
                 ))}
             </div>
-
-
-            <Form.Group controlId="resourceFiles" className="mb-3">
-                <h2>Add resources</h2>
-                <Form.Control
-                    type="file"
-                    name="resourceFiles"
-                    multiple
-                    onChange={handleFileChange}
-                />
-                <Form.Text className="text-muted">You can add one or more files.</Form.Text>
-            </Form.Group>
-
-            {selectedFiles.length > 0 && (
-                <ListGroup className="mb-3 files-list" style={{ maxHeight: "40px", overflowY: "auto" }}>
-                    {selectedFiles.map((file, index) => (
-                        <ListGroup.Item
-                            key={index}
-                            className="d-flex justify-content-between align-items-center"
-                        >
-                            <span>{file.name}</span>
-                            <button
-                                type="button"
-                                className="btn btn-sm btn-danger"
-                                onClick={() => removeFile(index)}
-                            >
-                                x
-                            </button>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            )}
-
         </Form>
     );
 }

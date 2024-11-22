@@ -1,9 +1,7 @@
-
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Form, ListGroup } from "react-bootstrap";
 
-export function TechnicalPart({ inputValues, setInputValues }) {
-
+export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setSelectedFiles }) {
     const typeOptions = [
         "Design Document",
         "Informative Document",
@@ -16,49 +14,42 @@ export function TechnicalPart({ inputValues, setInputValues }) {
     ];
     const scaleOptions = ["Text", "Concept", "Blueprints/actions", "Plan"];
 
+    const handleFileChange = (e) => {
+        const newFiles = Array.from(e.target.files);
+        setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    };
+
+    const removeFile = (index) => {
+        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    };
+
     return (
         <Form>
-            <h2>Technical information</h2>
-            <Form.Group controlId="formType" className="mb-3">
-                <Form.Label
-                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
+            <h2>Technical Information</h2>
+            <Form.Group controlId="formType" className="mb-2">
+                <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Type <span className="text-danger">*</span></Form.Label>
+                <Form.Control
+                    as="select"
+                    value={inputValues.type}
+                    onChange={(e) => setInputValues({ ...inputValues, type: e.target.value })}
+                    required
                 >
-                    Type
-                    <span className="text-danger ms-2 fw-bold">*</span>
-                </Form.Label>
-                <div className="d-flex align-items-center">
-                    <Form.Control
-                        as="select"
-                        value={inputValues.type}
-                        onChange={(e) =>
-                            setInputValues({ ...inputValues, type: e.target.value })
-                        }
-                        required
-                    >
-                        <option value="">Select a type</option>
-                        {typeOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </Form.Control>
-                </div>
+                    <option value="">Select a type</option>
+                    {typeOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </Form.Control>
             </Form.Group>
-            <Form.Group controlId="formScale" className="mb-3">
-                <Form.Label
-                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                >
-                    Scale
-                    <span className="text-danger ms-2 fw-bold">*</span>
-                </Form.Label>
-                <div style={{ display: "flex", gap: "1rem" }}>
+
+            <Form.Group controlId="formScale" className="mb-2">
+                <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Scale <span className="text-danger">*</span></Form.Label>
+                <div className="d-flex gap-2">
                     <Form.Control
                         as="select"
                         value={inputValues.scaleType}
-                        onChange={(e) =>
-                            setInputValues({ ...inputValues, scaleType: e.target.value })
-                        }
-                        style={{ flex: "1" }}
+                        onChange={(e) => setInputValues({ ...inputValues, scaleType: e.target.value })}
                         required
                     >
                         <option value="">Select a scale</option>
@@ -73,24 +64,16 @@ export function TechnicalPart({ inputValues, setInputValues }) {
                             type="text"
                             value={inputValues.planScale}
                             onChange={(e) =>
-                                setInputValues({
-                                    ...inputValues,
-                                    planScale: e.target.value,
-                                })
+                                setInputValues({ ...inputValues, planScale: e.target.value })
                             }
                             placeholder="Plan scale (e.g. 1:1,000)"
-                            style={{ flex: "3" }}
                         />
                     )}
                 </div>
             </Form.Group>
 
-            <Form.Group controlId="formLanguage" className="mb-3">
-                <Form.Label
-                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                >
-                    Language
-                </Form.Label>
+            <Form.Group controlId="formLanguage" className="mb-2">
+                <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Language</Form.Label>
                 <Form.Control
                     type="text"
                     value={inputValues.language}
@@ -100,12 +83,9 @@ export function TechnicalPart({ inputValues, setInputValues }) {
                     placeholder="Click to enter language"
                 />
             </Form.Group>
-            <Form.Group controlId="formPages" className="mb-3">
-                <Form.Label
-                    style={{ fontWeight: "bold", fontSize: "1.2rem", color: "black" }}
-                >
-                    Pages
-                </Form.Label>
+
+            <Form.Group controlId="formPages" className="mb-2">
+                <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Pages</Form.Label>
                 <Form.Control
                     type="text"
                     value={inputValues.pages}
@@ -115,6 +95,48 @@ export function TechnicalPart({ inputValues, setInputValues }) {
                     placeholder="Enter number of pages"
                 />
             </Form.Group>
+
+            <Form.Group controlId="resourceFiles" className="mb-2">
+                <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Add Resources</Form.Label>
+                <Form.Control
+                    type="file"
+                    name="resourceFiles"
+                    multiple
+                    onChange={handleFileChange}
+                />
+                <Form.Text className="text-muted">You can add one or more files.</Form.Text>
+            </Form.Group>
+
+            {selectedFiles.length > 0 && (
+                <div
+                    className="file-list d-flex flex-column gap-1"
+                    style={{
+                        maxHeight: "4rem",
+                        overflowY: "auto",
+                    }}
+                >
+                    {selectedFiles.map((file, index) => (
+                        <div
+                            key={index}
+                            className="d-flex justify-content-between align-items-center border-bottom pb-1"
+                            style={{
+                                fontSize: "0.8rem", // Riduci leggermente la dimensione del font
+                                height: "1.8rem", // Altezza di ciascun file (più compatto)
+                            }}
+                        >
+                            <span className="text-truncate">{file.name}</span>
+                            <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => removeFile(index)}
+                                style={{ lineHeight: "1" }} // Riduci il padding interno del bottone
+                            >
+                                x
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </Form>
     );
 }
