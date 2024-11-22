@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
+import { AppContext } from "../context/AppContext.jsx";
 
-const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage, isSatelliteView }) => {
+const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { isLoggedIn } = useContext(AppContext);
+
 
     const toggleSidebar = () => {
         setIsSidebarOpen(prevState => !prevState);
@@ -28,8 +31,10 @@ const Header = ({ isLoggedIn, handleLogout, headerClass, isHomePage, isSatellite
                 </button>
 
                 {/* Title */}
-                <h1 className="m-0" style={{transition: "transform 0.3s ease",
-                transform: isSidebarOpen ? "translateX(200px)" : "translateX(0)"}}>
+                <h1 className="m-0" style={{
+                    transition: "transform 0.3s ease",
+                    transform: isSidebarOpen ? "translateX(200px)" : "translateX(0)"
+                }}>
                     <Link to="/" className={`${isSatelliteView ? "text-light" : "text-dark"} text-decoration-none`} style={{ fontFamily: "fantasy" }}>
                         Kiruna eXplorer
                     </Link>

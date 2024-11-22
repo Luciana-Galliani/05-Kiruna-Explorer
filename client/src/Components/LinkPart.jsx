@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { Connection } from "../models.mjs";
+import { AppContext } from "../context/AppContext";
 
 export function LinkPart({
     inputValues,
     setInputValues,
-    documentOptions,
     relationshipOptions
 }) {
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
     const [document, setDocument] = useState("");
     const [relationship, setRelationship] = useState("");
+    const { allDocuments } = useContext(AppContext); // UseContext per allDocuments
 
     const handleDocumentChange = (e) => {
         const selectedDocId = e.target.value;
@@ -27,7 +28,7 @@ export function LinkPart({
 
     const addConnection = () => {
         if (document && relationship) {
-            const selectedDocument = documentOptions.find((doc) => doc.id === Number(document));
+            const selectedDocument = allDocuments.find((doc) => doc.id === Number(document));
 
             if (selectedDocument) {
                 const newConnection = new Connection(selectedDocument, relationship);
@@ -56,7 +57,7 @@ export function LinkPart({
                         <option key="0" value="">
                             Select a document
                         </option>
-                        {documentOptions.map((doc) => (
+                        {allDocuments.map((doc) => (
                             <option key={doc.id} value={doc.id}>
                                 {doc.title}
                             </option>

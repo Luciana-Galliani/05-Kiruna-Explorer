@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { DescriptionForm, EditDocumentForm } from "./Components/Form";
 import HomePage from "./Components/HomePage";
@@ -12,12 +12,9 @@ import ListDocuments from "./Components/List";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
-
-export const RefreshContext = React.createContext();
+import { AppContext } from "./context/AppContext";
 
 function App() {
-    const [needRefresh, setNeedRefresh] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState("Do you really want to logout?");
     const location = useLocation();
@@ -25,22 +22,18 @@ function App() {
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
-
-    const [allDocuments, setAllDocuments] = useState([]);
-
     const [isSatelliteView, setIsSatelliteView] = useState(true);
 
-    // Handler for deactivating/activating the satellite view
+    const { setIsLoggedIn } = useContext(AppContext);
+
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
     };
 
-    // Handler per attivare/disattivare la modalità di selezione
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
     };
 
-    // Funzione per aggiornare le coordinate nel form
     const handleCoordinatesSelected = (lon, lat) => {
         setCoordinates({ longitude: lon, latitude: lat });
         setIsSelectingCoordinates(false);
@@ -64,8 +57,8 @@ function App() {
     };
 
     const confirmLogout = () => {
-        handleLogout(); // Esegui il logout effettivo
-        setShowLogoutModal(false); // Nascondi il modal
+        handleLogout();
+        setShowLogoutModal(false);
     };
 
     const isHomePage = location.pathname === "/";
@@ -74,79 +67,63 @@ function App() {
 
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
-            {/* Header */}
             <Header
-                isLoggedIn={isLoggedIn}
                 handleLogout={() => setShowLogoutModal(true)}
                 headerClass={headerClass}
                 isHomePage={isHomePage}
                 isSatelliteView={isSatelliteView}
             />
 
-            {/* Routes */}
-            <RefreshContext.Provider value={[needRefresh, setNeedRefresh]}>
-                <HomePage
-                    isSelectingCoordinates={isSelectingCoordinates}
-                    handleCoordinatesSelected={handleCoordinatesSelected}
-                    allDocuments={allDocuments}
-                    setAllDocuments={setAllDocuments}
-                    isSatelliteView={isSatelliteView}
-                    handleSatelliteView={handleSatelliteView}
-                    isLoggedIn={isLoggedIn}
-                />
-                <Routes>
-                    <Route
-                        path="/add"
-                        element={
-                            <DescriptionForm
-                                isLoggedIn={isLoggedIn}
-                                coordinates={coordinates}
-                                handleChooseInMap={handleChooseInMap}
-                                documentOptions={allDocuments}
-                                setDocumentOptions={setAllDocuments}
-                                className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            />
-                        }
-                    />
-                    <Route
-                        path="edit/:documentId"
-                        element={
-                            <EditDocumentForm
-                                isLoggedIn={isLoggedIn}
-                                coordinates={coordinates}
-                                handleChooseInMap={handleChooseInMap}
-                                documentOptions={allDocuments}
-                                setDocumentOptions={setAllDocuments}
-                                className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            />
-                        }
-                    />
-                    <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
-                    <Route
-                        path="/registration"
-                        element={<RegistrationForm handleLogin={handleLogin} />}
-                    />
-                    <Route
-                        path="/allDocuments"
-                        element={<ListDocuments condition="false" isLoggedIn={isLoggedIn} />}
-                    />
-                    <Route
-                        path="/municipality"
-                        element={<ListDocuments condition="true" isLoggedIn={isLoggedIn} />}
-                    />
-                </Routes>
-            </RefreshContext.Provider>
+            <HomePage
+                isSelectingCoordinates={isSelectingCoordinates}
+                handleCoordinatesSelected={handleCoordinatesSelected}
+                isSatelliteView={isSatelliteView}
+                handleSatelliteView={handleSatelliteView}
+            />
 
-            {/* Buttons for the home page */}
+            <Routes>
+                <Route
+                    path="/add"
+                    element={
+                        <DescriptionForm
+                            coordinates={coordinates}
+                            handleChooseInMap={handleChooseInMap}
+                            className={isSelectingCoordinates ? "d-none" : "d-block"}
+                        />
+                    }
+                />
+                <Route
+                    path="edit/:documentId"
+                    element={
+                        <EditDocumentForm
+                            coordinates={coordinates}
+                            handleChooseInMap={handleChooseInMap}
+                            className={isSelectingCoordinates ? "d-none" : "d-block"}
+                        />
+                    }
+                />
+                <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
+                <Route
+                    path="/registration"
+                    element={<RegistrationForm handleLogin={handleLogin} />}
+                />
+                <Route
+                    path="/allDocuments"
+                    element={<ListDocuments condition="false" />}
+                />
+                <Route
+                    path="/municipality"
+                    element={<ListDocuments condition="true" />}
+                />
+            </Routes>
+
             <Footer
                 isHomePage={isHomePage}
-                isLoggedIn={isLoggedIn}
                 location={location}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
             />
 
-            {/* Modale di conferma logout */}
             <ConfirmationModal
                 show={showLogoutModal}
                 onClose={() => setShowLogoutModal(false)}

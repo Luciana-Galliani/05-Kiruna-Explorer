@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
-const List = ({ condition, isLoggedIn }) => {
+const List = ({ condition }) => {
+    const { isLoggedIn } = useContext(AppContext);
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -55,9 +57,8 @@ const List = ({ condition, isLoggedIn }) => {
                     {documentsToShow.map((document) => (
                         <li
                             key={document.id}
-                            className={`list-group-item ${
-                                hoveredItem === document.id ? "active" : ""
-                            }`}
+                            className={`list-group-item ${hoveredItem === document.id ? "active" : ""
+                                }`}
                             onMouseEnter={() => setHoveredItem(document.id)}
                             onMouseLeave={() => setHoveredItem(null)}
                             onClick={() => setSelectedDocument(document)}

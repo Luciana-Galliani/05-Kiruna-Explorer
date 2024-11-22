@@ -3,11 +3,11 @@ import { Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../API/API.mjs";
 import { Stakeholder } from "../models.mjs";
-import { RefreshContext } from "../App.jsx";
+import { AppContext } from "../context/AppContext.jsx";
 import { GeneralPart } from "./GeneralPart.jsx";
 import { TechnicalPart } from "./Technicalpart.jsx";
 import { LinkPart } from "./LinkPart.jsx";
-import { GeoPart } from "./GeoPart.jsx"
+import { GeoPart } from "./GeoPart.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import "react-step-progress-bar/styles.css";
 
@@ -35,27 +35,24 @@ const initializeInputValues = (doc) => {
 };
 
 export function DescriptionForm({
-    isLoggedIn,
     coordinates,
     handleChooseInMap,
-    documentOptions,
-    setDocumentOptions,
     existingDocument,
     className,
 }) {
     const navigate = useNavigate();
-    const [needRefresh, setNeedRefresh] = useContext(RefreshContext);
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
     const [relationshipOptions, setRelationshipOptions] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
+    const { setAllDocuments, isLoggedIn } = useContext(AppContext); // UseContext per allDocuments
     const steps = [
         <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} />,
         <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} />,
         <GeoPart inputValues={inputValues} setInputValues={setInputValues} handleChooseInMap={handleChooseInMap} />,
-        <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} documentOptions={documentOptions} />
+        <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} />
     ];
 
     useEffect(() => {
@@ -117,7 +114,7 @@ export function DescriptionForm({
                 )
             );
             setRelationshipOptions(relationshipResp.connections);
-            setDocumentOptions(documentsResp.documents);
+            setAllDocuments(documentsResp.documents);
         } catch (error) {
             console.error("Error fetching initial data:", error);
         }
@@ -131,7 +128,6 @@ export function DescriptionForm({
         }
 
         const documentData = prepareDocumentData();
-
 
         try {
             if (existingDocument) {
@@ -158,7 +154,6 @@ export function DescriptionForm({
             longitude: inputValues.allMunicipality ? null : inputValues.longitude,
         };
     };
-
 
     const handleValidation = (validateAllSteps = false) => {
         if (validateAllSteps || currentStep === 0) {
@@ -194,17 +189,16 @@ export function DescriptionForm({
         const response = await API.updateDocument(existingDocument.document.id, data, selectedFiles);
         showNotification("Document modified successfully!", "success");
         updateDocumentList(response.document);
-        setNeedRefresh(true);
     };
 
     const handleCreateDocument = async (data) => {
         const response = await API.createDocument(data, selectedFiles);
         showNotification("Document saved successfully!", "success");
-        setDocumentOptions((prev) => [...prev, response.document]);
+        setAllDocuments((prev) => [...prev, response.document]); // Update allDocuments
     };
 
     const updateDocumentList = (updatedDoc) => {
-        setDocumentOptions((prev) =>
+        setAllDocuments((prev) =>
             prev.map((doc) => (doc.id === updatedDoc.id ? updatedDoc : doc))
         );
     };
@@ -266,19 +260,17 @@ export function DescriptionForm({
     );
 }
 
-
 export function EditDocumentForm({
-    isLoggedIn,
     coordinates,
     handleChooseInMap,
-    documentOptions,
-    setDocumentOptions,
     className,
 }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
     const [loading, setLoading] = useState(true); // Loading status
+    const { isLoggedIn } = useContext(AppContext);
+
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -298,16 +290,13 @@ export function EditDocumentForm({
         };
 
         fetchDocumentById();
-    }, []);
+    }, [documentId]);
 
     if (!loading && existingDocument) {
         return (
             <DescriptionForm
-                isLoggedIn={isLoggedIn}
                 coordinates={coordinates}
                 handleChooseInMap={handleChooseInMap}
-                documentOptions={documentOptions}
-                setDocumentOptions={setDocumentOptions}
                 existingDocument={existingDocument}
                 className={className}
             />
