@@ -36,7 +36,6 @@ const initializeInputValues = (doc) => {
 
 export function DescriptionForm({
     coordinates,
-    handleChooseInMap,
     existingDocument,
     className,
 }) {
@@ -51,7 +50,7 @@ export function DescriptionForm({
     const steps = [
         <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} />,
         <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} />,
-        <GeoPart inputValues={inputValues} setInputValues={setInputValues} handleChooseInMap={handleChooseInMap} />,
+        <GeoPart inputValues={inputValues} setInputValues={setInputValues} />,
         <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} />
     ];
 
@@ -262,7 +261,6 @@ export function DescriptionForm({
 
 export function EditDocumentForm({
     coordinates,
-    handleChooseInMap,
     className,
 }) {
     const { documentId } = useParams(); //Get the document ID
@@ -296,7 +294,6 @@ export function EditDocumentForm({
         return (
             <DescriptionForm
                 coordinates={coordinates}
-                handleChooseInMap={handleChooseInMap}
                 existingDocument={existingDocument}
                 className={className}
             />

@@ -1,7 +1,12 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
-
-export function GeoPart({ inputValues, setInputValues, handleChooseInMap }) {
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+export function GeoPart({ inputValues, setInputValues }) {
+    const { setIsSelectingCoordinates } = useContext(AppContext);
+    const handleChooseInMap = () => {
+        setIsSelectingCoordinates(true);
+    };
     return (
         <Form>
             <h2>Georeference</h2>

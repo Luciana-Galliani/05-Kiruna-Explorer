@@ -25,7 +25,6 @@ import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 const CityMap = ({
-    isSelectingCoordinates,
     handleCoordinatesSelected,
     isSatelliteView,
 }) => {
@@ -33,7 +32,7 @@ const CityMap = ({
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
-    const { setAllDocuments, allDocuments, isLoggedIn } = useContext(AppContext);
+    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates } = useContext(AppContext);
 
 
     const longitude = 20.22513;

@@ -21,17 +21,12 @@ function App() {
     const navigate = useNavigate();
 
     const [coordinates, setCoordinates] = useState(null);
-    const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
     const [isSatelliteView, setIsSatelliteView] = useState(true);
 
-    const { setIsLoggedIn } = useContext(AppContext);
+    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates } = useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
-    };
-
-    const handleChooseInMap = () => {
-        setIsSelectingCoordinates(true);
     };
 
     const handleCoordinatesSelected = (lon, lat) => {
@@ -75,7 +70,6 @@ function App() {
             />
 
             <HomePage
-                isSelectingCoordinates={isSelectingCoordinates}
                 handleCoordinatesSelected={handleCoordinatesSelected}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
@@ -87,7 +81,6 @@ function App() {
                     element={
                         <DescriptionForm
                             coordinates={coordinates}
-                            handleChooseInMap={handleChooseInMap}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />
                     }
@@ -97,7 +90,6 @@ function App() {
                     element={
                         <EditDocumentForm
                             coordinates={coordinates}
-                            handleChooseInMap={handleChooseInMap}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />
                     }
