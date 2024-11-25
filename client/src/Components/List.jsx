@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
-const List = ({ condition, isLoggedIn }) => {
+const List = ({ condition }) => {
+    const { isLoggedIn } = useContext(AppContext);
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -27,24 +29,27 @@ const List = ({ condition, isLoggedIn }) => {
 
     return (
         <div
-            className="d-flex"
+            className="d-flex position-absolute"
             style={{
-                height: "100vh",
-                backgroundColor: "#f8f9fa",
-                alignItems: "flex-start",
+                top: "70px",
+                margin: "0 20px",
+                maxWidth: "calc(100% - 40px)",
+                minHeight: "80%",
+                maxHeight: "calc(100% - 75px)",
             }}
         >
             <div
                 className={"container position-relative "}
                 style={{
                     padding: "20px",
-                    width: "90%",
-                    height: "90%",
+                    width: "max-content",
+                    maxWidth: "100%",
                     borderRadius: "0.375rem",
                     boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
                     background: "rgba(255, 255, 255, 0.9)",
                     color: "#333",
                     zIndex: 1,
+                    overflowY: "auto",
                 }}
             >
                 <h1>{condition == "true" ? "All Municipality Documents" : "Documents"}</h1>
@@ -52,9 +57,8 @@ const List = ({ condition, isLoggedIn }) => {
                     {documentsToShow.map((document) => (
                         <li
                             key={document.id}
-                            className={`list-group-item ${
-                                hoveredItem === document.id ? "active" : ""
-                            }`}
+                            className={`list-group-item ${hoveredItem === document.id ? "active" : ""
+                                }`}
                             onMouseEnter={() => setHoveredItem(document.id)}
                             onMouseLeave={() => setHoveredItem(null)}
                             onClick={() => setSelectedDocument(document)}

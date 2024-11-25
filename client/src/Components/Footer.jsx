@@ -1,13 +1,15 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, matchPath } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 
-const Footer = ({ isHomePage, isLoggedIn, location, isSatelliteView, handleSatelliteView }) => {
+
+const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) => {
     const navigate = useNavigate();
+    const { isLoggedIn } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
     const isEditPage = matchPath("/edit/:documentId", location.pathname);
     return (
