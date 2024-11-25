@@ -307,35 +307,44 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
             </div>
 
             <div className="d-flex gap-5 mt-2">
-                <Button
-                    type="button"
-                    className="danger"
-                    style={{ flex: 1 }}
-                    onClick={handlePreviousStep}
-                    variant="danger"
-                    disabled={currentStep === 0}
-                >
-                    Previous
-                </Button>
-                <Button
-                    className="save-button"
-                    onClick={handleSaveForm}
-                    variant="success"
-                    style={{ flex: 1 }}
-                    disabled={!existingDocument && currentStep != steps.length - 1}
-                >
-                    {"  Save  "}
-                </Button>
-                <Button
-                    type="button"
-                    className=""
-                    onClick={handleNextStep}
-                    variant="primary"
-                    style={{ flex: 1 }}
-                    disabled={currentStep === steps.length - 1}
-                >
-                    {"  Next  "}
-                </Button>
+                {currentStep === 0 ? (
+                    <div style={{ flex: 1 }}></div>
+                ) : (
+                    <Button
+                        type="button"
+                        className="danger"
+                        style={{ flex: 1 }}
+                        onClick={handlePreviousStep}
+                        variant="danger"
+                    >
+                        Previous
+                    </Button>
+                )}
+                {!existingDocument && currentStep != steps.length - 1 ? (
+                    <div style={{ flex: 1 }}></div>
+                ) : (
+                    <Button
+                        className="save-button"
+                        onClick={handleSaveForm}
+                        variant="success"
+                        style={{ flex: 1 }}
+                    >
+                        Save
+                    </Button>
+                )}
+                {currentStep === steps.length - 1 ? (
+                    <div style={{ flex: 1 }}></div>
+                ) : (
+                    <Button
+                        type="button"
+                        className="danger"
+                        onClick={handleNextStep}
+                        variant="primary"
+                        style={{ flex: 1 }}
+                    >
+                        Next
+                    </Button>
+                )}
             </div>
         </div>
     );
