@@ -21,24 +21,33 @@ export async function findOriginalResources(id) {
     }
 }
 
-export function deleteOriginalResources(id) {
-    const folderPath = path.join("document_resources", id.toString(), "original_resources");
+export async function deleteOriginalResources(id) {
+    const createdPath = path.join("document_resources", id.toString(), "original_resources");
+    const folderPath = await fs.promises.realpath(createdPath);
+    if (!folderPath.startsWith(path.join(process.cwd(), "document_resources"))) {
+        throw new Error("Invalid path");
+    }
 
     if (fs.existsSync(folderPath)) {
         fs.rmSync(folderPath, { recursive: true });
     }
 }
 
-export function createOriginalResources(id, files) {
+export async function createOriginalResources(id, files) {
     // Create directory for document resources
-    const documentDir = path.join(process.cwd(), `document_resources/${id}/original_resources`);
-    if (!fs.existsSync(documentDir)) {
-        fs.mkdirSync(documentDir, { recursive: true });
+    const createdPath = path.join("document_resources", id.toString(), "original_resources");
+    const folderPath = await fs.promises.realpath(createdPath);
+    if (!folderPath.startsWith(path.join(process.cwd(), "document_resources"))) {
+        throw new Error("Invalid path");
+    }
+
+    if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
     }
 
     // Move uploaded files to document directory
     files.forEach((file) => {
-        const targetPath = path.join(documentDir, file.originalname);
+        const targetPath = path.join(folderPath, file.originalname);
         fs.copyFileSync(file.path, targetPath);
         fs.unlinkSync(file.path);
     });
