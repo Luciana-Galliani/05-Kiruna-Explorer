@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import fs from "fs";
 import path from "path";
 import {
@@ -8,6 +9,7 @@ import {
 
 jest.mock("fs", () => ({
     promises: {
+        realpath: jest.fn(),
         readdir: jest.fn(),
     },
     existsSync: jest.fn(),
@@ -16,99 +18,107 @@ jest.mock("fs", () => ({
     copyFileSync: jest.fn(),
     unlinkSync: jest.fn(),
 }));
+jest.spyOn(process, "cwd").mockReturnValue("/app");
 
-describe("findOriginalResources", () => {
-    it("should return a list of files if the folder exists", async () => {
-        const mockFiles = ["file1.txt", "file2.txt"];
-        fs.promises.readdir.mockResolvedValue(mockFiles);
+describe("manageResources", () => {
+    const id = 123;
+    const createdPath = path.join("document_resources", id.toString(), "original_resources");
+    const folderPath = path.join("/app", createdPath);
 
-        const result = await findOriginalResources(123);
-        expect(result).toEqual(mockFiles);
-        expect(fs.promises.readdir).toHaveBeenCalledWith(
-            path.join("document_resources", "123", "original_resources")
-        );
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    it("should return an empty array if the folder does not exist (ENOENT)", async () => {
-        const error = new Error("Folder not found");
-        error.code = "ENOENT";
-        fs.promises.readdir.mockRejectedValue(error);
+    describe("findOriginalResources", () => {
+        it("should throw error for invalid path", async () => {
+            fs.promises.realpath.mockResolvedValue("/invalid/path");
+            await expect(findOriginalResources(id)).rejects.toThrow("Invalid path");
+        });
 
-        const result = await findOriginalResources(123);
-        expect(result).toEqual([]);
-    });
+        it("should return files if folder exists", async () => {
+            const files = ["file1.txt", "file2.txt"];
+            fs.promises.realpath.mockResolvedValue(folderPath);
+            fs.promises.readdir.mockResolvedValue(files);
 
-    it("should throw an error for other exceptions", async () => {
-        const error = new Error("Unexpected error");
-        fs.promises.readdir.mockRejectedValue(error);
+            const result = await findOriginalResources(id);
+            expect(result).toEqual(files);
+        });
 
-        await expect(findOriginalResources(123)).rejects.toThrow("Unexpected error");
-    });
-});
+        it("should return empty array if folder does not exist", async () => {
+            fs.promises.realpath.mockRejectedValue({ code: "ENOENT" });
 
-describe("deleteOriginalResources", () => {
-    it("should delete the folder if it exists", () => {
-        fs.existsSync.mockReturnValue(true);
+            const result = await findOriginalResources(id);
+            expect(result).toEqual([]);
+        });
 
-        deleteOriginalResources(123);
-        expect(fs.existsSync).toHaveBeenCalledWith(
-            path.join("document_resources", "123", "original_resources")
-        );
-        expect(fs.rmSync).toHaveBeenCalledWith(
-            path.join("document_resources", "123", "original_resources"),
-            { recursive: true }
-        );
-    });
+        it("should throw error for other errors", async () => {
+            const error = new Error("Some error");
+            fs.promises.realpath.mockRejectedValue(error);
 
-    it("should do nothing if the folder does not exist", () => {
-        fs.existsSync.mockReturnValue(false);
-
-        deleteOriginalResources(123);
-        expect(fs.existsSync).toHaveBeenCalledWith(
-            path.join("document_resources", "123", "original_resources")
-        );
-        expect(fs.rmSync).not.toHaveBeenCalled();
-    });
-});
-
-describe("createOriginalResources", () => {
-    it("should create the folder if it does not exist and move files", () => {
-        fs.existsSync.mockReturnValue(false);
-        const mockFiles = [
-            { originalname: "file1.txt", path: "/tmp/file1.txt" },
-            { originalname: "file2.txt", path: "/tmp/file2.txt" },
-        ];
-
-        createOriginalResources(123, mockFiles);
-
-        const expectedDir = path.join(process.cwd(), "document_resources/123/original_resources");
-        expect(fs.existsSync).toHaveBeenCalledWith(expectedDir);
-        expect(fs.mkdirSync).toHaveBeenCalledWith(expectedDir, { recursive: true });
-
-        mockFiles.forEach((file) => {
-            const targetPath = path.join(expectedDir, file.originalname);
-            expect(fs.copyFileSync).toHaveBeenCalledWith(file.path, targetPath);
-            expect(fs.unlinkSync).toHaveBeenCalledWith(file.path);
+            await expect(findOriginalResources(id)).rejects.toThrow(error);
         });
     });
 
-    it("should not create the folder if it already exists but should move files", () => {
-        fs.existsSync.mockReturnValue(true);
-        const mockFiles = [
+    describe("deleteOriginalResources", () => {
+        it("should delete folder if it exists", async () => {
+            fs.promises.realpath.mockResolvedValue(folderPath);
+            fs.existsSync.mockReturnValue(true);
+
+            await deleteOriginalResources(id);
+            expect(fs.rmSync).toHaveBeenCalledWith(folderPath, { recursive: true });
+        });
+
+        it("should not delete folder if it does not exist", async () => {
+            fs.promises.realpath.mockResolvedValue(folderPath);
+            fs.existsSync.mockReturnValue(false);
+
+            await deleteOriginalResources(id);
+            expect(fs.rmSync).not.toHaveBeenCalled();
+        });
+
+        it("should throw error for invalid path", async () => {
+            fs.promises.realpath.mockResolvedValue("/invalid/path");
+
+            await expect(deleteOriginalResources(id)).rejects.toThrow("Invalid path");
+        });
+    });
+
+    describe("createOriginalResources", () => {
+        const files = [
             { originalname: "file1.txt", path: "/tmp/file1.txt" },
             { originalname: "file2.txt", path: "/tmp/file2.txt" },
         ];
 
-        createOriginalResources(123, mockFiles);
+        it("should create folder and move files", async () => {
+            fs.promises.realpath.mockResolvedValue(folderPath);
+            fs.existsSync.mockReturnValue(false);
 
-        const expectedDir = path.join(process.cwd(), "document_resources/123/original_resources");
-        expect(fs.existsSync).toHaveBeenCalledWith(expectedDir);
-        expect(fs.mkdirSync).not.toHaveBeenCalled();
+            await createOriginalResources(id, files);
+            expect(fs.mkdirSync).toHaveBeenCalledWith(folderPath, { recursive: true });
+            files.forEach((file) => {
+                const targetPath = path.join(folderPath, file.originalname);
+                expect(fs.copyFileSync).toHaveBeenCalledWith(file.path, targetPath);
+                expect(fs.unlinkSync).toHaveBeenCalledWith(file.path);
+            });
+        });
 
-        mockFiles.forEach((file) => {
-            const targetPath = path.join(expectedDir, file.originalname);
-            expect(fs.copyFileSync).toHaveBeenCalledWith(file.path, targetPath);
-            expect(fs.unlinkSync).toHaveBeenCalledWith(file.path);
+        it("should not create folder if it already exists", async () => {
+            fs.promises.realpath.mockResolvedValue(folderPath);
+            fs.existsSync.mockReturnValue(true);
+
+            await createOriginalResources(id, files);
+            expect(fs.mkdirSync).not.toHaveBeenCalled();
+            files.forEach((file) => {
+                const targetPath = path.join(folderPath, file.originalname);
+                expect(fs.copyFileSync).toHaveBeenCalledWith(file.path, targetPath);
+                expect(fs.unlinkSync).toHaveBeenCalledWith(file.path);
+            });
+        });
+
+        it("should throw error for invalid path", async () => {
+            fs.promises.realpath.mockResolvedValue("/invalid/path");
+
+            await expect(createOriginalResources(id, files)).rejects.toThrow("Invalid path");
         });
     });
 });

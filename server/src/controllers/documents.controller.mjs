@@ -49,8 +49,8 @@ export const createDocument = async (req, res) => {
 
         const newDocument = (await documentsDAO.createDocument(documentData)).toJSON();
 
-        deleteOriginalResources(newDocument.id);
-        createOriginalResources(newDocument.id, files);
+        await deleteOriginalResources(newDocument.id);
+        await createOriginalResources(newDocument.id, files);
         newDocument.originalResources = await findOriginalResources(newDocument.id);
 
         res.status(201).json({ document: newDocument });
@@ -72,8 +72,8 @@ export const updateDocument = async (req, res) => {
             await documentsDAO.updateDocument(documentId, documentData)
         ).toJSON();
 
-        deleteOriginalResources(documentId);
-        createOriginalResources(documentId, req.files);
+        await deleteOriginalResources(documentId);
+        await createOriginalResources(documentId, req.files);
         updatedDocument.originalResources = await findOriginalResources(updatedDocument.id);
 
         res.status(200).json({ document: updatedDocument });
