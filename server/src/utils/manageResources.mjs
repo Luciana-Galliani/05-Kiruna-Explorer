@@ -1,18 +1,30 @@
 import fs from "fs";
 import path from "path";
 
+function isValidId(id) {
+    return typeof id === "string" && /^[a-zA-Z0-9_-]+$/.test(id);
+}
+
 export async function findOriginalResources(id) {
-    const folderPath = path.join("document_resources", id.toString(), "original_resources");
+    if (!isValidId(id)) {
+        throw new Error("Invalid ID");
+    }
+
+    const baseFolderPath = path.resolve("document_resources");
+    const folderPath = path.join(baseFolderPath, id, "original_resources");
+
+    if (!folderPath.startsWith(baseFolderPath)) {
+        throw new Error("Path traversal attempt detected");
+    }
 
     try {
         const files = await fs.promises.readdir(folderPath);
         return files;
     } catch (err) {
         if (err.code === "ENOENT") {
-            // Folder does not exist
+            // non existing
             return [];
         } else {
-            // Other errors
             throw err;
         }
     }
