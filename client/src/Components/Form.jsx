@@ -3,14 +3,14 @@ import { Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../API/API.mjs";
 import { Stakeholder } from "../models.mjs";
-import { AppContext } from "../context/AppContext.jsx";
 import { GeneralPart } from "./GeneralPart.jsx";
 import { TechnicalPart } from "./Technicalpart.jsx";
 import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx";
+import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
-import "react-step-progress-bar/styles.css";
 
+// Function to initialize form values
 const initializeInputValues = (doc) => {
     const defaultDate = ["", "", ""];
     const dateParts = doc?.document?.issuanceDate?.split("-") || defaultDate;
@@ -34,11 +34,28 @@ const initializeInputValues = (doc) => {
     };
 };
 
-export function DescriptionForm({
-    coordinates,
-    existingDocument,
-    className,
-}) {
+const StepProgressBar = ({ currentStep, steps, setCurrentStep, existingDocument }) => {
+    return (
+        <div className="step-progress-bar">
+            {steps.map((step, index) => (
+                <div
+                    key={index}
+                    className={`step ${existingDocument || index <= currentStep ? "active" : ""}`}
+                    onClick={() => (existingDocument || index <= currentStep) && setCurrentStep(index)}
+                >
+                    <div className={`circle ${existingDocument || index <= currentStep ? "blue" : ""}`}>
+                        {index + 1}
+                    </div>
+                    <div className="label">{step.label}</div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+
+
+export function DescriptionForm({ coordinates, existingDocument, className }) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
@@ -46,18 +63,21 @@ export function DescriptionForm({
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
-    const { setAllDocuments, isLoggedIn } = useContext(AppContext); // UseContext per allDocuments
+    const { isLoggedIn, setAllDocuments } = useContext(AppContext);
+
     const steps = [
-        <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} />,
-        <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} />,
-        <GeoPart inputValues={inputValues} setInputValues={setInputValues} />,
-        <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} />
+        { label: "General Info", component: <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} /> },
+        { label: "Technical Info", component: <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} /> },
+        { label: "Geographic Info", component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} /> },
+        { label: "Linked Documents", component: <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} /> },
     ];
 
+    // Redirect if not logged in
     useEffect(() => {
         if (!isLoggedIn) navigate("/login");
     }, [isLoggedIn, navigate]);
 
+    // Validation function for form data
     useEffect(() => {
         fetchInitialData();
         if (existingDocument) fetchFiles();
@@ -229,32 +249,26 @@ export function DescriptionForm({
                 percent={Math.min(Math.max((currentStep / (steps.length - 1)) * 100, 0), 100)}
                 filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
             />
+            {/* Progress bar */}
+            <StepProgressBar currentStep={currentStep} steps={steps} setCurrentStep={setCurrentStep} existingDocument={existingDocument} />
 
+            {/* Current step content */}
             <div className={`step-content ${steps[currentStep]?.className || ""}`}>
-                {steps[currentStep]}
+                {steps[currentStep]?.component}
             </div>
 
             <div className="d-flex justify-content-between mt-2">
                 {currentStep > 0 && (
-                    <Button type="button" className="danger ms-2" onClick={handlePreviousStep} variant="danger">
-                        Previous
-                    </Button>
+                    <Button type="button" className="danger ms-2" onClick={handlePreviousStep} variant="danger">Previous</Button>
                 )}
-
                 {currentStep < steps.length - 1 && (
-                    <Button
-                        type="button" className="ms-2" onClick={handleNextStep} variant="primary">
-                        Next
-                    </Button>
+                    <Button type="button" className="ms-2" onClick={handleNextStep} variant="primary"> Next </Button>
                 )}
-
                 {(existingDocument || currentStep == steps.length - 1) && (
-                    <Button
-                        className="save-button ms-2" onClick={handleSaveForm} variant="success" >
-                        Save Document
-                    </Button>
+                    <Button className="save-button ms-2" onClick={handleSaveForm} variant="success" > Save </Button>
                 )}
             </div>
+
         </div>
     );
 }
