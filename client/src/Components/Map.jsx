@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -22,19 +22,18 @@ import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const CityMap = ({
-    isSelectingCoordinates,
     handleCoordinatesSelected,
-    allDocuments,
-    setAllDocuments,
-    isLoggedIn,
     isSatelliteView,
 }) => {
     const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
+    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates } = useContext(AppContext);
+
 
     const longitude = 20.22513;
     const latitude = 67.85572;

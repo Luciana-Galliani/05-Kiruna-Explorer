@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { RefreshContext } from "../App.jsx";
+import { AppContext } from "../context/AppContext";
 import API from "../API/API.mjs";
 
 const getFileType = (fileName) => {
@@ -27,24 +27,23 @@ const getFileType = (fileName) => {
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
-    const [needRefresh, setNeedRefresh] = useContext(RefreshContext);
     const navigate = useNavigate();
+    const { alldocuments } = useContext(AppContext);
 
     useEffect(() => {
         const fetchDocumentById = async () => {
             try {
                 const resp = await API.getDocument(doc);
                 setDocument(resp.document);
-                setNeedRefresh(false);
             } catch (error) {
                 console.error("Error fetching document:", error);
             }
         };
 
-        if (!document || needRefresh) {
+        if (!document) {
             fetchDocumentById();
         }
-    }, [doc, needRefresh]);
+    }, [doc, document, alldocuments]);
 
     if (!document) {
         return (
