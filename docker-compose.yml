@@ -12,6 +12,7 @@ services:
       - "5173:5173"  # Map host port 3000 to client container port
     environment:
       - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - server
     networks:
@@ -33,6 +34,7 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_NAME=kiruna_db
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       mysql:
         condition: service_healthy
