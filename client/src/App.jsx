@@ -80,6 +80,7 @@ function App() {
                     path="/add"
                     element={
                         <DescriptionForm
+                            setCoordinates={setCoordinates}
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />
@@ -89,6 +90,7 @@ function App() {
                     path="edit/:documentId"
                     element={
                         <EditDocumentForm
+                            setCoordinates={setCoordinates}
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                         />

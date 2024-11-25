@@ -35,21 +35,17 @@ const initializeInputValues = (doc) => {
     };
 };
 
-const StepProgressBar = ({ currentStep, steps, setCurrentStep, existingDocument }) => {
+const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, setValidSteps, existingDocument }) => {
     return (
         <div className="step-progress-bar">
             {steps.map((step, index) => (
                 <div
                     key={index}
-                    className={`step ${existingDocument || index <= currentStep ? "active" : ""}`}
-                    onClick={() =>
-                        (existingDocument || index <= currentStep) && setCurrentStep(index)
-                    }
+                    className={`step ${existingDocument || validSteps.includes(index) || index <= currentStep ? "active" : ""}`}
+                    onClick={() => (existingDocument || validSteps.includes(index) || index <= currentStep) && setCurrentStep(index)}
                 >
                     <div
-                        className={`circle ${
-                            existingDocument || index <= currentStep ? "blue" : ""
-                        }`}
+                        className={`circle ${existingDocument || validSteps.includes(index) || index <= currentStep ? "blue" : ""}`}
                     >
                         {index + 1}
                     </div>
@@ -60,7 +56,8 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, existingDocument 
     );
 };
 
-export function DescriptionForm({ coordinates, existingDocument, className }) {
+export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates = { setCoordinates }
+}) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
@@ -68,6 +65,7 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
+    const [validSteps, setValidSteps] = useState([]);  // Stato per tracciare gli step validati
     const { isLoggedIn, setAllDocuments } = useContext(AppContext);
 
     const steps = [
@@ -212,6 +210,7 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     };
 
     const handleValidation = (validateAllSteps = false) => {
+        let validationMessage = null;
         if (validateAllSteps || currentStep === 0) {
             if (
                 !inputValues.title ||
@@ -219,31 +218,37 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
                 !inputValues.description ||
                 !inputValues.issuanceYear
             ) {
-                return "Please complete title, stakeholders, description, and issuance date.";
+                validationMessage = "Please complete title, stakeholders, description, and issuance date.";
+            } else {
+                setValidSteps((prev) => [...prev, 0]);
             }
         }
         if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
-                return "Please complete type and scale type.";
+                validationMessage = "Please complete type and scale type.";
             }
             if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
-                return "Pages must be a number or a range (e.g., 1-32).";
+                validationMessage = "Pages must be a number or a range (e.g., 1-32).";
+            } else {
+                setValidSteps((prev) => [...prev, 1]);
             }
         }
         if (validateAllSteps || currentStep === 2) {
             if (!inputValues.allMunicipality) {
                 if (!inputValues.latitude || !inputValues.longitude) {
-                    return "Please provide latitude and longitude.";
+                    validationMessage = "Please provide latitude and longitude.";
                 }
                 if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
-                    return "Latitude must be between 67.21 and 69.3 for Kiruna.";
+                    validationMessage = "Latitude must be between 67.21 and 69.3 for Kiruna.";
                 }
                 if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
-                    return "Longitude must be between 17.53 and 23.17 for Kiruna.";
+                    validationMessage = "Longitude must be between 17.53 and 23.17 for Kiruna.";
                 }
+            } else {
+                setValidSteps((prev) => [...prev, 2]);
             }
         }
-        return null;
+        return validationMessage;
     };
 
     const handleUpdateDocument = async (data) => {
@@ -253,12 +258,22 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
             selectedFiles
         );
         showNotification("Document modified successfully!", "success");
+        setCoordinates((prev) => ({
+            ...prev,
+            latitude: null,
+            longitude: null
+        }));
         updateDocumentList(response.document);
     };
 
     const handleCreateDocument = async (data) => {
         const response = await API.createDocument(data, selectedFiles);
         showNotification("Document saved successfully!", "success");
+        setCoordinates((prev) => ({
+            ...prev,
+            latitude: null,
+            longitude: null
+        }));
         setAllDocuments((prev) => [...prev, response.document]); // Update allDocuments
     };
 
@@ -269,6 +284,7 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     const showNotification = (message, type) => {
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+
     };
 
     const handleNextStep = () => {
@@ -292,12 +308,12 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
             <ProgressBar
                 percent={Math.min(Math.max((currentStep / (steps.length - 1)) * 100, 0), 100)}
                 filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
-            />
-            {/* Progress bar */}
-            <StepProgressBar
+            />            <StepProgressBar
                 currentStep={currentStep}
                 steps={steps}
                 setCurrentStep={setCurrentStep}
+                validSteps={validSteps}
+                setValidSteps={setValidSteps}
                 existingDocument={existingDocument}
             />
 
@@ -350,7 +366,8 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     );
 }
 
-export function EditDocumentForm({ coordinates, className }) {
+export function EditDocumentForm({ coordinates, className, setCoordinates = { setCoordinates }
+}) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
