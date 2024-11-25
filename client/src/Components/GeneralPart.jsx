@@ -49,9 +49,7 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                         autoFocus
                         required
                         value={inputValues.title}
-                        onChange={(e) =>
-                            setInputValues({ ...inputValues, title: e.target.value })
-                        }
+                        onChange={(e) => setInputValues({ ...inputValues, title: e.target.value })}
                         placeholder="Click to enter the title"
                     />
                 </Form.Group>
@@ -70,11 +68,11 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                     />
                 </Form.Group>
 
-                <Form.Group >
+                <Form.Group>
                     <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>
                         Issuance Date <span className="text-danger">*</span>
                     </Form.Label>
-                    <div className="d-flex align-items-center gap-2 mt-2">
+                    <div className="d-flex align-items-center gap-2">
                         <Form.Control
                             type="number"
                             name="issuanceYear"
@@ -123,7 +121,7 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                     </div>
                 </Form.Group>
 
-                <Form.Group controlId="formDescription" >
+                <Form.Group controlId="formDescription">
                     <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>
                         Description<span className="text-danger ms-2 fw-bold">*</span>
                     </Form.Label>

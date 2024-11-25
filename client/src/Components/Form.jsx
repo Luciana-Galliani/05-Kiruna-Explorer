@@ -23,8 +23,9 @@ const initializeInputValues = (doc) => {
         issuanceMonth: dateParts[1] || "",
         issuanceDay: dateParts[2] || "",
         type: doc?.document?.type || "",
-        language: (doc?.document?.language && doc?.document?.language !== "-") ? doc.document.language : "",
-        pages: (doc?.document?.pages && doc?.document?.pages !== "-") ? doc.document.pages : "",
+        language:
+            doc?.document?.language && doc?.document?.language !== "-" ? doc.document.language : "",
+        pages: doc?.document?.pages && doc?.document?.pages !== "-" ? doc.document.pages : "",
         description: doc?.document?.description || "",
         planScale: doc?.document?.scaleValue || "",
         allMunicipality: doc?.document?.allMunicipality || false,
@@ -41,9 +42,15 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, existingDocument 
                 <div
                     key={index}
                     className={`step ${existingDocument || index <= currentStep ? "active" : ""}`}
-                    onClick={() => (existingDocument || index <= currentStep) && setCurrentStep(index)}
+                    onClick={() =>
+                        (existingDocument || index <= currentStep) && setCurrentStep(index)
+                    }
                 >
-                    <div className={`circle ${existingDocument || index <= currentStep ? "blue" : ""}`}>
+                    <div
+                        className={`circle ${
+                            existingDocument || index <= currentStep ? "blue" : ""
+                        }`}
+                    >
                         {index + 1}
                     </div>
                     <div className="label">{step.label}</div>
@@ -52,8 +59,6 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, existingDocument 
         </div>
     );
 };
-
-
 
 export function DescriptionForm({ coordinates, existingDocument, className }) {
     const navigate = useNavigate();
@@ -66,10 +71,41 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     const { isLoggedIn, setAllDocuments } = useContext(AppContext);
 
     const steps = [
-        { label: "General Info", component: <GeneralPart inputValues={inputValues} setInputValues={setInputValues} stakeholderOptions={stakeholderOptions} /> },
-        { label: "Technical Info", component: <TechnicalPart inputValues={inputValues} setInputValues={setInputValues} selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} /> },
-        { label: "Geographic Info", component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} /> },
-        { label: "Linked Documents", component: <LinkPart inputValues={inputValues} setInputValues={setInputValues} relationshipOptions={relationshipOptions} /> },
+        {
+            label: "General Info",
+            component: (
+                <GeneralPart
+                    inputValues={inputValues}
+                    setInputValues={setInputValues}
+                    stakeholderOptions={stakeholderOptions}
+                />
+            ),
+        },
+        {
+            label: "Technical Info",
+            component: (
+                <TechnicalPart
+                    inputValues={inputValues}
+                    setInputValues={setInputValues}
+                    selectedFiles={selectedFiles}
+                    setSelectedFiles={setSelectedFiles}
+                />
+            ),
+        },
+        {
+            label: "Geographic Info",
+            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} />,
+        },
+        {
+            label: "Linked Documents",
+            component: (
+                <LinkPart
+                    inputValues={inputValues}
+                    setInputValues={setInputValues}
+                    relationshipOptions={relationshipOptions}
+                />
+            ),
+        },
     ];
 
     // Redirect if not logged in
@@ -163,7 +199,8 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
 
     const prepareDocumentData = () => {
         let issuanceDate = inputValues.issuanceYear;
-        if (inputValues.issuanceMonth) issuanceDate += `-${inputValues.issuanceMonth.padStart(2, "0")}`;
+        if (inputValues.issuanceMonth)
+            issuanceDate += `-${inputValues.issuanceMonth.padStart(2, "0")}`;
         if (inputValues.issuanceDay) issuanceDate += `-${inputValues.issuanceDay.padStart(2, "0")}`;
 
         return {
@@ -176,7 +213,12 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
 
     const handleValidation = (validateAllSteps = false) => {
         if (validateAllSteps || currentStep === 0) {
-            if (!inputValues.title || !inputValues.stakeholders.length || !inputValues.description || !inputValues.issuanceYear) {
+            if (
+                !inputValues.title ||
+                !inputValues.stakeholders.length ||
+                !inputValues.description ||
+                !inputValues.issuanceYear
+            ) {
                 return "Please complete title, stakeholders, description, and issuance date.";
             }
         }
@@ -205,7 +247,11 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     };
 
     const handleUpdateDocument = async (data) => {
-        const response = await API.updateDocument(existingDocument.document.id, data, selectedFiles);
+        const response = await API.updateDocument(
+            existingDocument.document.id,
+            data,
+            selectedFiles
+        );
         showNotification("Document modified successfully!", "success");
         updateDocumentList(response.document);
     };
@@ -217,9 +263,7 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     };
 
     const updateDocumentList = (updatedDoc) => {
-        setAllDocuments((prev) =>
-            prev.map((doc) => (doc.id === updatedDoc.id ? updatedDoc : doc))
-        );
+        setAllDocuments((prev) => prev.map((doc) => (doc.id === updatedDoc.id ? updatedDoc : doc)));
     };
 
     const showNotification = (message, type) => {
@@ -241,7 +285,7 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
     };
 
     return (
-        <div className={`form-container position-relative ${className}`}>
+        <div className={`form-container position-absolute ${className}`}>
             {notification.message && (
                 <div className={`notification ${notification.type}`}> {notification.message} </div>
             )}
@@ -250,39 +294,59 @@ export function DescriptionForm({ coordinates, existingDocument, className }) {
                 filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
             />
             {/* Progress bar */}
-            <StepProgressBar currentStep={currentStep} steps={steps} setCurrentStep={setCurrentStep} existingDocument={existingDocument} />
+            <StepProgressBar
+                currentStep={currentStep}
+                steps={steps}
+                setCurrentStep={setCurrentStep}
+                existingDocument={existingDocument}
+            />
 
             {/* Current step content */}
             <div className={`step-content ${steps[currentStep]?.className || ""}`}>
                 {steps[currentStep]?.component}
             </div>
 
-            <div className="d-flex justify-content-between mt-2">
-                {currentStep > 0 && (
-                    <Button type="button" className="danger ms-2" onClick={handlePreviousStep} variant="danger">Previous</Button>
-                )}
-                {currentStep < steps.length - 1 && (
-                    <Button type="button" className="ms-2" onClick={handleNextStep} variant="primary"> Next </Button>
-                )}
-                {(existingDocument || currentStep == steps.length - 1) && (
-                    <Button className="save-button ms-2" onClick={handleSaveForm} variant="success" > Save </Button>
-                )}
+            <div className="d-flex gap-5 mt-2">
+                <Button
+                    type="button"
+                    className="danger"
+                    style={{ flex: 1 }}
+                    onClick={handlePreviousStep}
+                    variant="danger"
+                    disabled={currentStep === 0}
+                >
+                    Previous
+                </Button>
+                <Button
+                    className="save-button"
+                    onClick={handleSaveForm}
+                    variant="success"
+                    style={{ flex: 1 }}
+                    disabled={!existingDocument && currentStep != steps.length - 1}
+                >
+                    {"  Save  "}
+                </Button>
+                <Button
+                    type="button"
+                    className=""
+                    onClick={handleNextStep}
+                    variant="primary"
+                    style={{ flex: 1 }}
+                    disabled={currentStep === steps.length - 1}
+                >
+                    {"  Next  "}
+                </Button>
             </div>
-
         </div>
     );
 }
 
-export function EditDocumentForm({
-    coordinates,
-    className,
-}) {
+export function EditDocumentForm({ coordinates, className }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
     const [loading, setLoading] = useState(true); // Loading status
     const { isLoggedIn } = useContext(AppContext);
-
 
     useEffect(() => {
         if (!isLoggedIn) {
