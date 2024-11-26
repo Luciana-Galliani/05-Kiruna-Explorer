@@ -56,8 +56,7 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, setVa
     );
 };
 
-export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates = { setCoordinates }
-}) {
+export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates }) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
@@ -366,8 +365,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     );
 }
 
-export function EditDocumentForm({ coordinates, className, setCoordinates = { setCoordinates }
-}) {
+export function EditDocumentForm({ coordinates, className, setCoordinates }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
@@ -400,6 +398,7 @@ export function EditDocumentForm({ coordinates, className, setCoordinates = { se
                 coordinates={coordinates}
                 existingDocument={existingDocument}
                 className={className}
+                setCoordinates={setCoordinates}
             />
         );
     } else {
