@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 import { AppContext } from "../context/AppContext";
@@ -12,6 +12,20 @@ export function LinkPart({
     const [document, setDocument] = useState("");
     const [relationship, setRelationship] = useState("");
     const { allDocuments } = useContext(AppContext); // UseContext per allDocuments
+    const [searchTerm, setSearchTerm] = useState(""); // Initialize as an empty string
+    const [filteredDocuments, setFilteredDocuments] = useState(allDocuments);
+
+    useEffect(() => {
+        setFilteredDocuments(
+            allDocuments.filter((doc) =>
+                doc.title.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+    }, [searchTerm, allDocuments]);
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
 
     const handleDocumentChange = (e) => {
         const selectedDocId = e.target.value;
@@ -50,6 +64,13 @@ export function LinkPart({
                 <Form.Group controlId="formDocument" className="mb-3">
                     <Form.Label>Document</Form.Label>
                     <Form.Control
+                        type="text"
+                        placeholder="Search documents..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="mb-2"
+                    />
+                    <Form.Control
                         as="select"
                         value={document}
                         onChange={handleDocumentChange}
@@ -57,7 +78,7 @@ export function LinkPart({
                         <option key="0" value="">
                             Select a document
                         </option>
-                        {allDocuments.map((doc) => (
+                        {filteredDocuments.map((doc) => (
                             <option key={doc.id} value={doc.id}>
                                 {doc.title}
                             </option>
