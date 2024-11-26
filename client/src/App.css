@@ -140,6 +140,18 @@ button {
     cursor: pointer;
 }
 
+.custom-button {
+    margin-top: 0;
+    padding: 5px 10px;
+    cursor: pointer;
+    background: none;
+}
+
+.custom-button:hover {
+    background-color: none;
+    background: none;
+}
+
 button:hover {
     background-color: #3b6c14;
 }
@@ -229,4 +241,8 @@ button:hover {
     margin-top: 5px;
     font-size: 14px;
     color: #666;
+}
+
+.sidebar .list-group-item a:hover {
+    color: #007bff;
 }

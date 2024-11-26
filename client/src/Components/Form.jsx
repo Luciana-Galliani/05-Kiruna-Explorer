@@ -43,10 +43,9 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
             {steps.map((step, index) => {
                 const isActive = existingDocument || validSteps.includes(index) || index <= currentStep;
                 return (
-                    <div
+                    <button
                         key={index}
-                        className={`step ${isActive ? "active" : ""}`}
-                        tabIndex={isActive ? 0 : -1}
+                        className={`step ${isActive ? "active" : ""} custom-button`}
                         onClick={() => isActive && setCurrentStep(index)}
                         onKeyDown={(e) => {
                             if (isActive && (e.key === "Enter" || e.key === " ")) {
@@ -54,15 +53,17 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
                             }
                         }}
                         aria-disabled={!isActive}
+                        role="button"
                     >
                         <div className={`circle ${isActive ? "blue" : ""}`}>{index + 1}</div>
                         <div className="label">{step.label}</div>
-                    </div>
+                    </button>
                 );
             })}
         </div>
     );
 };
+
 
 
 
@@ -443,4 +444,17 @@ EditDocumentForm.propTypes = {
     }),
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
+};
+
+StepProgressBar.propTypes = {
+    currentStep: PropTypes.number.isRequired,
+    steps: PropTypes.arrayOf(
+        PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            component: PropTypes.node.isRequired,
+        })
+    ).isRequired,
+    setCurrentStep: PropTypes.func.isRequired,
+    validSteps: PropTypes.arrayOf(PropTypes.number).isRequired,
+    existingDocument: PropTypes.object,
 };

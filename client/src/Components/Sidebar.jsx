@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import PropTypes from 'prop-types';
-
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
@@ -19,10 +17,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         }
     };
 
-    const handleMenuClick = (e) => {
-        // Check if the clicked item is not a link
-        if (e.target.tagName !== 'A') {
-            toggleSidebar();
+    const handleKeyDown = (e, target) => {
+        // Allows closing the sidebar when pressing "Enter" or "Space"
+        if (e.key === 'Enter' || e.key === ' ') {
+            target.click();  // Trigger the click event
         }
     };
 
@@ -30,7 +28,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <>
             {/* Sidebar */}
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}
-                onClick={handleMenuClick}
+                onClick={handleKeyDown}
                 style={{
                     position: 'fixed',
                     top: 0,
@@ -46,15 +44,55 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }}>
                 <h2>Menu</h2>
                 <ul className="list-group" style={{ listStyleType: 'none', padding: 0 }}>
-                    <li className={`list-group-item ${hoveredItem === "municipalDocuments" ? "active" : ""}`}
+                    <li
+                        className={`list-group-item ${hoveredItem === "municipalDocuments" ? "active" : ""}`}
                         onMouseEnter={() => setHoveredItem("municipalDocuments")}
-                        onAbort={() => setHoveredItem(null)}>
-                        <Link to="/municipality" style={{ textDecoration: 'none', color: 'black' }} onClick={closeSidebar}>Municipal Documents</Link>
+                        onMouseLeave={() => setHoveredItem(null)}
+                    >
+                        <button
+                            onClick={closeSidebar}
+                            onKeyDown={(e) => handleKeyDown(e, e.target)}
+                            style={{ background: 'none', border: 'none', padding: '0', width: '100%' }}
+                            aria-label="Municipal Documents"
+                        >
+                            <Link
+                                to="/municipality"
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'black',
+                                    display: 'block'
+                                }}
+                                onMouseEnter={() => setHoveredItem("municipalDocuments")}
+                                onMouseLeave={() => setHoveredItem(null)}
+                            >
+                                Municipal Documents
+                            </Link>
+                        </button>
                     </li>
-                    <li className={`list-group-item ${hoveredItem === "allDocuments" ? "active" : ""}`}
+                    <li
+                        className={`list-group-item ${hoveredItem === "allDocuments" ? "active" : ""}`}
                         onMouseEnter={() => setHoveredItem("allDocuments")}
-                        onAbort={() => setHoveredItem(null)}>
-                        <Link to="/allDocuments" style={{ textDecoration: 'none', color: 'black' }} onClick={closeSidebar}>All documents</Link>
+                        onMouseLeave={() => setHoveredItem(null)}
+                    >
+                        <button
+                            onClick={closeSidebar}
+                            onKeyDown={(e) => handleKeyDown(e, e.target)}  // Aggiungi il supporto per la tastiera
+                            style={{ background: 'none', border: 'none', padding: '0', width: '100%' }}
+                            aria-label="All documents"
+                        >
+                            <Link
+                                to="/allDocuments"
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'black',  // Colore per il testo di default
+                                    display: 'block'
+                                }}
+                                onMouseEnter={() => setHoveredItem("allDocuments")}
+                                onMouseLeave={() => setHoveredItem(null)}
+                            >
+                                All documents
+                            </Link>
+                        </button>
                     </li>
                 </ul>
             </div>
