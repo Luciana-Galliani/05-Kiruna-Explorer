@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Form, Button, Card } from "react-bootstrap";
+import { Form, Button, Card, Dropdown } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 import { AppContext } from "../context/AppContext";
 
@@ -27,8 +27,8 @@ export function LinkPart({
         setSearchTerm(e.target.value);
     };
 
-    const handleDocumentChange = (e) => {
-        const selectedDocId = e.target.value;
+    const handleDocumentChange = (docId) => {
+        const selectedDocId = docId;
         setDocument(Number(selectedDocId));
         setIsTypeOfEnabled(selectedDocId !== "");
     };
@@ -63,27 +63,29 @@ export function LinkPart({
                 <h2>Add a connection</h2>
                 <Form.Group controlId="formDocument" className="mb-3">
                     <Form.Label>Document</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Search documents..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        className="mb-2"
-                    />
-                    <Form.Control
-                        as="select"
-                        value={document}
-                        onChange={handleDocumentChange}
-                    >
-                        <option key="0" value="">
-                            Select a document
-                        </option>
-                        {filteredDocuments.map((doc) => (
-                            <option key={doc.id} value={doc.id}>
-                                {doc.title}
-                            </option>
-                        ))}
-                    </Form.Control>
+                    <Dropdown>
+                        <Dropdown.Toggle variant="success" id="dropdown-basic">
+                            {document ? filteredDocuments.find(doc => doc.id === document)?.title : "Select a document"}
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                            <Form.Control
+                                type="text"
+                                placeholder="Search documents..."
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                                className="mb-2"
+                            />
+                            {filteredDocuments.map((doc) => (
+                                <Dropdown.Item
+                                    key={doc.id}
+                                    onClick={() => handleDocumentChange(doc.id)}
+                                >
+                                    {doc.title}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </Form.Group>
 
                 <Form.Group controlId="formRelationship" className="mb-3">
