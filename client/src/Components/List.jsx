@@ -3,6 +3,8 @@ import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import PropTypes from 'prop-types';
+
 
 const List = ({ condition }) => {
     const { isLoggedIn } = useContext(AppContext);
@@ -80,6 +82,9 @@ const List = ({ condition }) => {
             )}
         </div>
     );
+};
+List.propTypes = {
+    condition: PropTypes.string.isRequired
 };
 
 export default List;

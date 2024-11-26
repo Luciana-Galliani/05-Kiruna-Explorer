@@ -23,6 +23,8 @@ import actionIcon from "../Icons/action.svg";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import PropTypes from 'prop-types';
+
 
 const CityMap = ({
     handleCoordinatesSelected,
@@ -224,6 +226,11 @@ const CityMap = ({
             </div>
         </div>
     );
+};
+
+CityMap.propTypes = {
+    handleCoordinatesSelected: PropTypes.func.isRequired,
+    isSatelliteView: PropTypes.bool.isRequired
 };
 
 export default CityMap;

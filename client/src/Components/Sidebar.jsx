@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
+
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
@@ -28,20 +30,20 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <>
             {/* Sidebar */}
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}
-            onClick={handleMenuClick}
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                height: '100%',
-                width: '250px',
-                backgroundColor: 'white',
-                color: 'black',
-                padding: '20px',
-                transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-                transition: 'transform 0.3s ease',
-                zIndex: 1001
-            }}>
+                onClick={handleMenuClick}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    height: '100%',
+                    width: '250px',
+                    backgroundColor: 'white',
+                    color: 'black',
+                    padding: '20px',
+                    transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+                    transition: 'transform 0.3s ease',
+                    zIndex: 1001
+                }}>
                 <h2>Menu</h2>
                 <ul className="list-group" style={{ listStyleType: 'none', padding: 0 }}>
                     <li className={`list-group-item ${hoveredItem === "municipalDocuments" ? "active" : ""}`}
@@ -71,6 +73,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             )}
         </>
     );
+};
+
+Sidebar.propTypes = {
+    isSidebarOpen: PropTypes.bool.isRequired,
+    toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

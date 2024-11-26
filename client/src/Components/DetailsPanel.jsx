@@ -1,4 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from 'prop-types';
+
 import {
     faFilePdf,
     faFileImage,
@@ -127,10 +129,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                         alignItems: "stretch",
                     }}
                 >
-                    {processedResources.map((resource, index) => {
+                    {processedResources.map((resource) => {
                         const icon = getIconForFileType(resource.fileType);
                         return (
-                            <div key={index} className="mb-2">
+                            <div key={resource.name} className="mb-2">
                                 <button
                                     className="btn btn-outline-primary w-100"
                                     onClick={() =>
@@ -164,6 +166,12 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             </div>
         </div>
     );
+};
+
+DetailsPanel.propTypes = {
+    doc: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default DetailsPanel;

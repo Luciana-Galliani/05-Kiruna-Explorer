@@ -9,6 +9,8 @@ import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
+import PropTypes from 'prop-types';
+
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -44,7 +46,6 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
                     <div
                         key={index}
                         className={`step ${isActive ? "active" : ""}`}
-                        role="button"
                         tabIndex={isActive ? 0 : -1}
                         onClick={() => isActive && setCurrentStep(index)}
                         onKeyDown={(e) => {
@@ -376,6 +377,16 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     );
 }
 
+DescriptionForm.propTypes = {
+    coordinates: PropTypes.shape({
+        latitude: PropTypes.number,
+        longitude: PropTypes.number,
+    }),
+    existingDocument: PropTypes.object,
+    className: PropTypes.string,
+    setCoordinates: PropTypes.func.isRequired,
+};
+
 export function EditDocumentForm({ coordinates, className, setCoordinates }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
@@ -424,3 +435,12 @@ export function EditDocumentForm({ coordinates, className, setCoordinates }) {
         );
     }
 }
+
+EditDocumentForm.propTypes = {
+    coordinates: PropTypes.shape({
+        latitude: PropTypes.number,
+        longitude: PropTypes.number,
+    }),
+    className: PropTypes.string,
+    setCoordinates: PropTypes.func.isRequired,
+};

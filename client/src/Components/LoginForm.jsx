@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
+
 
 function LoginForm({ handleLogin }) {
     const [username, setUsername] = useState("");
@@ -78,5 +80,9 @@ function LoginForm({ handleLogin }) {
         </div>
     );
 }
+
+LoginForm.propTypes = {
+    handleLogin: PropTypes.func.isRequired
+};
 
 export default LoginForm;

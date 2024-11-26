@@ -1,10 +1,11 @@
-import React from "react";
 import { useState, useContext } from "react";
 import { useNavigate, matchPath } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import { Button } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
+import PropTypes from 'prop-types';
+
 
 
 const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) => {
@@ -94,6 +95,13 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
             />
         </>
     );
+};
+
+Footer.propTypes = {
+    isHomePage: PropTypes.bool.isRequired,
+    location: PropTypes.object.isRequired,
+    isSatelliteView: PropTypes.bool.isRequired,
+    handleSatelliteView: PropTypes.func.isRequired,
 };
 
 export default Footer;

@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
 import { AppContext } from "../context/AppContext.jsx";
+import PropTypes from 'prop-types';
+
 
 const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -61,4 +63,11 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
     );
 };
 
+Header.propTypes = {
+    handleLogout: PropTypes.func.isRequired,
+    headerClass: PropTypes.string,
+    isSatelliteView: PropTypes.bool.isRequired
+};
+
 export default Header;
+

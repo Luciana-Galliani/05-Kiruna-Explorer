@@ -16,7 +16,7 @@ import { AppContext } from "./context/AppContext";
 
 function App() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState("Do you really want to logout?");
+    const [confirmationMessage] = useState("Do you really want to logout?");
     const location = useLocation();
     const navigate = useNavigate();
 

@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
+
 
 const LinkButton = ({ msg, link, color }) => {
-    
+
     const icon = link === "/add" ? "bi bi-plus" : "bi bi-list";
 
     return (
@@ -17,7 +19,7 @@ const LinkButton = ({ msg, link, color }) => {
                 transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
                 position: "relative",
             }}
-            title={ msg }
+            title={msg}
             onMouseEnter={(e) => {
                 e.currentTarget.style.width = "8rem";
                 e.currentTarget.style.borderRadius = "0.5rem";
@@ -45,10 +47,15 @@ const LinkButton = ({ msg, link, color }) => {
                 }}
                 className="add-text"
             >
-                { msg }
+                {msg}
             </span>
         </Link>
-);
+    );
 }
 
+LinkButton.propTypes = {
+    msg: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired,
+    color: PropTypes.bool
+};
 export default LinkButton;

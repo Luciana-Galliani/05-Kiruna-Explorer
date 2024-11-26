@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 import { AppContext } from "../context/AppContext";
+import PropTypes from 'prop-types';
+
 
 export function LinkPart({
     inputValues,
@@ -129,3 +131,13 @@ export function LinkPart({
         </Form>
     );
 }
+
+LinkPart.propTypes = {
+    inputValues: PropTypes.shape({
+        connections: PropTypes.arrayOf(
+            PropTypes.instanceOf(Connection)
+        ).isRequired
+    }).isRequired,
+    setInputValues: PropTypes.func.isRequired,
+    relationshipOptions: PropTypes.arrayOf(PropTypes.string).isRequired
+};
