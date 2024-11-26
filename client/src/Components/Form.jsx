@@ -35,26 +35,35 @@ const initializeInputValues = (doc) => {
     };
 };
 
-const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, setValidSteps, existingDocument }) => {
+const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, existingDocument }) => {
     return (
         <div className="step-progress-bar">
-            {steps.map((step, index) => (
-                <div
-                    key={index}
-                    className={`step ${existingDocument || validSteps.includes(index) || index <= currentStep ? "active" : ""}`}
-                    onClick={() => (existingDocument || validSteps.includes(index) || index <= currentStep) && setCurrentStep(index)}
-                >
+            {steps.map((step, index) => {
+                const isActive = existingDocument || validSteps.includes(index) || index <= currentStep;
+                return (
                     <div
-                        className={`circle ${existingDocument || validSteps.includes(index) || index <= currentStep ? "blue" : ""}`}
+                        key={index}
+                        className={`step ${isActive ? "active" : ""}`}
+                        role="button"
+                        tabIndex={isActive ? 0 : -1}
+                        onClick={() => isActive && setCurrentStep(index)}
+                        onKeyDown={(e) => {
+                            if (isActive && (e.key === "Enter" || e.key === " ")) {
+                                setCurrentStep(index);
+                            }
+                        }}
+                        aria-disabled={!isActive}
                     >
-                        {index + 1}
+                        <div className={`circle ${isActive ? "blue" : ""}`}>{index + 1}</div>
+                        <div className="label">{step.label}</div>
                     </div>
-                    <div className="label">{step.label}</div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
+
+
 
 export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates }) {
     const navigate = useNavigate();
@@ -237,14 +246,16 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 if (!inputValues.latitude || !inputValues.longitude) {
                     validationMessage = "Please provide latitude and longitude.";
                 }
-                if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
+                else if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
                     validationMessage = "Latitude must be between 67.21 and 69.3 for Kiruna.";
                 }
-                if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
+                else if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
                     validationMessage = "Longitude must be between 17.53 and 23.17 for Kiruna.";
+                } else {
+                    setValidSteps((prev) => [...prev, 2, 3]);
                 }
             } else {
-                setValidSteps((prev) => [...prev, 2]);
+                setValidSteps((prev) => [...prev, 2, 3]);
             }
         }
         return validationMessage;
