@@ -64,25 +64,31 @@ export async function deleteOriginalResources(id) {
 // }
 
 export async function createOriginalResources(id, files) {
-    // Create directory for document resources
-    const createdPath = path.join("document_resources", id.toString(), "original_resources");
+    // Define the base directory
+    const baseDir = path.join(process.cwd(), "document_resources");
 
-    // Ensure the directory exists before resolving its real path
-    if (!fs.existsSync(createdPath)) {
-        fs.mkdirSync(createdPath, { recursive: true });
-    }
+    // Construct the target directory path
+    const createdPath = path.join(baseDir, id.toString(), "original_resources");
 
-    // Resolve the real path of the directory
-    const folderPath = await fs.promises.realpath(createdPath);
+    // Check the real path of the base directory
+    const baseRealPath = await fs.promises.realpath(baseDir);
 
-    // Ensure the path is within the allowed directory
-    if (!folderPath.startsWith(path.join(process.cwd(), "document_resources"))) {
+    // Ensure that the target directory is within the allowed base directory
+    const targetRealPath = path.resolve(createdPath);
+    console.log("baseRealPath", baseRealPath);
+    console.log("targetRealPath", targetRealPath);
+    if (!targetRealPath.startsWith(baseRealPath)) {
         throw new Error("Invalid path");
     }
 
-    // Move uploaded files to document directory
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(targetRealPath)) {
+        fs.mkdirSync(targetRealPath, { recursive: true });
+    }
+
+    // Move uploaded files to the created directory
     files.forEach((file) => {
-        const targetPath = path.join(folderPath, file.originalname);
+        const targetPath = path.join(targetRealPath, file.originalname);
         fs.copyFileSync(file.path, targetPath);
         fs.unlinkSync(file.path);
     });
