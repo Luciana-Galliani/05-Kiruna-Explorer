@@ -64,7 +64,7 @@ export function LinkPart({
                 <Form.Group controlId="formDocument" className="mb-3">
                     <Form.Label>Document</Form.Label>
                     <Dropdown>
-                        <Dropdown.Toggle variant="success" id="dropdown-basic">
+                        <Dropdown.Toggle id="dropdown-basic-button">
                             {document ? filteredDocuments.find(doc => doc.id === document)?.title : "Select a document"}
                         </Dropdown.Toggle>
 
