@@ -133,6 +133,11 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                                 className="connection-item border rounded p-2 mb-2"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => handleConnectionClick(connection)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleConnectionClick(connection); // Gestisce Enter o Space come click
+                                    }
+                                }}
                             >
                                 <p style={{ margin: 0 }}>
                                     <strong>Document:</strong> {connection.targetDocument.title}
