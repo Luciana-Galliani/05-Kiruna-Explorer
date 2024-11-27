@@ -128,14 +128,14 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                 <div className="connections overflow-y-auto" style={{ maxHeight: "150px", overflowY: "auto" }}>
                     {document.connections.length > 0 ? (
                         document.connections.map((connection, index) => (
-                            <div
-                                key={index}
-                                className="connection-item border rounded p-2 mb-2"
-                                style={{ cursor: "pointer" }}
+                            <button
+                                key={connection.targetDocument.id}
+                                className="connection-item border rounded p-2 mb-2 custom-button"
+                                style={{ cursor: "pointer", color: "black" }}
                                 onClick={() => handleConnectionClick(connection)}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
-                                        handleConnectionClick(connection); // Gestisce Enter o Space come click
+                                        handleConnectionClick(connection);
                                     }
                                 }}
                             >
@@ -145,7 +145,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                                 <p style={{ margin: 0 }}>
                                     <strong>Type:</strong> {connection.relationship}
                                 </p>
-                            </div>
+                            </button>
                         ))
                     ) : (
                         <p>No connections available.</p>

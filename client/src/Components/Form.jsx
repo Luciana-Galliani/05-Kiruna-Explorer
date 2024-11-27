@@ -53,7 +53,6 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
                             }
                         }}
                         aria-disabled={!isActive}
-                        role="button"
                     >
                         <div className={`circle ${isActive ? "blue" : ""}`}>{index + 1}</div>
                         <div className="label">{step.label}</div>

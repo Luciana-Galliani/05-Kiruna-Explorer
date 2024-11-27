@@ -69,7 +69,7 @@ const List = ({ condition }) => {
                                 onMouseEnter={() => setHoveredItem(document.id)}
                                 onMouseLeave={() => setHoveredItem(null)}
                                 onClick={() => setSelectedDocument(document)}
-                                onKeyDown={(e) => handleKeyDown(e, document)} // Aggiungi il supporto per la tastiera
+                                onKeyDown={(e) => handleKeyDown(e, document)}
                                 style={{ background: 'none', border: 'none', padding: '0', width: '100%', color: "black" }}
                                 aria-label={`Select ${document.title}`}
                                 tabIndex={0}
