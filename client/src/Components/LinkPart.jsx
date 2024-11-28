@@ -65,19 +65,21 @@ export function LinkPart({
                 <h2>Add a connection</h2>
                 <Form.Group controlId="formDocument" className="mb-3">
                     <Form.Label>Document</Form.Label>
-                    <Dropdown>
+                    <Dropdown className="custom-dropdown">
                         <Dropdown.Toggle id="dropdown-basic-button">
                             {document ? filteredDocuments.find(doc => doc.id === document)?.title : "Select a document"}
                         </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                            <Form.Control
-                                type="text"
-                                placeholder="Search documents..."
-                                value={searchTerm}
-                                onChange={handleSearchChange}
-                                className="mb-2"
-                            />
+                        <Dropdown.Menu className="custom-dropdown-menu">
+                            <Dropdown.Header>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search documents..."
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    className="mb-2"
+                                />
+                            </Dropdown.Header>
                             {filteredDocuments.map((doc) => (
                                 <Dropdown.Item
                                     key={doc.id}

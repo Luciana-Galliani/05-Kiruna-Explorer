@@ -245,3 +245,42 @@ button:hover {
 .sidebar .list-group-item a:hover {
     color: #007bff;
 }
+
+.custom-dropdown .dropdown-toggle {
+    width: 100%;
+    text-align: left;
+    background-color: #fff;
+    color: #495057;
+    outline: none;
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+.custom-dropdown-menu {
+    max-height: 200px; /* Set your desired max height */
+    overflow-y: auto; /* Enable vertical scrollbar */
+    width: 100%; /* Ensure the dropdown menu matches the width of the form group */
+    background-color: #fff; /* Match the background color of the form group */
+    border: 1px solid #ced4da; /* Match the border color of the form group */
+    border-radius: 0.25rem; /* Match the border radius of the form group */
+}
+
+.custom-dropdown-menu .dropdown-item {
+    color: #495057; /* Match the text color of the form group */
+}
+
+.custom-dropdown-menu .dropdown-item:hover {
+    background-color: #e9ecef; /* Match the hover background color of the form group */
+}
+
+.custom-dropdown .dropdown-toggle:focus,
+.custom-dropdown .dropdown-toggle:active,
+.custom-dropdown .dropdown-toggle:focus:active {
+    width: 100%;
+    text-align: left;
+    outline: none; /* Remove the default blue outline */
+    box-shadow: none; /* Remove the default blue shadow */
+    background-color: #fff; /* Ensure the background color remains the same */
+    color: #495057; /* Ensure the text color remains the same */
+    border-color: #ced4da; /* Ensure the border color remains the same */
+}
