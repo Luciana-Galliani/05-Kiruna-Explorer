@@ -10,11 +10,11 @@ const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
                 <p className="text-center m-2 fs-5">{message}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose} className="ms-auto">
-                    No
-                </Button>
-                <Button variant="primary" onClick={onConfirm} className="me-auto">
+                <Button variant="primary" onClick={onConfirm} className="ms-auto">
                     Yes
+                </Button>
+                <Button variant="secondary" onClick={onClose} className="me-auto">
+                    No
                 </Button>
             </Modal.Footer>
         </Modal>
