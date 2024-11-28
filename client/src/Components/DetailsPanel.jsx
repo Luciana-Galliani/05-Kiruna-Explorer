@@ -1,4 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from 'prop-types';
+
 import {
     faFilePdf,
     faFileImage,
@@ -27,6 +29,7 @@ const getFileType = (fileName) => {
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
+    const [selectedDoc, setSelectedDoc] = useState(null); // Per aprire un altro DetailsPanel
     const navigate = useNavigate();
     const { alldocuments } = useContext(AppContext);
 
@@ -82,6 +85,14 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
         }
     };
 
+    const handleConnectionClick = (connection) => {
+        setSelectedDoc(connection.targetDocument.id);
+    };
+
+    if (selectedDoc) {
+        return <DetailsPanel doc={selectedDoc} onClose={() => setSelectedDoc(null)} isLoggedIn={isLoggedIn} />;
+    }
+
     return (
         <div className="details-panel-container">
             <div>
@@ -107,15 +118,40 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                         <strong>Pages:</strong> {document.pages || "N/A"}
                     </li>
                     <li>
-                        <strong>Number of Connections:</strong> {document.connections.length || "0"}
-                    </li>
-                    <li>
                         <strong>Stakeholders:</strong> {stakeholdersList}
                     </li>
                     <li>
                         <strong>Description:</strong> {document.description || "N/A"}
                     </li>
                 </ul>
+                <strong>Connections:</strong>
+                <div className="connections overflow-y-auto" style={{ maxHeight: "150px", overflowY: "auto" }}>
+                    {document.connections.length > 0 ? (
+                        document.connections.map((connection, index) => (
+                            <button
+                                key={connection.targetDocument.id}
+                                className="connection-item border rounded p-2 mb-2 custom-button"
+                                style={{ cursor: "pointer", color: "black" }}
+                                onClick={() => handleConnectionClick(connection)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleConnectionClick(connection);
+                                    }
+                                }}
+                            >
+                                <p style={{ margin: 0 }}>
+                                    <strong>Document:</strong> {connection.targetDocument.title}
+                                </p>
+                                <p style={{ margin: 0 }}>
+                                    <strong>Type:</strong> {connection.relationship}
+                                </p>
+                            </button>
+                        ))
+                    ) : (
+                        <p>No connections available.</p>
+                    )}
+                </div>
+
                 <div
                     style={{
                         margin: "auto",
@@ -127,10 +163,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                         alignItems: "stretch",
                     }}
                 >
-                    {processedResources.map((resource, index) => {
+                    {processedResources.map((resource) => {
                         const icon = getIconForFileType(resource.fileType);
                         return (
-                            <div key={index} className="mb-2">
+                            <div key={resource.name} className="mb-2">
                                 <button
                                     className="btn btn-outline-primary w-100"
                                     onClick={() =>
@@ -164,6 +200,12 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             </div>
         </div>
     );
+};
+
+DetailsPanel.propTypes = {
+    doc: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default DetailsPanel;

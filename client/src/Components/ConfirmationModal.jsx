@@ -1,5 +1,7 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import PropTypes from 'prop-types';
+
 
 const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
     return (
@@ -17,6 +19,13 @@ const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
             </Modal.Footer>
         </Modal>
     );
+};
+
+ConfirmationModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    message: PropTypes.string.isRequired,
 };
 
 export default ConfirmationModal;

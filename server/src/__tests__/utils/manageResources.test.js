@@ -69,8 +69,9 @@ describe("manageResources", () => {
         });
 
         it("should not delete folder if it does not exist", async () => {
-            fs.promises.realpath.mockResolvedValue(folderPath);
-            fs.existsSync.mockReturnValue(false);
+            const error = new Error("ENOENT");
+            error.code = "ENOENT";
+            fs.promises.realpath.mockRejectedValue(error);
 
             await deleteOriginalResources(id);
             expect(fs.rmSync).not.toHaveBeenCalled();

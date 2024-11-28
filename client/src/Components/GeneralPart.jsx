@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Form, Modal, Button } from "react-bootstrap";
+import PropTypes from 'prop-types';
+
 
 export function GeneralPart({ inputValues, setInputValues, stakeholderOptions }) {
     const [showModal, setShowModal] = useState(false);
@@ -176,3 +178,26 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
         </>
     );
 }
+
+GeneralPart.propTypes = {
+    inputValues: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        stakeholders: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                name: PropTypes.string.isRequired,
+            })
+        ).isRequired,
+        issuanceYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        issuanceMonth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        issuanceDay: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        description: PropTypes.string.isRequired,
+    }).isRequired,
+    setInputValues: PropTypes.func.isRequired,
+    stakeholderOptions: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+};

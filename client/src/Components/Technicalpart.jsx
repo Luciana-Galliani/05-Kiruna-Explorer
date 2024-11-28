@@ -1,5 +1,7 @@
 import React from "react";
-import { Form, ListGroup, Row } from "react-bootstrap";
+import { Form, Row } from "react-bootstrap";
+import PropTypes from 'prop-types';
+
 
 export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setSelectedFiles }) {
     const typeOptions = [
@@ -152,3 +154,16 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
         </Form>
     );
 }
+
+TechnicalPart.propTypes = {
+    inputValues: PropTypes.shape({
+        type: PropTypes.string.isRequired,
+        scaleType: PropTypes.string.isRequired,
+        planScale: PropTypes.string,
+        language: PropTypes.string,
+        pages: PropTypes.string,
+    }).isRequired,
+    setInputValues: PropTypes.func.isRequired,
+    selectedFiles: PropTypes.arrayOf(PropTypes.object).isRequired,
+    setSelectedFiles: PropTypes.func.isRequired,
+};

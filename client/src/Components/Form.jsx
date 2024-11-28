@@ -9,6 +9,8 @@ import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
+import PropTypes from 'prop-types';
+
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -35,29 +37,36 @@ const initializeInputValues = (doc) => {
     };
 };
 
-const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, setValidSteps, existingDocument }) => {
+const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, existingDocument }) => {
     return (
         <div className="step-progress-bar">
-            {steps.map((step, index) => (
-                <div
-                    key={index}
-                    className={`step ${existingDocument || validSteps.includes(index) || index <= currentStep ? "active" : ""}`}
-                    onClick={() => (existingDocument || validSteps.includes(index) || index <= currentStep) && setCurrentStep(index)}
-                >
-                    <div
-                        className={`circle ${existingDocument || validSteps.includes(index) || index <= currentStep ? "blue" : ""}`}
+            {steps.map((step, index) => {
+                const isActive = existingDocument || validSteps.includes(index) || index <= currentStep;
+                return (
+                    <button
+                        key={index}
+                        className={`step ${isActive ? "active" : ""} custom-button`}
+                        onClick={() => isActive && setCurrentStep(index)}
+                        onKeyDown={(e) => {
+                            if (isActive && (e.key === "Enter" || e.key === " ")) {
+                                setCurrentStep(index);
+                            }
+                        }}
+                        aria-disabled={!isActive}
                     >
-                        {index + 1}
-                    </div>
-                    <div className="label">{step.label}</div>
-                </div>
-            ))}
+                        <div className={`circle ${isActive ? "blue" : ""}`}>{index + 1}</div>
+                        <div className="label">{step.label}</div>
+                    </button>
+                );
+            })}
         </div>
     );
 };
 
-export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates = { setCoordinates }
-}) {
+
+
+
+export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates }) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
@@ -238,14 +247,16 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 if (!inputValues.latitude || !inputValues.longitude) {
                     validationMessage = "Please provide latitude and longitude.";
                 }
-                if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
+                else if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
                     validationMessage = "Latitude must be between 67.21 and 69.3 for Kiruna.";
                 }
-                if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
+                else if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
                     validationMessage = "Longitude must be between 17.53 and 23.17 for Kiruna.";
+                } else {
+                    setValidSteps((prev) => [...prev, 2, 3]);
                 }
             } else {
-                setValidSteps((prev) => [...prev, 2]);
+                setValidSteps((prev) => [...prev, 2, 3]);
             }
         }
         return validationMessage;
@@ -366,8 +377,17 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     );
 }
 
-export function EditDocumentForm({ coordinates, className, setCoordinates = { setCoordinates }
-}) {
+DescriptionForm.propTypes = {
+    coordinates: PropTypes.shape({
+        latitude: PropTypes.number,
+        longitude: PropTypes.number,
+    }),
+    existingDocument: PropTypes.object,
+    className: PropTypes.string,
+    setCoordinates: PropTypes.func.isRequired,
+};
+
+export function EditDocumentForm({ coordinates, className, setCoordinates }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
@@ -400,6 +420,7 @@ export function EditDocumentForm({ coordinates, className, setCoordinates = { se
                 coordinates={coordinates}
                 existingDocument={existingDocument}
                 className={className}
+                setCoordinates={setCoordinates}
             />
         );
     } else {
@@ -414,3 +435,25 @@ export function EditDocumentForm({ coordinates, className, setCoordinates = { se
         );
     }
 }
+
+EditDocumentForm.propTypes = {
+    coordinates: PropTypes.shape({
+        latitude: PropTypes.number,
+        longitude: PropTypes.number,
+    }),
+    className: PropTypes.string,
+    setCoordinates: PropTypes.func.isRequired,
+};
+
+StepProgressBar.propTypes = {
+    currentStep: PropTypes.number.isRequired,
+    steps: PropTypes.arrayOf(
+        PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            component: PropTypes.node.isRequired,
+        })
+    ).isRequired,
+    setCurrentStep: PropTypes.func.isRequired,
+    validSteps: PropTypes.arrayOf(PropTypes.number).isRequired,
+    existingDocument: PropTypes.object,
+};

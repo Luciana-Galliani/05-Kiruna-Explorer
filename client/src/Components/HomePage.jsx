@@ -1,5 +1,7 @@
 import React from 'react';
 import CityMap from './Map.jsx';
+import PropTypes from 'prop-types';
+
 const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, isSatelliteView, handleSatelliteView }) => {
     return (
         <CityMap
@@ -9,6 +11,13 @@ const HomePage = ({ handleCoordinatesSelected, isSelectingCoordinates, isSatelli
             handleSatelliteView={handleSatelliteView}
         />
     );
+};
+
+HomePage.propTypes = {
+    handleCoordinatesSelected: PropTypes.func.isRequired,
+    isSelectingCoordinates: PropTypes.bool.isRequired,
+    isSatelliteView: PropTypes.bool.isRequired,
+    handleSatelliteView: PropTypes.func.isRequired
 };
 
 export default HomePage;

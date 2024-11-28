@@ -99,7 +99,7 @@ const createDocument = async (documentData, files) => {
     }
     const response = await fetch(`${baseURL}/api/documents`, {
         method: "POST",
-        headers: authHeaders(false),
+        headers: authHeaders(),
         body: formData,
     });
 
@@ -133,7 +133,7 @@ const updateDocument = async (documentId, documentData, selectedFiles) => {
 
     const response = await fetch(`${baseURL}/api/documents/${documentId}`, {
         method: "PUT",
-        headers: authHeaders(false),
+        headers: authHeaders(),
         body: formData,
     });
 

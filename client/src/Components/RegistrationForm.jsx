@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Form, Button, Row, Col, Card, Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../API/API.mjs";
+import PropTypes from 'prop-types';
+
 
 function RegistrationForm({ handleLogin }) {
     const [username, setUsername] = useState("");
@@ -108,5 +110,9 @@ function RegistrationForm({ handleLogin }) {
         </div>
     );
 }
+
+RegistrationForm.propTypes = {
+    handleLogin: PropTypes.func.isRequired
+};
 
 export default RegistrationForm;

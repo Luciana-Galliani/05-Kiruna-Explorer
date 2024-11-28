@@ -3,13 +3,13 @@ import API from "../API/API.mjs";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import PropTypes from 'prop-types';
 
 const List = ({ condition }) => {
     const { isLoggedIn } = useContext(AppContext);
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
-
     const location = useLocation();
 
     useEffect(() => {
@@ -17,7 +17,7 @@ const List = ({ condition }) => {
             const response = await API.getDocuments();
             if (condition === "true") {
                 setDocumentsToShow(
-                    response.documents.filter((document) => document.allMunicipality == true)
+                    response.documents.filter((document) => document.allMunicipality === true)
                 );
             } else {
                 setDocumentsToShow(response.documents);
@@ -26,6 +26,12 @@ const List = ({ condition }) => {
 
         fetchDocuments();
     }, [location.pathname]);
+
+    const handleKeyDown = (e, document) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            setSelectedDocument(document); // Se premi Enter o Space, seleziona il documento
+        }
+    };
 
     return (
         <div
@@ -39,7 +45,7 @@ const List = ({ condition }) => {
             }}
         >
             <div
-                className={"container position-relative "}
+                className="container position-relative"
                 style={{
                     padding: "20px",
                     width: "max-content",
@@ -52,18 +58,24 @@ const List = ({ condition }) => {
                     overflowY: "auto",
                 }}
             >
-                <h1>{condition == "true" ? "All Municipality Documents" : "Documents"}</h1>
+                <h1>{condition === "true" ? "All Municipality Documents" : "Documents"}</h1>
                 <ul className="list-group">
                     {documentsToShow.map((document) => (
                         <li
                             key={document.id}
-                            className={`list-group-item ${hoveredItem === document.id ? "active" : ""
-                                }`}
-                            onMouseEnter={() => setHoveredItem(document.id)}
-                            onMouseLeave={() => setHoveredItem(null)}
-                            onClick={() => setSelectedDocument(document)}
+                            className={`list-group-item ${hoveredItem === document.id ? "active" : ""}`}
                         >
-                            {document.title}
+                            <button
+                                onMouseEnter={() => setHoveredItem(document.id)}
+                                onMouseLeave={() => setHoveredItem(null)}
+                                onClick={() => setSelectedDocument(document)}
+                                onKeyDown={(e) => handleKeyDown(e, document)}
+                                style={{ background: 'none', border: 'none', padding: '0', width: '100%', color: "black" }}
+                                aria-label={`Select ${document.title}`}
+                                tabIndex={0}
+                            >
+                                {document.title}
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -80,6 +92,10 @@ const List = ({ condition }) => {
             )}
         </div>
     );
+};
+
+List.propTypes = {
+    condition: PropTypes.string.isRequired
 };
 
 export default List;
