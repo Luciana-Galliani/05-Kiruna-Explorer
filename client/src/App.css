@@ -284,3 +284,9 @@ button:hover {
     color: #495057; /* Ensure the text color remains the same */
     border-color: #ced4da; /* Ensure the border color remains the same */
 }
+
+.custom-button-search-bar{
+    margin-top: 0;
+    padding: 5px 10px;
+    cursor: pointer;
+}

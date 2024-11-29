@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import TableList from './TableList';
+import SearchBar from './SearchBar';
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
@@ -34,7 +36,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                     top: 0,
                     left: 0,
                     height: '100%',
-                    width: '250px',
+                    width: '50%',
                     backgroundColor: 'white',
                     color: 'black',
                     padding: '20px',
@@ -42,59 +44,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                     transition: 'transform 0.3s ease',
                     zIndex: 1001
                 }}>
-                <h2>Menu</h2>
-                <ul className="list-group" style={{ listStyleType: 'none', padding: 0 }}>
-                    <li
-                        className={`list-group-item ${hoveredItem === "municipalDocuments" ? "active" : ""}`}
-                        onMouseEnter={() => setHoveredItem("municipalDocuments")}
-                        onMouseLeave={() => setHoveredItem(null)}
-                    >
-                        <button
-                            onClick={closeSidebar}
-                            onKeyDown={(e) => handleKeyDown(e, e.target)}
-                            style={{ background: 'none', border: 'none', padding: '0', width: '100%' }}
-                            aria-label="Municipal Documents"
-                        >
-                            <Link
-                                to="/municipality"
-                                style={{
-                                    textDecoration: 'none',
-                                    color: 'black',
-                                    display: 'block'
-                                }}
-                                onMouseEnter={() => setHoveredItem("municipalDocuments")}
-                                onMouseLeave={() => setHoveredItem(null)}
-                            >
-                                Municipal Documents
-                            </Link>
-                        </button>
-                    </li>
-                    <li
-                        className={`list-group-item ${hoveredItem === "allDocuments" ? "active" : ""}`}
-                        onMouseEnter={() => setHoveredItem("allDocuments")}
-                        onMouseLeave={() => setHoveredItem(null)}
-                    >
-                        <button
-                            onClick={closeSidebar}
-                            onKeyDown={(e) => handleKeyDown(e, e.target)}  // Aggiungi il supporto per la tastiera
-                            style={{ background: 'none', border: 'none', padding: '0', width: '100%' }}
-                            aria-label="All documents"
-                        >
-                            <Link
-                                to="/allDocuments"
-                                style={{
-                                    textDecoration: 'none',
-                                    color: 'black',  // Colore per il testo di default
-                                    display: 'block'
-                                }}
-                                onMouseEnter={() => setHoveredItem("allDocuments")}
-                                onMouseLeave={() => setHoveredItem(null)}
-                            >
-                                All documents
-                            </Link>
-                        </button>
-                    </li>
-                </ul>
+                <div>
+                    <SearchBar />
+                </div>
+                <TableList allMunicipality={false}/>
             </div>
 
             {/* Overlay */}
