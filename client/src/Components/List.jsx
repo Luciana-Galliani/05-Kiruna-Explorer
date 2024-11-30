@@ -84,7 +84,7 @@ const List = ({ condition }) => {
             {selectedDocument && (
                 <div className="details-panel-container">
                     <DetailsPanel
-                        doc={selectedDocument.id}
+                        initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
                     />

@@ -27,10 +27,12 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
+const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
     const { alldocuments } = useContext(AppContext);
+    const [doc, setDoc] = useState(initialDocId);
+
 
     useEffect(() => {
         const fetchDocumentById = async () => {
@@ -87,8 +89,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
 
     const handleConnectionClick = (connection) => {
         setDocument(null);
-        const newDocId = connection.targetDocument.id;
-        doc = newDocId;
+        setDoc(connection.targetDocument.id);
     };
 
     return (
@@ -201,7 +202,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
 };
 
 DetailsPanel.propTypes = {
-    doc: PropTypes.string.isRequired,
+    doc: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
 };

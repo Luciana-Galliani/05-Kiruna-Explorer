@@ -232,7 +232,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
             <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
             {selectedDocument && location.pathname === "/" && (
                 <DetailsPanel
-                    doc={selectedDocument.id}
+                    initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
                 />
