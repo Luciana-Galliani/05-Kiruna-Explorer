@@ -116,12 +116,14 @@ class DocumentsDAO {
                     scaleValue: documentData.scaleValue,
                     issuanceDate: documentData.issuanceDate,
                     type: documentData.type,
+                    otherDocumentType: documentData.otherDocumentType,
                     language: documentData.language,
                     pages: documentData.pages,
                     description: documentData.description,
                     allMunicipality: documentData.allMunicipality,
                     latitude: documentData.latitude,
                     longitude: documentData.longitude,
+                    otherStakeholderName: documentData.otherStakeholderName,
                 },
                 { transaction }
             );

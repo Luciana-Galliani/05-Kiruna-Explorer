@@ -39,8 +39,13 @@ export default (sequelize) => {
                 "Agreement",
                 "Conflict",
                 "Consultation",
-                "Action"
+                "Action",
+                "Other"
             ),
+        },
+        otherDocumentType: {
+            allowNull: true,
+            type: DataTypes.STRING,
         },
         language: {
             type: DataTypes.STRING,
@@ -63,6 +68,10 @@ export default (sequelize) => {
         longitude: {
             allowNull: true,
             type: DataTypes.DECIMAL(11, 8),
+        },
+        otherStakeholderName: {
+            allowNull: true,
+            type: DataTypes.STRING,
         },
     });
     return Document;
