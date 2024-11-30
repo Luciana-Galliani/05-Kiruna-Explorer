@@ -29,7 +29,6 @@ const getFileType = (fileName) => {
 
 const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
-    const [selectedDoc, setSelectedDoc] = useState(null); // Per aprire un altro DetailsPanel
     const navigate = useNavigate();
     const { alldocuments } = useContext(AppContext);
 
@@ -47,6 +46,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             fetchDocumentById();
         }
     }, [doc, document, alldocuments]);
+
 
     if (!document) {
         return (
@@ -86,12 +86,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     };
 
     const handleConnectionClick = (connection) => {
-        setSelectedDoc(connection.targetDocument.id);
+        setDocument(null);
+        const newDocId = connection.targetDocument.id;
+        doc = newDocId;
     };
-
-    if (selectedDoc) {
-        return <DetailsPanel doc={selectedDoc} onClose={() => setSelectedDoc(null)} isLoggedIn={isLoggedIn} />;
-    }
 
     return (
         <div className="details-panel-container">

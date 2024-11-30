@@ -32,8 +32,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
-    const [documentLayer, setDocumentLayer] = useState(null); // Stato per il layer dei documenti
-    const [boundaryLayer, setBoundaryLayer] = useState(null); // Stato per il layer delle boundaries
+    const [documentLayer, setDocumentLayer] = useState(null);
+    const [boundaryLayer, setBoundaryLayer] = useState(null);
 
     const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates } =
         useContext(AppContext);
@@ -104,6 +104,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         };
     }, [isSatelliteView]);
 
+    // Update map with documents and boundaries
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map) return;
@@ -111,7 +112,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         const shouldShow =
             !(location.pathname === "/add" || location.pathname.includes("edit")) ||
             isSelectingCoordinates;
-
 
         // Update document layer (icons)
         if (shouldShow && allDocuments?.length > 0) {
@@ -161,8 +161,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
             const fetchGeoJSON = async () => {
                 const geojsonFormat = new GeoJSON();
                 try {
-                    const response = await fetch("kiruna.geojson");
-                    const data = await response.json();
+                    const data = await API.getBoundaries();
 
                     const features = geojsonFormat.readFeatures(data, {
                         featureProjection: "EPSG:3857",
@@ -188,12 +187,23 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
             fetchGeoJSON();
         } else {
             map.removeLayer(boundaryLayer);
-            setBoundaryLayer(null); // Reset dello stato
+            setBoundaryLayer(null);
         }
     }, [allDocuments, location.pathname, isSelectingCoordinates]);
 
+    // Center the map on the selected document
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map || !selectedDocument) return;
 
-    // Handle coordinate selection
+        if (selectedDocument.longitude && selectedDocument.latitude) {
+            const location = fromLonLat([selectedDocument.longitude, selectedDocument.latitude]);
+            map.getView().setCenter(location);
+            map.getView().setZoom(14); // Adjust zoom level as needed
+        }
+    }, [selectedDocument]);
+
+    // Handle coordinate selection or document click
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map) return;

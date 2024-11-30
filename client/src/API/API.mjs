@@ -52,6 +52,21 @@ const loginUser = async ({ username, password }) => {
     }
 };
 
+const getBoundaries = async () => {
+    const response = await fetch(`${baseURL}/api/kiruna/boundaries`, {
+        method: "GET",
+        headers: authHeaders(),
+    });
+    if (response.ok) {
+        const doc = await response.json();
+        return doc;
+    } else {
+        const errDetails = await response.text();
+        throw errDetails;
+    }
+};
+
+
 const getDocuments = async () => {
     const response = await fetch(`${baseURL}/api/documents`, {
         headers: authHeaders(),
@@ -184,6 +199,7 @@ const API = {
     updateDocument,
     getConnections,
     getStakeholders,
+    getBoundaries
 };
 
 export default API;

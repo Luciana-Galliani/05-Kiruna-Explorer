@@ -11,7 +11,6 @@ import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from 'prop-types';
 import { point, booleanPointInPolygon } from "@turf/turf";
-import { GeoJSON } from 'ol/format';
 
 
 
@@ -170,14 +169,12 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
     const fetchInitialData = async () => {
         try {
-            const [stakeholderResp, relationshipResp, documentsResp, geoJSONResp] = await Promise.all([
+            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] = await Promise.all([
                 API.getStakeholders(),
                 API.getConnections(),
                 API.getDocuments(),
-                fetch("/kiruna.geojson"),
+                API.getBoundaries(),
             ]);
-
-            const geoJSONData = await geoJSONResp.json();
 
             setStakeholderOptions(
                 stakeholderResp.stakeholders.map(
@@ -257,27 +254,22 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             }
         }
 
-        // Step 2: Verifica latitudine/longitudine e GeoJSON
         if (validateAllSteps || currentStep === 2) {
             if (!inputValues.allMunicipality) {
                 if (!inputValues.latitude || !inputValues.longitude) {
                     validationMessage = "Please provide latitude and longitude.";
                 } else {
-                    // Verifica la presenza di GeoJSON e la sua struttura
                     if (kirunaGeoJSON && kirunaGeoJSON.type === 'FeatureCollection' && kirunaGeoJSON.features) {
                         const multipolygon = kirunaGeoJSON.features[0].geometry;
 
-                        // Verifica che la geometria sia un MultiPolygon
                         if (multipolygon.type === 'MultiPolygon') {
                             const userPoint = point([inputValues.longitude, inputValues.latitude]);
 
-                            // Verifica se il punto è all'interno di uno dei poligoni del MultiPolygon
                             const isInsideKiruna = multipolygon.coordinates.some(polygonCoordinates => {
                                 const polygon = { type: 'Polygon', coordinates: polygonCoordinates };
                                 return booleanPointInPolygon(userPoint, polygon);
                             });
 
-                            // Se il punto non è all'interno, imposta il messaggio di errore
                             if (!isInsideKiruna) {
                                 validationMessage = "The coordinates must be inside the Kiruna region.";
                             } else {
