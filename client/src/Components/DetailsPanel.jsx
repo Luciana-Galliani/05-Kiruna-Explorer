@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import {
     faFilePdf,
@@ -90,7 +90,13 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     };
 
     if (selectedDoc) {
-        return <DetailsPanel doc={selectedDoc} onClose={() => setSelectedDoc(null)} isLoggedIn={isLoggedIn} />;
+        return (
+            <DetailsPanel
+                doc={selectedDoc}
+                onClose={() => setSelectedDoc(null)}
+                isLoggedIn={isLoggedIn}
+            />
+        );
     }
 
     return (
@@ -125,7 +131,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                     </li>
                 </ul>
                 <strong>Connections:</strong>
-                <div className="connections overflow-y-auto" style={{ maxHeight: "150px", overflowY: "auto" }}>
+                <div
+                    className="connections overflow-y-auto d-flex flex-column"
+                    style={{ maxHeight: "150px", overflowY: "auto" }}
+                >
                     {document.connections.length > 0 ? (
                         document.connections.map((connection, index) => (
                             <button
