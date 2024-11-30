@@ -1,7 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export function GeoPart({ inputValues, setInputValues }) {
     const { setIsSelectingCoordinates } = useContext(AppContext);
@@ -41,13 +41,11 @@ export function GeoPart({ inputValues, setInputValues }) {
 
             {/* Latitude Input */}
             <Form.Group controlId="formLatitude" className="mb-3">
-                <Form.Label>Latitude</Form.Label>
+                <Form.Label className="fw-bold">Latitude</Form.Label>
                 <Form.Control
                     type="number"
                     value={inputValues.latitude || ""}
-                    onChange={(e) =>
-                        setInputValues({ ...inputValues, latitude: e.target.value })
-                    }
+                    onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
                     placeholder="Enter latitude"
                     disabled={inputValues.allMunicipality}
                 />
@@ -55,13 +53,11 @@ export function GeoPart({ inputValues, setInputValues }) {
 
             {/* Longitude Input */}
             <Form.Group controlId="formLongitude" className="mb-3">
-                <Form.Label>Longitude</Form.Label>
+                <Form.Label className="fw-bold">Longitude</Form.Label>
                 <Form.Control
                     type="number"
                     value={inputValues.longitude || ""}
-                    onChange={(e) =>
-                        setInputValues({ ...inputValues, longitude: e.target.value })
-                    }
+                    onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
                     placeholder="Enter longitude"
                     disabled={inputValues.allMunicipality}
                 />

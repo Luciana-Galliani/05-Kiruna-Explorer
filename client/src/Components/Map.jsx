@@ -31,6 +31,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
     const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const hoveredFeatureRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
@@ -128,19 +129,18 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                     const img = new Image();
                     img.src = iconMap[doc.type];
                     img.onload = () => {
-                        feature.setStyle(
-                            new Style({
-                                image: new Icon({
-                                    anchor: [0.5, 0.5],
-                                    img: img,
-                                    scale: 0.4,
-                                    imgSize: [img.width, img.height],
-                                    color: doc.stakeholders?.[0]?.color || "purple",
-                                }),
-                            })
-                        );
+                        const initialStyle = new Style({
+                            image: new Icon({
+                                anchor: [0.5, 0.5],
+                                img: img,
+                                scale: 0.4,
+                                imgSize: [img.width, img.height],
+                                color: doc.stakeholders?.[0]?.color || "purple",
+                            }),
+                        });
+                        feature.setStyle(initialStyle);
+                        feature.initialStyle = initialStyle;
                     };
-
                     return feature;
                 });
 
@@ -226,6 +226,61 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
             map.un("click", handleMapClick);
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected, allDocuments]);
+
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        const handlePointerMove = (event) => {
+            if (isSelectingCoordinates) {
+                map.getTargetElement().style.cursor = "pointer";
+            } else {
+                const hit = map.hasFeatureAtPixel(event.pixel);
+                map.getTargetElement().style.cursor = hit ? "pointer" : "";
+
+                // If we hover a feature
+                const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                if (featureAtPixel) {
+                    if (hoveredFeatureRef.current !== featureAtPixel) {
+                        if (hoveredFeatureRef.current) {
+                            hoveredFeatureRef.current.setStyle(
+                                hoveredFeatureRef.current.initialStyle
+                            );
+                        }
+
+                        const currentFeatureStyle = featureAtPixel.getStyle();
+                        const icon = currentFeatureStyle.getImage();
+                        const img = new Image();
+                        img.src = icon.getSrc();
+                        img.onload = () => {
+                            featureAtPixel.setStyle(
+                                new Style({
+                                    image: new Icon({
+                                        anchor: [0.5, 0.5],
+                                        img: img,
+                                        scale: 0.45,
+                                        imgSize: [img.width, img.height],
+                                        color: icon.getColor(),
+                                    }),
+                                    zIndex: 2,
+                                })
+                            );
+                        };
+                        hoveredFeatureRef.current = featureAtPixel;
+                    }
+                } else {
+                    if (hoveredFeatureRef.current) {
+                        hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
+                        hoveredFeatureRef.current = null;
+                    }
+                }
+            }
+        };
+
+        map.on("pointermove", handlePointerMove);
+
+        return () => {
+            map.un("pointermove", handlePointerMove);
+        };
+    }, [isSelectingCoordinates]);
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>

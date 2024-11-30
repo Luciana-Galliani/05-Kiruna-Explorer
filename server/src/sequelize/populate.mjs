@@ -100,7 +100,9 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2015",
                     type: "Design Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    latitude: 67.8595,
+                    longitude: 20.3135,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -112,7 +114,9 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:1.000",
                     issuanceDate: "2016-06-22",
                     type: "Prescriptive Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    latitude: 67.8495,
+                    longitude: 20.3035,
                     language: "Swedish",
                     pages: "1-43",
                     description:
