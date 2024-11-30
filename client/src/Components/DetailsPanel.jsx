@@ -27,11 +27,12 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
+const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
-    const [selectedDoc, setSelectedDoc] = useState(null); // Per aprire un altro DetailsPanel
     const navigate = useNavigate();
     const { alldocuments } = useContext(AppContext);
+    const [doc, setDoc] = useState(initialDocId);
+
 
     useEffect(() => {
         const fetchDocumentById = async () => {
@@ -47,6 +48,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             fetchDocumentById();
         }
     }, [doc, document, alldocuments]);
+
 
     if (!document) {
         return (
@@ -86,18 +88,9 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     };
 
     const handleConnectionClick = (connection) => {
-        setSelectedDoc(connection.targetDocument.id);
+        setDocument(null);
+        setDoc(connection.targetDocument.id);
     };
-
-    if (selectedDoc) {
-        return (
-            <DetailsPanel
-                doc={selectedDoc}
-                onClose={() => setSelectedDoc(null)}
-                isLoggedIn={isLoggedIn}
-            />
-        );
-    }
 
     return (
         <div className="details-panel-container">
@@ -212,7 +205,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
 };
 
 DetailsPanel.propTypes = {
-    doc: PropTypes.string.isRequired,
+    doc: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
 };

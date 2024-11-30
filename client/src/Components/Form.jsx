@@ -10,6 +10,8 @@ import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from 'prop-types';
+import { point, booleanPointInPolygon } from "@turf/turf";
+
 
 
 // Function to initialize form values
@@ -76,6 +78,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const [currentStep, setCurrentStep] = useState(0);
     const [validSteps, setValidSteps] = useState([]);  // Stato per tracciare gli step validati
     const { isLoggedIn, setAllDocuments } = useContext(AppContext);
+    const [kirunaGeoJSON, setKirunaGeoJSON] = useState(null);
+
 
     const steps = [
         {
@@ -127,7 +131,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     }, []);
 
     useEffect(() => {
-        if (coordinates) {
+        if (coordinates && coordinates.latitude && coordinates.longitude) {
             setInputValues((prev) => ({
                 ...prev,
                 latitude: coordinates.latitude,
@@ -165,11 +169,13 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
     const fetchInitialData = async () => {
         try {
-            const [stakeholderResp, relationshipResp, documentsResp] = await Promise.all([
+            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] = await Promise.all([
                 API.getStakeholders(),
                 API.getConnections(),
                 API.getDocuments(),
+                API.getBoundaries(),
             ]);
+
             setStakeholderOptions(
                 stakeholderResp.stakeholders.map(
                     (item) => new Stakeholder(item.id, item.name, item.color)
@@ -177,6 +183,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             );
             setRelationshipOptions(relationshipResp.connections);
             setAllDocuments(documentsResp.documents);
+            setKirunaGeoJSON(geoJSONData);
         } catch (error) {
             console.error("Error fetching initial data:", error);
         }
@@ -220,6 +227,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
     const handleValidation = (validateAllSteps = false) => {
         let validationMessage = null;
+
+        // Step 0: Verifica dei campi principali
         if (validateAllSteps || currentStep === 0) {
             if (
                 !inputValues.title ||
@@ -232,6 +241,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 setValidSteps((prev) => [...prev, 0]);
             }
         }
+
+        // Step 1: Verifica tipo e pagine
         if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
                 validationMessage = "Please complete type and scale type.";
@@ -242,25 +253,43 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 setValidSteps((prev) => [...prev, 1]);
             }
         }
+
         if (validateAllSteps || currentStep === 2) {
             if (!inputValues.allMunicipality) {
                 if (!inputValues.latitude || !inputValues.longitude) {
                     validationMessage = "Please provide latitude and longitude.";
-                }
-                else if (inputValues.latitude < 67.21 || inputValues.latitude > 69.3) {
-                    validationMessage = "Latitude must be between 67.21 and 69.3 for Kiruna.";
-                }
-                else if (inputValues.longitude < 17.53 || inputValues.longitude > 23.17) {
-                    validationMessage = "Longitude must be between 17.53 and 23.17 for Kiruna.";
                 } else {
-                    setValidSteps((prev) => [...prev, 2, 3]);
+                    if (kirunaGeoJSON && kirunaGeoJSON.type === 'FeatureCollection' && kirunaGeoJSON.features) {
+                        const multipolygon = kirunaGeoJSON.features[0].geometry;
+
+                        if (multipolygon.type === 'MultiPolygon') {
+                            const userPoint = point([inputValues.longitude, inputValues.latitude]);
+
+                            const isInsideKiruna = multipolygon.coordinates.some(polygonCoordinates => {
+                                const polygon = { type: 'Polygon', coordinates: polygonCoordinates };
+                                return booleanPointInPolygon(userPoint, polygon);
+                            });
+
+                            if (!isInsideKiruna) {
+                                validationMessage = "The coordinates must be inside the Kiruna region.";
+                            } else {
+                                setValidSteps((prev) => [...prev, 2]);
+                            }
+                        } else {
+                            validationMessage = "GeoJSON is not a MultiPolygon.";
+                        }
+                    } else {
+                        validationMessage = "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
+                    }
                 }
             } else {
-                setValidSteps((prev) => [...prev, 2, 3]);
+                setValidSteps((prev) => [...prev, 2]);
             }
         }
+
         return validationMessage;
     };
+
 
     const handleUpdateDocument = async (data) => {
         const response = await API.updateDocument(
