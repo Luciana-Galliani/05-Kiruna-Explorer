@@ -205,7 +205,7 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
 };
 
 DetailsPanel.propTypes = {
-    doc: PropTypes.number.isRequired,
+    doc: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
 };
