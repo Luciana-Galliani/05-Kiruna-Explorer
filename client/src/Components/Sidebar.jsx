@@ -23,9 +23,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     };
 
     const handleTitle = (title) => {
-        console.log("Previous filter (Title): ", filter);
         const updatedFilter = new Filter({ ...filter, title: title });
-        console.log("Updated filter (Title): ", updatedFilter);
         setFilter(updatedFilter);
     };
 

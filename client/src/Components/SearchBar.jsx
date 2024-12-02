@@ -6,8 +6,10 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
     const [searchTitle, setSearchTitle] = useState('');
     const [searchAuthor, setSearchAuthor] = useState('');
     const [searchDescription, setSearchDescription] = useState('');
+    const [searchIssuanceDate, setSearchIssuanceDate] = useState(null);
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
 
+    //One useEffect for each search parameter, for now only works in that way
     useEffect(() => {
         handleDescription(searchDescription);
     }, [searchDescription]);
@@ -16,17 +18,28 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
         handleTitle(searchTitle);
     }, [searchTitle]);
 
+    useEffect(() => {
+        handleIssuanceDate(searchIssuanceDate);
+    }, [searchIssuanceDate]);
+
+    useEffect(() => {
+        handleAuthor(searchAuthor);
+    }, [searchAuthor]);
+
     const handleDeteiledSearch = (e) => {
         setShowDetailedSearch(!showDetailedSearch);
     }
 
     const handleTitleChange = (e) => {
-        console.log(e.target.value);
         setSearchTitle(e.target.value);
     };
 
     const handleSearchDescription = (e) => {
         setSearchDescription(e.target.value);
+    }
+
+    const handleIssuanceDateChange = (e) => {
+        setSearchIssuanceDate(e.target.value);
     }
 
     const handleSearchAuthor = (e) => {
@@ -64,10 +77,17 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
                         <Form.Control
                             type="text"
                             placeholder="Author"
+                            value={searchAuthor}
+                            onChange={handleSearchAuthor}
                         />
                     </Col>
                     <Col>
-                        <Form.Control placeholder="Year" />
+                        <Form.Control 
+                            type="text"
+                            placeholder="Year" 
+                            value={searchIssuanceDate}
+                            onChange={handleIssuanceDateChange}
+                        />
                     </Col>
                 </Row>
             )}

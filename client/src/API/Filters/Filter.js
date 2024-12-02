@@ -37,8 +37,8 @@ class Filter {
         const titleMatch = this.title === null || this.title === "" || document.title.toLowerCase().includes(this.title.toLowerCase());
         const scaleTypeMatch = this.scaleType === null || this.scaleType === "" || document.scaleType.toLowerCase().includes(this.scaleType.toLowerCase());
         const scaleValueMatch = this.scaleValue === null || this.scaleValue === "" || document.scaleValue.toLowerCase().includes(this.scaleValue.toLowerCase());
-        const authorMatch = this.author === null || this.author === "" || document.author.toLowerCase().includes(this.author.toLowerCase());
-        const issuanceDateMatch = this.issuanceDate === null || this.issuanceDate === "" || document.issuanceDate === this.issuanceDate;
+        const authorMatch = this.author === null || this.author === "" || document.stakeholders.some(stakeholder => stakeholder.name.toLowerCase().includes(this.author.toLowerCase()));
+        const issuanceDateMatch = this.issuanceDate === null || this.issuanceDate === "" || new Date(document.issuanceDate).getFullYear() === parseInt(this.issuanceDate);
         const typeMatch = this.type === null || this.type === "" || document.type === this.type;
         const languageMatch = this.language === null || this.language === "" || document.language.toLowerCase().includes(this.language.toLowerCase());
         const descriptionMatch = this.description === null || this.description === "" || document.description.toLowerCase().includes(this.description.toLowerCase());
