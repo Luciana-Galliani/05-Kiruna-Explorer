@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import TableList from './TableList';
 import SearchBar from './SearchBar';
@@ -12,13 +11,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //const [isFilterUpdated, setIsFilterUpdated] = useState(false);
 
     const handleMunicipality = () => {
-        const updatedFilter = new Filter({...filter, allMunicipality: !filter.allMunicipality});
+        const updatedFilter = new Filter({ ...filter, allMunicipality: !filter.allMunicipality });
         setFilter(updatedFilter);
         //setIsFilterUpdated(!isFilterUpdated);
     };
 
     const handleAuthor = (author) => {
-        const updatedFilter = new Filter({...filter, author: author});
+        const updatedFilter = new Filter({ ...filter, author: author });
         setFilter(updatedFilter);
     };
 
@@ -28,12 +27,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     };
 
     const handleIssuanceDate = (issuanceDate) => {
-        const updatedFilter = new Filter({...filter, issuanceDate: issuanceDate});
+        const updatedFilter = new Filter({ ...filter, issuanceDate: issuanceDate });
         setFilter(updatedFilter);
     };
 
     const handleDescription = (description) => {
-        const updatedFilter = new Filter({...filter, description: description});
+        const updatedFilter = new Filter({ ...filter, description: description });
         setFilter(updatedFilter);
     };
 
@@ -84,11 +83,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                     <h2>Documents</h2>
                 </div>
                 <div>
-                    <SearchBar  handleMunicipality={handleMunicipality}
+                    <SearchBar handleMunicipality={handleMunicipality}
                         handleAuthor={handleAuthor} handleTitle={handleTitle} handleIssuanceDate={handleIssuanceDate}
                         handleDescription={handleDescription} />
                 </div>
-                <TableList filter={filter}/>
+                <TableList filter={filter} />
             </div>
 
             {/* Overlay */}
@@ -108,7 +107,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 };
 
 Sidebar.propTypes = {
-    isSidebarOpen: PropTypes.bool.isRequired,
+    isSidebarOpen: PropTypes.bool,
     toggleSidebar: PropTypes.func.isRequired,
 };
 
