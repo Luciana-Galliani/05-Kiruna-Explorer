@@ -322,43 +322,44 @@
     }
     ```
 
-    ## Areas
+## Areas
+
 -   POST /api/areas
 
-  Body:
+    Body:
 
-  ```json
-{
-    "name": "new area",
-    "geojson": {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [2.3522, 48.8566],
-                [2.3532, 48.8566],
-                [2.3532, 48.8576],
-                [2.3522, 48.8576],
-                [2.3522, 48.8566]
+    ```json
+    {
+        "name": "new area",
+        "geojson": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [2.3522, 48.8566],
+                    [2.3532, 48.8566],
+                    [2.3532, 48.8576],
+                    [2.3522, 48.8576],
+                    [2.3522, 48.8566]
+                ]
             ]
-        ]
-    }
-}
-```
-
-Response: 
-{
-    "area": 
-        {
-            "id": 1,
-            "name": "City center",
-            "geojson": {},
-            "centerLat": 75.12,
-            "centerLon": 32,21
         }
-}
-        
-    
-  
+    }
+    ```
+
+    Response: 
+
+    ```json
+    {
+        "area": 
+            {
+                "id": 1,
+                "name": "City center",
+                "geojson": {},
+                "centerLat": 75.12,
+                "centerLon": 32,21
+            }
+    }
+    ```
 
 -   GET /api/areas
 
