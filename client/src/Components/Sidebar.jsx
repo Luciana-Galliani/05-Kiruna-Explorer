@@ -64,6 +64,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <>
             {/* Sidebar */}
             <div
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        toggleSidebar(); // Chiude la sidebar con tastiera
+                    }
+                }}
                 className={`sidebar ${isSidebarOpen ? "open" : ""}`}
                 onClick={handleKeyDown}
                 style={{
@@ -98,6 +103,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             {/* Overlay */}
             {isSidebarOpen && (
                 <div
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            toggleSidebar();
+                        }
+                    }}
                     className="overlay"
                     onClick={handleOverlayClick}
                     style={{
