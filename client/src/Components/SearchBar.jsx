@@ -11,7 +11,7 @@ const SearchBar = ({
     const [searchTitle, setSearchTitle] = useState("");
     const [searchAuthor, setSearchAuthor] = useState("");
     const [searchDescription, setSearchDescription] = useState("");
-    const [searchIssuanceDate, setSearchIssuanceDate] = useState(null);
+    const [searchIssuanceDate, setSearchIssuanceDate] = useState("");
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
 
     //One useEffect for each search parameter, for now only works in that way

@@ -12,6 +12,9 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
+import PropTypes from "prop-types";
+import Filter from "../API/Filters/Filter";
+
 
 const TableList = ({ filter }) => {
 
@@ -36,7 +39,7 @@ const TableList = ({ filter }) => {
 
     const img = new Image();
 
-    
+
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -44,7 +47,7 @@ const TableList = ({ filter }) => {
             //filter documentsToShow based on the conditions
             const filteredDocuments = documents.filter((document) => {
                 //filter the document with all the conditions required
-                if(filter !== undefined)
+                if (filter !== undefined)
                     return filter.matchFilter(document);
                 return true;
             });
@@ -58,7 +61,6 @@ const TableList = ({ filter }) => {
         if (selectedDocument) {
             setIsSelected(true);
         }
-        console.log(selectedDocument);
     }, [selectedDocument]);
 
     useEffect(() => {
@@ -67,43 +69,45 @@ const TableList = ({ filter }) => {
     }, [location.pathname]);
 
     return (
-        <div style={{ display:"flex", maxHeight: "70%", overflowY: "auto"}}>
+        <div style={{ display: "flex", maxHeight: "70%", overflowY: "auto" }}>
             <div style={{ flex: 1 }}>
-            <Table striped unbordered hover responsive>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Title</th>
-                        <th>Stakeholder</th>
-                        <th>Language</th>
-                        <th>Icon</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        documentsToShow.map((document, index) => (
-                            img.src = icon[document.type],
-                            <tr key={index} onClick={() => setSelectedDocument(document)} tabIndex={0}>
-                                <td>{document.type}</td>
-                                <td>{document.title}</td>
-                                <td>{document.stakeholders[0].name}</td>
-                                <td>{document.language}</td>
-                                <td>{icon[document.type] && 
-                                    <img src={img.src} 
-                                    alt={document.type} 
-                                    style={{ width: "30px", height: "30px", marginLeft: "5px", 
-                                    padding: "2px", borderRadius: "50%"}} />}
-                                </td>
-                            </tr>
-                        ))
-                    }   
-                </tbody>
-            </Table>
+                <Table striped unbordered='true' hover responsive>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Stakeholder</th>
+                            <th>Language</th>
+                            <th>Icon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            documentsToShow.map((document, index) => (
+                                img.src = icon[document.type],
+                                <tr key={index} onClick={() => setSelectedDocument(document)} tabIndex={0}>
+                                    <td>{document.type}</td>
+                                    <td>{document.title}</td>
+                                    <td>{document.stakeholders[0].name}</td>
+                                    <td>{document.language}</td>
+                                    <td>{icon[document.type] &&
+                                        <img src={img.src}
+                                            alt={document.type}
+                                            style={{
+                                                width: "30px", height: "30px", marginLeft: "5px",
+                                                padding: "2px", borderRadius: "50%"
+                                            }} />}
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </Table>
             </div>
             {isSelected && selectedDocument && (
                 <Modal
                     size="lg"
-                    show= {isSelected}
+                    show={isSelected}
                     onHide={() => {
                         setSelectedDocument(null);
                         setIsSelected(false);
@@ -120,5 +124,9 @@ const TableList = ({ filter }) => {
         </div>
     );
 }
+
+TableList.propTypes = {
+    filter: PropTypes.instanceOf(Filter).isRequired,
+};
 
 export default TableList;
