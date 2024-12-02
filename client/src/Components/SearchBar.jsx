@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, InputGroup, Row, Col } from 'react-bootstrap';
 
-const SearchBar = ({ onSearch, onDetailedSearch, onToggleAllMunicipality }) => {
-    const [searchTerm, setSearchTerm] = useState('');
+const SearchBar = ({ onSearch, handleMunicipality, handleAuthor, handleTitle, handleIssuanceDate, handleDescription }) => {
+    
+    const [searchTitle, setSearchTitle] = useState('');
+    const [searchAuthor, setSearchAuthor] = useState('');
+    const [searchDescription, setSearchDescription] = useState('');
+    const [showDetailedSearch, setShowDetailedSearch] = useState(false);
+
+    useEffect(() => {
+        handleTitle(searchTitle);
+        handleDescription(searchDescription);
+    }, [searchTitle, searchDescription]);
+
+    const handleDeteiledSearch = (e) => {
+        setShowDetailedSearch(!showDetailedSearch);
+    }
 
     const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
+        setSearchTitle(e.target.value);
     };
+
+    const handleSearchDescription = (e) => {
+        setSearchDescription(e.target.value);
+    }
+
+    const handleSearchAuthor = (e) => {
+        setSearchAuthor(e.target.value);
+    }
 
     const handleSearch = () => {
         onSearch(searchTerm);
+    };
+
+    const handleSwitchChange = (e) => {
+        handleMunicipality();
     };
 
     return (
@@ -17,19 +42,39 @@ const SearchBar = ({ onSearch, onDetailedSearch, onToggleAllMunicipality }) => {
             <InputGroup >
                 <Form.Control
                     type="text"
-                    placeholder="Search..."
-                    value={searchTerm}
+                    placeholder="Title..."
+                    value={searchTitle}
                     onChange={handleSearchChange}
-                    aria-label="Search"
                 />
-                <Button className="custom-button-search-bar " variant="outline-secondary" onClick={handleSearch}>
-                    Search
+                <Button className="custom-button-search-bar " variant="outline-secondary" onClick={handleDeteiledSearch}>
+                    <i class="bi bi-sliders" />
                 </Button>
             </InputGroup>
+            {showDetailedSearch && (
+                <Row className="mt-2">
+                    <Col>
+                        <Form.Control
+                            type = "text" 
+                            placeholder="Description" 
+                            value={searchDescription}
+                            onChange={handleSearchDescription}
+                        />
+                    </Col>
+                    <Col>
+                        <Form.Control
+                            type="text"
+                            placeholder="Author"
+                        />
+                    </Col>
+                    <Col>
+                        <Form.Control placeholder="Year" />
+                    </Col>
+                </Row>
+            )}
             <Form.Check 
                 type="switch" 
                 label="All Municipality" 
-                onClick={onToggleAllMunicipality} 
+                onChange={handleSwitchChange} 
                 className="mt-2"
             />
         </Form>

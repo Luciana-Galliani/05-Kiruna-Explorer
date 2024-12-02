@@ -26,10 +26,12 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                     color: `${isSatelliteView ? "white" : "black"}`,
                     border: 'none',
                     fontSize: '1.5rem',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     cursor: 'pointer',
                     marginRight: '10px'
                 }}>
-                    ☰
+                    <i className="bi bi-list"></i>
                 </button>
 
                 {/* Title */}

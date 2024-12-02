@@ -1,10 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import TableList from './TableList';
 import SearchBar from './SearchBar';
+import Filter from "../API/Filters/Filter";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+
+    //const [allMunicipality, setAllMunicipality] = useState(false);
+    const [filter, setFilter] = useState(new Filter());
+    //const [isFilterUpdated, setIsFilterUpdated] = useState(false);
+
+    
+    const handleMunicipality = () => {
+        const updatedFilter = new Filter({...filter, allMunicipality: !filter.allMunicipality});
+        setFilter(updatedFilter);
+        //setIsFilterUpdated(!isFilterUpdated);
+    };
+
+    const handleAuthor = (author) => {
+        const updatedFilter = new Filter({...filter, author: author});
+        setFilter(updatedFilter);
+    };
+
+    const handleTitle = (title) => {
+        const updatedFilter = new Filter({...filter, title: title});
+        setFilter(updatedFilter);
+    };
+
+    const handleIssuanceDate = (issuanceDate) => {
+        const updatedFilter = new Filter({...filter, issuanceDate: issuanceDate});
+        setFilter(updatedFilter);
+    };
+
+    const handleDescription = (description) => {
+        const updatedFilter = new Filter({...filter, description: description});
+        setFilter(updatedFilter);
+    };
 
     const closeSidebar = () => {
         toggleSidebar();
@@ -26,6 +58,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         }
     };
 
+    useEffect(() => {
+        // Close the deteils pannel and the sidebar when the user clicks on modify
+        closeSidebar();
+    }, [location.pathname]);
+
     return (
         <>
             {/* Sidebar */}
@@ -45,9 +82,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                     zIndex: 1001
                 }}>
                 <div>
-                    <SearchBar />
+                    <h2>Documents</h2>
                 </div>
-                <TableList allMunicipality={false}/>
+                <div>
+                    <SearchBar  handleMunicipality={handleMunicipality}
+                        handleAuthor={handleAuthor} handleTitle={handleTitle} handleIssuanceDate={handleIssuanceDate}
+                        handleDescription={handleDescription} />
+                </div>
+                <TableList filter={filter}/>
             </div>
 
             {/* Overlay */}
