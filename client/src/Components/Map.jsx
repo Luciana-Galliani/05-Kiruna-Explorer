@@ -65,7 +65,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         };
 
         fetchAllDocuments();
-    }, []);
+    }, [isSatelliteView]);
 
     // Initialize map
     useEffect(() => {
@@ -280,7 +280,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         return () => {
             map.un("pointermove", handlePointerMove);
         };
-    }, [isSelectingCoordinates]);
+    }, [isSelectingCoordinates, isSatelliteView]);
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
