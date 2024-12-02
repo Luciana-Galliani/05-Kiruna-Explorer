@@ -107,6 +107,7 @@
         "pages": "12",
         "description": "This is a description",
         "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "areaId": 1,
         "otherStakeholderName": "new stakeholder", (if one the stakeholders selected is "Other")
         "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
@@ -142,6 +143,7 @@
                     "color": "#FFFF00"
                 }
             ],
+            "area": {},
             "otherStakeholderName": "new stakeholder",
             "connections": [
                 {
@@ -179,6 +181,7 @@
         "pages": "12",
         "description": "This is a description",
         "stakeholders": [{ "id": 1 }, { "id": 2 }],
+        "areaId": 1,
         "otherStakeholderName": "new stakeholder", (if one the stakeholders selected is "Other")
         "connections": [{"documentId": 1, "relationship": "Prevision"}, ...]
     }
@@ -214,6 +217,7 @@
                     "color": "#FFFF00"
                 }
             ],
+            "area": {},
             "otherStakeholderName": "new stakeholder",
             "connections": [
                 {
@@ -315,5 +319,53 @@
                 }
             }
         ]
+    }
+    ```
+
+    ## Areas
+-   POST /api/areas
+
+  Body:
+
+  ```json
+{
+    "name": "new area",
+    "geojson": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [2.3522, 48.8566],
+                [2.3532, 48.8566],
+                [2.3532, 48.8576],
+                [2.3522, 48.8576],
+                [2.3522, 48.8566]
+            ]
+        ]
+    }
+}
+```
+
+Response: 
+{
+    "area": 
+        {
+            "id": 1,
+            "name": "City center",
+            "geojson": {},
+            "centerLat": 75.12,
+            "centerLon": 32,21
+        }
+}
+        
+    
+  
+
+-   GET /api/areas
+
+    Response:
+
+    ```json
+    {
+        "areas": []
     }
     ```
