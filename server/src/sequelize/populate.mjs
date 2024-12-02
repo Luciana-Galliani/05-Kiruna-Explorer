@@ -44,6 +44,64 @@ export default async function populateDB(sequelize) {
             { validate: true }
         );
 
+        // Create areas
+        await sequelize.models.Area.bulkCreate(
+            [
+                {
+                    name: "Area 1",
+                    geojson: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [20.2224, 67.8525],
+                                [20.2324, 67.8525],
+                                [20.2324, 67.8625],
+                                [20.2224, 67.8625],
+                                [20.2224, 67.8525],
+                            ],
+                        ],
+                    },
+                    centerLat: 67.8575,
+                    centerLon: 20.2274,
+                },
+                {
+                    name: "Area 2",
+                    geojson: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [20.2124, 67.8425],
+                                [20.2224, 67.8425],
+                                [20.2224, 67.8525],
+                                [20.2124, 67.8525],
+                                [20.2124, 67.8425],
+                            ],
+                        ],
+                    },
+                    centerLat: 67.8475,
+                    centerLon: 20.2174,
+                },
+                {
+                    name: "Area 3",
+                    geojson: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [20.2324, 67.8525],
+                                [20.2424, 67.8525],
+                                [20.2424, 67.8625],
+                                [20.2324, 67.8625],
+                                [20.2324, 67.8525],
+                            ],
+                        ],
+                    },
+                    centerLat: 67.8575,
+                    centerLon: 20.2374,
+                },
+            ],
+            { validate: true }
+        );
+
         //Create documents
         const documents = await Document.bulkCreate(
             [
