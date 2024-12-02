@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, InputGroup, Row, Col } from 'react-bootstrap';
 
-const SearchBar = ({ onSearch, handleMunicipality, handleAuthor, handleTitle, handleIssuanceDate, handleDescription }) => {
+const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuanceDate, handleDescription }) => {
     
     const [searchTitle, setSearchTitle] = useState('');
     const [searchAuthor, setSearchAuthor] = useState('');
@@ -9,15 +9,19 @@ const SearchBar = ({ onSearch, handleMunicipality, handleAuthor, handleTitle, ha
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
 
     useEffect(() => {
-        handleTitle(searchTitle);
         handleDescription(searchDescription);
-    }, [searchTitle, searchDescription]);
+    }, [searchDescription]);
+
+    useEffect(() => {
+        handleTitle(searchTitle);
+    }, [searchTitle]);
 
     const handleDeteiledSearch = (e) => {
         setShowDetailedSearch(!showDetailedSearch);
     }
 
-    const handleSearchChange = (e) => {
+    const handleTitleChange = (e) => {
+        console.log(e.target.value);
         setSearchTitle(e.target.value);
     };
 
@@ -28,10 +32,6 @@ const SearchBar = ({ onSearch, handleMunicipality, handleAuthor, handleTitle, ha
     const handleSearchAuthor = (e) => {
         setSearchAuthor(e.target.value);
     }
-
-    const handleSearch = () => {
-        onSearch(searchTerm);
-    };
 
     const handleSwitchChange = (e) => {
         handleMunicipality();
@@ -44,7 +44,7 @@ const SearchBar = ({ onSearch, handleMunicipality, handleAuthor, handleTitle, ha
                     type="text"
                     placeholder="Title..."
                     value={searchTitle}
-                    onChange={handleSearchChange}
+                    onChange={handleTitleChange}
                 />
                 <Button className="custom-button-search-bar " variant="outline-secondary" onClick={handleDeteiledSearch}>
                     <i class="bi bi-sliders" />

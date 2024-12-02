@@ -11,7 +11,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const [filter, setFilter] = useState(new Filter());
     //const [isFilterUpdated, setIsFilterUpdated] = useState(false);
 
-    
     const handleMunicipality = () => {
         const updatedFilter = new Filter({...filter, allMunicipality: !filter.allMunicipality});
         setFilter(updatedFilter);
@@ -24,7 +23,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     };
 
     const handleTitle = (title) => {
-        const updatedFilter = new Filter({...filter, title: title});
+        console.log("Previous filter (Title): ", filter);
+        const updatedFilter = new Filter({ ...filter, title: title });
+        console.log("Updated filter (Title): ", updatedFilter);
         setFilter(updatedFilter);
     };
 
