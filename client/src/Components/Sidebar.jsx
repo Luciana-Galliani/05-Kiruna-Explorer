@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import TableList from './TableList';
-import SearchBar from './SearchBar';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import TableList from "./TableList";
+import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
-
     //const [allMunicipality, setAllMunicipality] = useState(false);
     const [filter, setFilter] = useState(new Filter());
     //const [isFilterUpdated, setIsFilterUpdated] = useState(false);
@@ -44,15 +43,15 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
     const handleOverlayClick = (e) => {
         // If the overlay was clicked, close the sidebar
-        if (e.target.classList.contains('overlay')) {
+        if (e.target.classList.contains("overlay")) {
             toggleSidebar();
         }
     };
 
     const handleKeyDown = (e, target) => {
         // Allows closing the sidebar when pressing "Enter" or "Space"
-        if (e.key === 'Enter' || e.key === ' ') {
-            target.click();  // Trigger the click event
+        if (e.key === "Enter" || e.key === " ") {
+            target.click(); // Trigger the click event
         }
     };
 
@@ -64,43 +63,53 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     return (
         <>
             {/* Sidebar */}
-            <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}
+            <div
+                className={`sidebar ${isSidebarOpen ? "open" : ""}`}
                 onClick={handleKeyDown}
                 style={{
-                    position: 'fixed',
+                    position: "fixed",
                     top: 0,
                     left: 0,
-                    height: '100%',
-                    width: '50%',
-                    backgroundColor: 'white',
-                    color: 'black',
-                    padding: '20px',
-                    transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-                    transition: 'transform 0.3s ease',
-                    zIndex: 1001
-                }}>
+                    maxWidth: "95%",
+                    height: "100%",
+                    backgroundColor: "white",
+                    color: "black",
+                    padding: "20px",
+                    transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
+                    transition: "transform 0.3s ease",
+                    zIndex: 1001,
+                }}
+            >
                 <div>
                     <h2>Documents</h2>
                 </div>
                 <div>
-                    <SearchBar handleMunicipality={handleMunicipality}
-                        handleAuthor={handleAuthor} handleTitle={handleTitle} handleIssuanceDate={handleIssuanceDate}
-                        handleDescription={handleDescription} />
+                    <SearchBar
+                        handleMunicipality={handleMunicipality}
+                        handleAuthor={handleAuthor}
+                        handleTitle={handleTitle}
+                        handleIssuanceDate={handleIssuanceDate}
+                        handleDescription={handleDescription}
+                    />
                 </div>
                 <TableList filter={filter} />
             </div>
 
             {/* Overlay */}
             {isSidebarOpen && (
-                <div className="overlay" onClick={handleOverlayClick} style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1000
-                }}></div>
+                <div
+                    className="overlay"
+                    onClick={handleOverlayClick}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        zIndex: 1000,
+                    }}
+                ></div>
             )}
         </>
     );
