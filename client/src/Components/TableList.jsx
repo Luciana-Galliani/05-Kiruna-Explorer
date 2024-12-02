@@ -58,6 +58,7 @@ const TableList = ({ filter }) => {
         if (selectedDocument) {
             setIsSelected(true);
         }
+        console.log(selectedDocument);
     }, [selectedDocument]);
 
     useEffect(() => {
@@ -110,7 +111,7 @@ const TableList = ({ filter }) => {
                     className="custom-modal-table-list"
                 >
                     <DetailsPanel
-                        doc={selectedDocument.id}
+                        initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)} // Close the details panel
                         isLoggedIn={isLoggedIn}
                     />
