@@ -4,13 +4,11 @@ import ConfirmationModal from "./ConfirmationModal";
 import { Button } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
-import PropTypes from 'prop-types';
-
-
+import PropTypes from "prop-types";
 
 const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) => {
     const navigate = useNavigate();
-    const { isLoggedIn } = useContext(AppContext);
+    const { isLoggedIn, setIsSelectingCoordinates } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
     const isEditPage = matchPath("/edit/:documentId", location.pathname);
     return (
@@ -21,8 +19,10 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
                         <LinkButton msg="Add Document" link="/add" color={isSatelliteView} />
                     </div>
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                        <Button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                            onClick={handleSatelliteView}>
+                        <Button
+                            className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                            onClick={handleSatelliteView}
+                        >
                             <i className="bi bi-globe"></i>
                         </Button>
                     </div>
@@ -50,10 +50,15 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
                 </div>
             )}
 
-            {(location.pathname === "/allDocuments" || isEditPage || location.pathname === "/municipality") ? (
+            {location.pathname === "/allDocuments" ||
+            isEditPage ||
+            location.pathname === "/municipality" ? (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
-                        onClick={() => navigate("/")}
+                        onClick={() => {
+                            setIsSelectingCoordinates(false);
+                            navigate("/");
+                        }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{
                             width: "3rem",
@@ -72,23 +77,28 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
                 </div>
             ) : null}
 
-            {/* Not logged */
+            {
+                /* Not logged */
                 !isLoggedIn && (
                     <div className="container">
                         <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                            <Button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                                onClick={handleSatelliteView}>
+                            <Button
+                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                onClick={handleSatelliteView}
+                            >
                                 <i className="bi bi-globe"></i>
                             </Button>
                         </div>
                     </div>
-                )}
+                )
+            }
 
             <ConfirmationModal
                 show={showCloseConfirmation}
                 onClose={() => setShowCloseConfirmation(false)}
                 onConfirm={() => {
                     setShowCloseConfirmation(false);
+                    setIsSelectingCoordinates(false);
                     navigate("/");
                 }}
                 message="Are you sure you want to close the form? Your changes will be lost."

@@ -2,16 +2,14 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
 import { AppContext } from "../context/AppContext.jsx";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { isLoggedIn } = useContext(AppContext);
 
-
     const toggleSidebar = () => {
-        setIsSidebarOpen(prevState => !prevState);
+        setIsSidebarOpen((prevState) => !prevState);
     };
 
     return (
@@ -35,11 +33,20 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                 </button>
 
                 {/* Title */}
-                <h1 className="m-0" style={{
-                    transition: "transform 0.3s ease",
-                    transform: isSidebarOpen ? "translateX(200px)" : "translateX(0)"
-                }}>
-                    <Link to="/" className={`${isSatelliteView ? "text-light" : "text-dark"} text-decoration-none`} style={{ fontFamily: "fantasy" }}>
+                <h1
+                    className="m-0"
+                    style={{
+                        transition: "transform 0.3s ease",
+                        transform: isSidebarOpen ? "translateX(200px)" : "translateX(0)",
+                    }}
+                >
+                    <Link
+                        to="/"
+                        className={`${
+                            isSatelliteView ? "text-light" : "text-dark"
+                        } text-decoration-none`}
+                        style={{ fontFamily: "fantasy" }}
+                    >
                         Kiruna eXplorer
                     </Link>
                 </h1>
@@ -47,12 +54,18 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
 
             <div>
                 {isLoggedIn ? (
-                    <button className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`} onClick={handleLogout}>
+                    <button
+                        className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                        onClick={handleLogout}
+                    >
                         Logout
                     </button>
                 ) : (
                     location.pathname !== "/login" && (
-                        <Link to="/login" className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}>
+                        <Link
+                            to="/login"
+                            className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                        >
                             Login
                         </Link>
                     )
@@ -68,8 +81,7 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
 Header.propTypes = {
     handleLogout: PropTypes.func.isRequired,
     headerClass: PropTypes.string,
-    isSatelliteView: PropTypes.bool.isRequired
+    isSatelliteView: PropTypes.bool.isRequired,
 };
 
 export default Header;
-

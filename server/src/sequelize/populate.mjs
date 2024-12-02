@@ -18,15 +18,15 @@ export default async function populateDB(sequelize) {
             [
                 {
                     name: "LKAB",
-                    color: "#428243",
+                    color: "#63C565",
                 },
                 {
                     name: "Municipality",
-                    color: "#8C6760",
+                    color: "#AD8179",
                 },
                 {
                     name: "Norrbotten County",
-                    color: "#6B282E",
+                    color: "#C7535D",
                 },
                 {
                     name: "Architecture firms",
@@ -34,11 +34,11 @@ export default async function populateDB(sequelize) {
                 },
                 {
                     name: "Citizens",
-                    color: "#B3D0D3",
+                    color: "#A3AEE0",
                 },
                 {
                     name: "Others",
-                    color: "#8CA2A4",
+                    color: "#8FA4A6",
                 },
             ],
             { validate: true }
@@ -100,7 +100,9 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:7.500",
                     issuanceDate: "2015",
                     type: "Design Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    latitude: 67.8595,
+                    longitude: 20.3135,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -112,7 +114,9 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:1.000",
                     issuanceDate: "2016-06-22",
                     type: "Prescriptive Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    latitude: 67.8495,
+                    longitude: 20.3035,
                     language: "Swedish",
                     pages: "1-43",
                     description:

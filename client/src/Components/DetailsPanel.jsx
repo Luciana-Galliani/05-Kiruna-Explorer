@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import {
     faFilePdf,
@@ -27,11 +27,12 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
+const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
-    const [selectedDoc, setSelectedDoc] = useState(null); // Per aprire un altro DetailsPanel
     const navigate = useNavigate();
     const { alldocuments } = useContext(AppContext);
+    const [doc, setDoc] = useState(initialDocId);
+
 
     useEffect(() => {
         const fetchDocumentById = async () => {
@@ -47,6 +48,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
             fetchDocumentById();
         }
     }, [doc, document, alldocuments]);
+
 
     if (!document) {
         return (
@@ -86,12 +88,9 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
     };
 
     const handleConnectionClick = (connection) => {
-        setSelectedDoc(connection.targetDocument.id);
+        setDocument(null);
+        setDoc(connection.targetDocument.id);
     };
-
-    if (selectedDoc) {
-        return <DetailsPanel doc={selectedDoc} onClose={() => setSelectedDoc(null)} isLoggedIn={isLoggedIn} />;
-    }
 
     return (
         <div className="details-panel-container">
@@ -125,7 +124,10 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
                     </li>
                 </ul>
                 <strong>Connections:</strong>
-                <div className="connections overflow-y-auto" style={{ maxHeight: "150px", overflowY: "auto" }}>
+                <div
+                    className="connections overflow-y-auto d-flex flex-column"
+                    style={{ maxHeight: "150px", overflowY: "auto" }}
+                >
                     {document.connections.length > 0 ? (
                         document.connections.map((connection, index) => (
                             <button
@@ -203,7 +205,7 @@ const DetailsPanel = ({ doc, onClose, isLoggedIn }) => {
 };
 
 DetailsPanel.propTypes = {
-    doc: PropTypes.string.isRequired,
+    doc: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
 };
