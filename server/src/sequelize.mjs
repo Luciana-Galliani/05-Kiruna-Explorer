@@ -24,6 +24,7 @@ const modelDefiners = [
     import("./sequelize/models/document.model.mjs"),
     import("./sequelize/models/stakeholder.model.mjs"),
     import("./sequelize/models/connection.model.mjs"),
+    import("./sequelize/models/area.model.mjs"),
 ];
 
 // Define all models

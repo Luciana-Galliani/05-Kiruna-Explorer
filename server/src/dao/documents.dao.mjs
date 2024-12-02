@@ -63,6 +63,7 @@ class DocumentsDAO {
                             attributes: [],
                         },
                     },
+                    "area",
                     {
                         association: "connections",
                         attributes: ["id", "relationship"],
@@ -88,6 +89,7 @@ class DocumentsDAO {
                             attributes: [],
                         },
                     },
+                    "area",
                     {
                         association: "connections",
                         attributes: ["id", "relationship"],
@@ -132,6 +134,11 @@ class DocumentsDAO {
             const stakeholdersIds = documentData.stakeholders.map((stakeholder) => stakeholder.id);
             await document.setStakeholders(stakeholdersIds, { transaction });
 
+            // Set area
+            if (documentData.areaId) {
+                await document.setArea(documentData.areaId, { transaction });
+            }
+
             // Set connected documents
             for (const connection of documentData.connections) {
                 await this._connectDocuments(
@@ -169,6 +176,11 @@ class DocumentsDAO {
             // Update stakeholders with transaction
             const stakeholdersIds = documentData.stakeholders.map((stakeholder) => stakeholder.id);
             await document.setStakeholders(stakeholdersIds, { transaction });
+
+            // Update area with transaction
+            if (documentData.areaId) {
+                await document.setArea(documentData.areaId, { transaction });
+            }
 
             // Update connected documents
             await this._updateConnectedDocuments(document, documentData.connections, transaction);

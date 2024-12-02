@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Button, InputGroup, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Form, Button, InputGroup, Row, Col } from "react-bootstrap";
 
-const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuanceDate, handleDescription }) => {
-    
-    const [searchTitle, setSearchTitle] = useState('');
-    const [searchAuthor, setSearchAuthor] = useState('');
-    const [searchDescription, setSearchDescription] = useState('');
+const SearchBar = ({
+    handleMunicipality,
+    handleAuthor,
+    handleTitle,
+    handleIssuanceDate,
+    handleDescription,
+}) => {
+    const [searchTitle, setSearchTitle] = useState("");
+    const [searchAuthor, setSearchAuthor] = useState("");
+    const [searchDescription, setSearchDescription] = useState("");
     const [searchIssuanceDate, setSearchIssuanceDate] = useState(null);
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
 
@@ -28,7 +33,7 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
 
     const handleDeteiledSearch = (e) => {
         setShowDetailedSearch(!showDetailedSearch);
-    }
+    };
 
     const handleTitleChange = (e) => {
         setSearchTitle(e.target.value);
@@ -36,15 +41,15 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
 
     const handleSearchDescription = (e) => {
         setSearchDescription(e.target.value);
-    }
+    };
 
     const handleIssuanceDateChange = (e) => {
         setSearchIssuanceDate(e.target.value);
-    }
+    };
 
     const handleSearchAuthor = (e) => {
         setSearchAuthor(e.target.value);
-    }
+    };
 
     const handleSwitchChange = (e) => {
         handleMunicipality();
@@ -52,23 +57,27 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
 
     return (
         <Form>
-            <InputGroup >
+            <InputGroup>
                 <Form.Control
                     type="text"
                     placeholder="Title..."
                     value={searchTitle}
                     onChange={handleTitleChange}
                 />
-                <Button className="custom-button-search-bar " variant="outline-secondary" onClick={handleDeteiledSearch}>
-                    <i class="bi bi-sliders" />
+                <Button
+                    className="custom-button-search-bar "
+                    variant="outline-secondary"
+                    onClick={handleDeteiledSearch}
+                >
+                    <i className="bi bi-sliders" />
                 </Button>
             </InputGroup>
             {showDetailedSearch && (
                 <Row className="mt-2">
                     <Col>
                         <Form.Control
-                            type = "text" 
-                            placeholder="Description" 
+                            type="text"
+                            placeholder="Description"
                             value={searchDescription}
                             onChange={handleSearchDescription}
                         />
@@ -82,19 +91,19 @@ const SearchBar = ({ handleMunicipality, handleAuthor, handleTitle, handleIssuan
                         />
                     </Col>
                     <Col>
-                        <Form.Control 
+                        <Form.Control
                             type="text"
-                            placeholder="Year" 
+                            placeholder="Year"
                             value={searchIssuanceDate}
                             onChange={handleIssuanceDateChange}
                         />
                     </Col>
                 </Row>
             )}
-            <Form.Check 
-                type="switch" 
-                label="All Municipality" 
-                onChange={handleSwitchChange} 
+            <Form.Check
+                type="switch"
+                label="All Municipality"
+                onChange={handleSwitchChange}
                 className="mt-2"
             />
         </Form>

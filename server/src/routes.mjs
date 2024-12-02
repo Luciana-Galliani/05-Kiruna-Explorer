@@ -5,6 +5,7 @@ import documentsRoutes from "./routes/documents.route.mjs";
 import connectionsRoutes from "./routes/connections.route.mjs";
 import stakeholdersRoutes from "./routes/stakeholders.route.mjs";
 import kirunaRoutes from "./routes/kiruna.route.mjs";
+import areasRoutes from "./routes/areas.route.mjs";
 
 export default (app) => {
     // Serve static files from document_resources
@@ -16,4 +17,5 @@ export default (app) => {
     app.use("/api/connections", connectionsRoutes);
     app.use("/api/stakeholders", stakeholdersRoutes);
     app.use("/api/kiruna", kirunaRoutes);
+    app.use("/api/areas", express.json(), areasRoutes);
 };

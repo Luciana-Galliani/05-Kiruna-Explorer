@@ -1,5 +1,5 @@
 function setupAssociations(sequelize) {
-    const { Document, Stakeholder, Connection } = sequelize.models;
+    const { Document, Stakeholder, Connection, Area } = sequelize.models;
 
     // Define the association between Document and Stakeholder (many-to-many)
     Document.belongsToMany(Stakeholder, {
@@ -11,6 +11,15 @@ function setupAssociations(sequelize) {
         through: "document_stakeholder",
         as: "documents",
         foreignKey: "stakeholderId",
+    });
+
+    // Define the association between Document and Area (many-to-one)
+    Document.belongsTo(Area, {
+        foreignKey: "areaId",
+        as: "area",
+    });
+    Area.hasMany(Document, {
+        foreignKey: "areaId",
     });
 
     // Define the association between Documents through Connection (2 one-to-many relationships)
