@@ -164,6 +164,7 @@ describe("DocumentsDAO", () => {
                         association: "stakeholders",
                         through: { attributes: [] },
                     },
+                    "area",
                     {
                         association: "connections",
                         attributes: ["id", "relationship"],
@@ -196,6 +197,7 @@ describe("DocumentsDAO", () => {
                         association: "stakeholders",
                         through: { attributes: [] },
                     },
+                    "area",
                     {
                         association: "connections",
                         attributes: ["id", "relationship"],
@@ -229,6 +231,7 @@ describe("DocumentsDAO", () => {
             document = {
                 id: 1,
                 setStakeholders: jest.fn(),
+                setArea: jest.fn(),
             };
 
             // Mock methods called in createDocument
@@ -237,7 +240,7 @@ describe("DocumentsDAO", () => {
             documentsDAO.getDocumentById = jest.fn();
         });
 
-        it("should create a document, set stakeholders, and connect documents, then commit the transaction", async () => {
+        it("should create a document, set stakeholders, set area and connect documents, then commit the transaction", async () => {
             const documentData = {
                 title: "Document Title",
                 scaleType: "Plan",
@@ -247,9 +250,10 @@ describe("DocumentsDAO", () => {
                 language: "english",
                 pages: "1-32",
                 description: "A sample document",
-                allMunicipality: true,
+                allMunicipality: false,
                 latitude: null,
                 longitude: null,
+                areaId: 1,
                 stakeholders: [{ id: 1 }, { id: 2 }],
                 connections: [
                     { documentId: 2, relationship: "Prevision" },
@@ -284,6 +288,9 @@ describe("DocumentsDAO", () => {
 
             // Verify setStakeholders was called with the correct IDs
             expect(document.setStakeholders).toHaveBeenCalledWith([1, 2], { transaction });
+
+            // Verify setArea was called with the correct ID
+            expect(document.setArea).toHaveBeenCalledWith(1, { transaction });
 
             // Verify _connectDocuments was called for each connection
             expect(documentsDAO._connectDocuments).toHaveBeenCalledWith(
@@ -356,6 +363,7 @@ describe("DocumentsDAO", () => {
                 id: 1,
                 update: jest.fn(),
                 setStakeholders: jest.fn(),
+                setArea: jest.fn(),
             };
 
             // Mock methods called in updateDocument
@@ -368,10 +376,11 @@ describe("DocumentsDAO", () => {
             jest.clearAllMocks();
         });
 
-        it("should update the document, stakeholders, and connections, then commit the transaction", async () => {
+        it("should update the document, stakeholders, area and connections, then commit the transaction", async () => {
             const documentData = {
                 title: "Updated Title",
                 stakeholders: [{ id: 1 }, { id: 2 }],
+                areaId: 1,
                 connections: [
                     { documentId: 2, relationship: "Prevision" },
                     { documentId: 3, relationship: "Update" },
@@ -389,6 +398,8 @@ describe("DocumentsDAO", () => {
             expect(document.update).toHaveBeenCalledWith(documentData, { transaction });
 
             expect(document.setStakeholders).toHaveBeenCalledWith([1, 2], { transaction });
+
+            expect(document.setArea).toHaveBeenCalledWith(1, { transaction });
 
             expect(documentsDAO._updateConnectedDocuments).toHaveBeenCalledWith(
                 document,
