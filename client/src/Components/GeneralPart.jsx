@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Form, Modal, Button } from "react-bootstrap";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 export function GeneralPart({ inputValues, setInputValues, stakeholderOptions }) {
     const [showModal, setShowModal] = useState(false);
@@ -172,17 +171,22 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                                 ))
                             )}
                             {/* Text field to write a new stakeholder */}
-                            {inputValues.stakeholders.some((stakeholder) => stakeholder.name === "Others")  && (
+                            {inputValues.stakeholders.some(
+                                (stakeholder) => stakeholder.name === "Others"
+                            ) && (
                                 <div className="mt-3 w-100">
-                                    <Form.Label>New Stakeholder</Form.Label>
+                                    <Form.Label className="fw-bold">Other Stakeholder</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter a new stakeholder name"
+                                        placeholder="Enter a name"
                                         value={inputValues.otherStakeholderName || ""}
                                         onChange={(e) =>
-                                            setInputValues({ ...inputValues, otherStakeholderName: e.target.value }) 
+                                            setInputValues({
+                                                ...inputValues,
+                                                otherStakeholderName: e.target.value,
+                                            })
                                         }
-                                    />   
+                                    />
                                 </div>
                             )}
                         </div>

@@ -1,7 +1,6 @@
 import React from "react";
 import { Form, Row } from "react-bootstrap";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setSelectedFiles }) {
     const typeOptions = [
@@ -13,7 +12,7 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
         "Conflict",
         "Consultation",
         "Action",
-        "Other"
+        "Other",
     ];
     const scaleOptions = ["Text", "Concept", "Blueprints/actions", "Plan"];
 
@@ -34,28 +33,37 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                     Type <span className="text-danger">*</span>
                 </Form.Label>
                 <div className="d-flex gap-2">
-                <Form.Control
-                    as="select"
-                    value={inputValues.type}
-                    onChange={(e) => setInputValues({ 
-                        ...inputValues, 
-                        type: e.target.value,
-                        otherDocumentType: e.target.value === "Other" ? inputValues.otherDocumentType : "" /* Reset the field if it is not "Other" */ })}
-                    required
-                >
-                    <option value="">Select a type</option>
-                    {typeOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </Form.Control>
-                {inputValues.type === "Other" && (
+                    <Form.Control
+                        as="select"
+                        value={inputValues.type}
+                        onChange={(e) =>
+                            setInputValues({
+                                ...inputValues,
+                                type: e.target.value,
+                                otherDocumentType:
+                                    e.target.value === "Other"
+                                        ? inputValues.otherDocumentType
+                                        : "" /* Reset the field if it is not "Other" */,
+                            })
+                        }
+                        required
+                    >
+                        <option value="">Select a type</option>
+                        {typeOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </Form.Control>
+                    {inputValues.type === "Other" && (
                         <Form.Control
                             type="text"
                             value={inputValues.otherDocumentType}
                             onChange={(e) =>
-                                setInputValues({ ...inputValues, otherDocumentType: e.target.value })
+                                setInputValues({
+                                    ...inputValues,
+                                    otherDocumentType: e.target.value,
+                                })
                             }
                             placeholder="Enter a new document type"
                         />
@@ -75,7 +83,8 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                             setInputValues({
                                 ...inputValues,
                                 scaleType: e.target.value,
-                                scaleType: e.target.value === "Plan" ? inputValues.scaleType : "" })
+                                scaleValue: e.target.value === "Plan" ? inputValues.scaleValue : "",
+                            })
                         }
                         required
                     >
@@ -89,9 +98,9 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                     {inputValues.scaleType === "Plan" && (
                         <Form.Control
                             type="text"
-                            value={inputValues.planScale}
+                            value={inputValues.scaleValue}
                             onChange={(e) =>
-                                setInputValues({ ...inputValues, planScale: e.target.value })
+                                setInputValues({ ...inputValues, scaleValue: e.target.value })
                             }
                             placeholder="Plan scale (e.g. 1:1,000)"
                         />
@@ -100,7 +109,9 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
             </Form.Group>
             <Row>
                 <Form.Group controlId="formLanguage" className="mb-2 col-md-6">
-                    <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Language</Form.Label>
+                    <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>
+                        Language
+                    </Form.Label>
                     <Form.Control
                         type="text"
                         value={inputValues.language}
@@ -112,13 +123,13 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                 </Form.Group>
 
                 <Form.Group controlId="formPages" className="mb-2 col-md-6">
-                    <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>Pages</Form.Label>
+                    <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>
+                        Pages
+                    </Form.Label>
                     <Form.Control
                         type="text"
                         value={inputValues.pages}
-                        onChange={(e) =>
-                            setInputValues({ ...inputValues, pages: e.target.value })
-                        }
+                        onChange={(e) => setInputValues({ ...inputValues, pages: e.target.value })}
                         placeholder="Enter number of pages"
                     />
                 </Form.Group>
@@ -178,7 +189,7 @@ TechnicalPart.propTypes = {
     inputValues: PropTypes.shape({
         type: PropTypes.string.isRequired,
         scaleType: PropTypes.string.isRequired,
-        planScale: PropTypes.string,
+        scaleValue: PropTypes.string,
         language: PropTypes.string,
         pages: PropTypes.string,
     }).isRequired,

@@ -22,6 +22,7 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
+import otherIcon from "../Icons/other.svg";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -51,6 +52,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         Conflict: conflictIcon,
         Consultation: consultationIcon,
         Action: actionIcon,
+        Other: otherIcon,
     };
 
     // Fetch all documents on load
@@ -133,7 +135,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                             image: new Icon({
                                 anchor: [0.5, 0.5],
                                 img: img,
-                                scale: 0.4,
+                                scale: 0.5,
                                 imgSize: [img.width, img.height],
                                 color: doc.stakeholders?.[0]?.color || "purple",
                             }),
@@ -256,7 +258,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                                     image: new Icon({
                                         anchor: [0.5, 0.5],
                                         img: img,
-                                        scale: 0.45,
+                                        scale: 0.55,
                                         imgSize: [img.width, img.height],
                                         color: icon.getColor(),
                                     }),

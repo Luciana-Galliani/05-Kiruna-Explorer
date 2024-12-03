@@ -18,7 +18,7 @@ export default (sequelize) => {
             type: DataTypes.STRING,
             validate: {
                 // to check if the scaleValue is a valid scale
-                is: /^1:\d{1,3}([.,]\d{3})*$/,
+                is: /^1:\d{1,3}([.,]\d{3})*$|^$/,
             },
         },
         issuanceDate: {
