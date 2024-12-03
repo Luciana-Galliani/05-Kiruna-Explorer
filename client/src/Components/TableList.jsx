@@ -113,13 +113,17 @@ const TableList = ({ filter }) => {
                         setIsSelected(false);
                     }}
                     className="custom-modal-table-list"
+                    unmountOnExit={false}
+                    animation={false} // Disabilita l'animazione del Modale
                 >
                     <DetailsPanel
                         initialDocId={selectedDocument.id}
-                        onClose={() => setSelectedDocument(null)} // Close the details panel
+                        onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
                     />
                 </Modal>
+
+
             )}
         </div>
     );

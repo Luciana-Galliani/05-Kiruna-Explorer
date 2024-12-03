@@ -6,7 +6,7 @@ import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 import PropTypes from "prop-types";
 
-const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) => {
+const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setnewArea }) => {
     const navigate = useNavigate();
     const { isLoggedIn, setIsSelectingCoordinates } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
@@ -31,7 +31,10 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
             {(location.pathname === "/add" || location.pathname === "/edit/:documentId") && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
-                        onClick={() => setShowCloseConfirmation(true)}
+                        onClick={() => {
+                            setShowCloseConfirmation(true);
+                            setnewArea(null);
+                        }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{
                             width: "3rem",
@@ -51,13 +54,15 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView }) 
             )}
 
             {location.pathname === "/allDocuments" ||
-            isEditPage ||
-            location.pathname === "/municipality" ? (
+                isEditPage ||
+                location.pathname === "/municipality" ? (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => {
                             setIsSelectingCoordinates(false);
                             navigate("/");
+                            setnewArea(null);
+
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{

@@ -7,6 +7,7 @@ export const AppProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [allDocuments, setAllDocuments] = useState([]);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
+    const [isSelectingArea, setIsSelectingArea] = useState(false);
 
     return (
         <AppContext.Provider
@@ -16,7 +17,10 @@ export const AppProvider = ({ children }) => {
                 allDocuments,
                 setAllDocuments,
                 isSelectingCoordinates,
-                setIsSelectingCoordinates
+                setIsSelectingCoordinates,
+                isSelectingArea,
+                setIsSelectingArea,
+
             }}
         >
             {children}

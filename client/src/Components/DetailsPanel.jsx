@@ -33,6 +33,9 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const { alldocuments } = useContext(AppContext);
     const [doc, setDoc] = useState(initialDocId);
 
+    useEffect(() => {
+        if (initialDocId) setDoc(initialDocId);
+    }, [initialDocId]);
 
     useEffect(() => {
         const fetchDocumentById = async () => {
@@ -44,10 +47,10 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
             }
         };
 
-        if (!document) {
-            fetchDocumentById();
-        }
-    }, [doc, document, alldocuments]);
+        // Reimposta `document` a null quando cambia `doc` e richiama l'API
+        setDocument(null);
+        fetchDocumentById();
+    }, [doc]); // Aggiungi `doc` come dipendenza
 
 
     if (!document) {

@@ -13,7 +13,6 @@ import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
 import { AppContext } from "./context/AppContext";
-
 function App() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [confirmationMessage] = useState("Do you really want to logout?");
@@ -22,8 +21,9 @@ function App() {
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSatelliteView, setIsSatelliteView] = useState(true);
+    const [newarea, setnewArea] = useState(null);
 
-    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates } = useContext(AppContext);
+    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
@@ -33,6 +33,11 @@ function App() {
         setCoordinates({ longitude: lon, latitude: lat });
         setIsSelectingCoordinates(false);
     };
+    const handleAreaSelected = (newA) => {
+        setnewArea(newA);
+        console.log(newA);
+        setIsSelectingArea(false);
+    }
 
     const handleLogin = async (username, password) => {
         try {
@@ -73,6 +78,7 @@ function App() {
                 handleCoordinatesSelected={handleCoordinatesSelected}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
+                handleAreaSelected={handleAreaSelected}
             />
 
             <Routes>
@@ -83,6 +89,9 @@ function App() {
                             setCoordinates={setCoordinates}
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
+                            newarea={newarea}
+                            setnewArea={setnewArea}
+
                         />
                     }
                 />
@@ -93,6 +102,8 @@ function App() {
                             setCoordinates={setCoordinates}
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
+                            newarea={newarea}
+                            setnewArea={setnewArea}
                         />
                     }
                 />
@@ -116,6 +127,7 @@ function App() {
                 location={location}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
+                setnewArea={setnewArea}
             />
 
             <ConfirmationModal

@@ -26,17 +26,22 @@ import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
+import Draw from "ol/interaction/Draw";
+import { transform } from "ol/proj";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
+const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
     const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const hoveredFeatureRef = useRef(null);
+    const [drawnArea, setDrawnArea] = useState(null);
+    const [areas, setAreas] = useState([]); // Stato per memorizzare le aree
+    const drawInteractionRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
 
-    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates } =
+    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates, isSelectingArea } =
         useContext(AppContext);
 
     const longitude = 20.22513;
@@ -52,6 +57,20 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         Consultation: consultationIcon,
         Action: actionIcon,
     };
+
+    // Effetto per caricare le aree
+    useEffect(() => {
+        const loadAreas = async () => {
+            try {
+                const fetchedAreas = await API.fetchAreas(); // Supponendo che l'API restituisca le aree in formato GeoJSON
+                console.log(fetchedAreas);
+                setAreas(fetchedAreas);
+            } catch (error) {
+                console.error("Failed to load areas:", error);
+            }
+        };
+        loadAreas();
+    }, [drawnArea]);
 
     // Fetch all documents on load
     useEffect(() => {
@@ -105,6 +124,96 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         };
     }, [isSatelliteView]);
 
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map || !isSelectingArea) return;
+
+        const drawSource = new VectorSource();
+        const drawLayer = new VectorLayer({
+            source: drawSource,
+            style: new Style({
+                stroke: new Stroke({
+                    color: "rgba(0, 0, 255, 0.5)", // Colore blu per la linea
+                    width: 2,
+                }),
+            }),
+        });
+
+        map.addLayer(drawLayer);
+
+        const drawInteraction = new Draw({
+            source: drawSource,
+            type: "Polygon",
+        });
+
+        drawInteraction.on("drawend", (event) => {
+            const feature = event.feature;
+            const geometry = feature.getGeometry();
+            const coordinates = geometry.getCoordinates();
+
+            const coordsIn4326 = coordinates[0].map(coord => {
+                const transformedCoord = transform([coord[0], coord[1]], 'EPSG:3857', 'EPSG:4326');
+                return transformedCoord;
+            });
+            setDrawnArea(coordsIn4326); // Salva l'area disegnata
+            handleAreaSelected(coordsIn4326); // Notifica il componente genitore
+
+            // Rimuovi la modalità di disegno
+            map.removeInteraction(drawInteraction);
+            map.removeLayer(drawLayer);
+            drawInteractionRef.current = null;
+        });
+
+        map.addInteraction(drawInteraction);
+        drawInteractionRef.current = drawInteraction;
+
+        return () => {
+            if (drawInteractionRef.current) {
+                map.removeInteraction(drawInteractionRef.current);
+            }
+            map.removeLayer(drawLayer);
+        };
+    }, [isSelectingArea, handleAreaSelected]);
+
+
+    // Effect to show areas when isSelectingArea is true
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map || !isSelectingArea) return;
+
+        const areaSource = new VectorSource();
+        const areaLayer = new VectorLayer({
+            source: areaSource,
+            style: new Style({
+                stroke: new Stroke({
+                    color: "rgba(0, 255, 0, 0.8)",
+                    width: 2,
+                }),
+            }),
+        });
+
+        areas.forEach((area) => {
+            const geojsonFormat = new GeoJSON();
+            try {
+                // Pass only the `geojson` property to readFeatures
+                const features = geojsonFormat.readFeatures(area.geojson, {
+                    featureProjection: "EPSG:3857",
+                });
+                areaSource.addFeatures(features);
+            } catch (error) {
+                console.error("Error processing area GeoJSON:", error, area);
+            }
+        });
+
+        map.addLayer(areaLayer);
+
+        return () => {
+            map.removeLayer(areaLayer);
+        };
+    }, [isSelectingArea, areas]);
+
+
+
     // Update map with documents and boundaries
     useEffect(() => {
         const map = mapInstanceRef.current;
@@ -157,7 +266,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
         }
 
         // Update boundary layer
-        if (shouldShow) {
+        if (shouldShow || isSelectingArea) {
             const fetchGeoJSON = async () => {
                 const geojsonFormat = new GeoJSON();
                 try {
@@ -236,7 +345,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                 const hit = map.hasFeatureAtPixel(event.pixel);
                 map.getTargetElement().style.cursor = hit ? "pointer" : "";
 
-                // If we hover a feature
                 const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
                 if (featureAtPixel) {
                     if (hoveredFeatureRef.current !== featureAtPixel) {
@@ -247,23 +355,25 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                         }
 
                         const currentFeatureStyle = featureAtPixel.getStyle();
-                        const icon = currentFeatureStyle.getImage();
-                        const img = new Image();
-                        img.src = icon.getSrc();
-                        img.onload = () => {
-                            featureAtPixel.setStyle(
-                                new Style({
-                                    image: new Icon({
-                                        anchor: [0.5, 0.5],
-                                        img: img,
-                                        scale: 0.45,
-                                        imgSize: [img.width, img.height],
-                                        color: icon.getColor(),
-                                    }),
-                                    zIndex: 2,
-                                })
-                            );
-                        };
+                        if (currentFeatureStyle && currentFeatureStyle.getImage) {
+                            const icon = currentFeatureStyle.getImage();
+                            const img = new Image();
+                            img.src = icon.getSrc();
+                            img.onload = () => {
+                                featureAtPixel.setStyle(
+                                    new Style({
+                                        image: new Icon({
+                                            anchor: [0.5, 0.5],
+                                            img: img,
+                                            scale: 0.45,
+                                            imgSize: [img.width, img.height],
+                                            color: icon.getColor(),
+                                        }),
+                                        zIndex: 2,
+                                    })
+                                );
+                            };
+                        }
                         hoveredFeatureRef.current = featureAtPixel;
                     }
                 } else {
@@ -274,6 +384,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView }) => {
                 }
             }
         };
+
 
         map.on("pointermove", handlePointerMove);
 

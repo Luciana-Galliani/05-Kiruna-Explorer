@@ -114,6 +114,7 @@
     .notification {
         font-size: 0.9rem;
     }
+
     .details-panel-container {
         max-width: 100%;
         margin: 5px;
@@ -266,20 +267,28 @@ button:hover {
 }
 
 .custom-dropdown-menu {
-    max-height: 200px; /* Set your desired max height */
-    overflow-y: auto; /* Enable vertical scrollbar */
-    width: 100%; /* Ensure the dropdown menu matches the width of the form group */
-    background-color: #fff; /* Match the background color of the form group */
-    border: 1px solid #ced4da; /* Match the border color of the form group */
-    border-radius: 0.25rem; /* Match the border radius of the form group */
+    max-height: 200px;
+    /* Set your desired max height */
+    overflow-y: auto;
+    /* Enable vertical scrollbar */
+    width: 100%;
+    /* Ensure the dropdown menu matches the width of the form group */
+    background-color: #fff;
+    /* Match the background color of the form group */
+    border: 1px solid #ced4da;
+    /* Match the border color of the form group */
+    border-radius: 0.25rem;
+    /* Match the border radius of the form group */
 }
 
 .custom-dropdown-menu .dropdown-item {
-    color: #495057; /* Match the text color of the form group */
+    color: #495057;
+    /* Match the text color of the form group */
 }
 
 .custom-dropdown-menu .dropdown-item:hover {
-    background-color: #e9ecef; /* Match the hover background color of the form group */
+    background-color: #e9ecef;
+    /* Match the hover background color of the form group */
 }
 
 .custom-dropdown .dropdown-toggle:focus,
@@ -287,14 +296,19 @@ button:hover {
 .custom-dropdown .dropdown-toggle:focus:active {
     width: 100%;
     text-align: left;
-    outline: none; /* Remove the default blue outline */
-    box-shadow: none; /* Remove the default blue shadow */
-    background-color: #fff; /* Ensure the background color remains the same */
-    color: #495057; /* Ensure the text color remains the same */
-    border-color: #ced4da; /* Ensure the border color remains the same */
+    outline: none;
+    /* Remove the default blue outline */
+    box-shadow: none;
+    /* Remove the default blue shadow */
+    background-color: #fff;
+    /* Ensure the background color remains the same */
+    color: #495057;
+    /* Ensure the text color remains the same */
+    border-color: #ced4da;
+    /* Ensure the border color remains the same */
 }
 
-.custom-button-search-bar{
+.custom-button-search-bar {
     margin-top: 0;
     padding: 5px 10px;
     cursor: pointer;
@@ -302,12 +316,13 @@ button:hover {
 
 .custom-modal-table-lise .modal-content {
     padding-top: 0;
-    margin-top: 0;  
-    border: none; 
+    margin-top: 0;
+    border: none;
 }
 
 .custom-modal-table-list .modal-header {
-    display: none; /* Hide the modal header if not needed */
+    display: none;
+    /* Hide the modal header if not needed */
 }
 
 .custom-modal-table-list .modal-body {

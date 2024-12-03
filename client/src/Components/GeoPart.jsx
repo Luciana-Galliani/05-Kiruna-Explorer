@@ -1,17 +1,23 @@
-import { Form, Button } from "react-bootstrap";
 import { useContext } from "react";
+import { Form, Button } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
+import { propTypes } from "react-bootstrap/esm/Image";
 
-export function GeoPart({ inputValues, setInputValues }) {
+export function GeoPart({ inputValues, setInputValues, setSecond, area }) {
     const { setIsSelectingCoordinates } = useContext(AppContext);
+
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
     };
+
+    const handleArea = () => {
+        setSecond(true);
+    };
+
     return (
         <Form>
             <h2>Georeference</h2>
-
             {/* Row with checkbox and button */}
             <Form.Group controlId="formAllMunicipality" className="mb-3">
                 <div className="d-flex align-items-center justify-content-between">
@@ -24,7 +30,10 @@ export function GeoPart({ inputValues, setInputValues }) {
                             setInputValues((prev) => ({
                                 ...prev,
                                 allMunicipality: isChecked,
-                                ...(isChecked && { longitude: null, latitude: null }),
+                                ...(isChecked && {
+                                    longitude: null,
+                                    latitude: null,
+                                }),
                             }));
                         }}
                         className="me-3"
@@ -36,6 +45,13 @@ export function GeoPart({ inputValues, setInputValues }) {
                     >
                         Choose on the Map
                     </Button>
+                    <Button
+                        variant="dark"
+                        onClick={handleArea}
+                        disabled={inputValues.allMunicipality}
+                    >
+                        {area.length > 0 ? "Area Saved" : "Create Area"}
+                    </Button>
                 </div>
             </Form.Group>
 
@@ -45,7 +61,9 @@ export function GeoPart({ inputValues, setInputValues }) {
                 <Form.Control
                     type="number"
                     value={inputValues.latitude || ""}
-                    onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
+                    onChange={(e) =>
+                        setInputValues({ ...inputValues, latitude: e.target.value })
+                    }
                     placeholder="Enter latitude"
                     disabled={inputValues.allMunicipality}
                 />
@@ -57,7 +75,9 @@ export function GeoPart({ inputValues, setInputValues }) {
                 <Form.Control
                     type="number"
                     value={inputValues.longitude || ""}
-                    onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
+                    onChange={(e) =>
+                        setInputValues({ ...inputValues, longitude: e.target.value })
+                    }
                     placeholder="Enter longitude"
                     disabled={inputValues.allMunicipality}
                 />
@@ -73,4 +93,6 @@ GeoPart.propTypes = {
         longitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
+    area: PropTypes.any,
+    setSecond: propTypes.any
 };

@@ -29,7 +29,7 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                     cursor: 'pointer',
                     marginRight: '10px'
                 }}>
-                    <i className="bi bi-list"></i>
+                    <i className="bi bi-view-list"></i>
                 </button>
 
                 {/* Title */}
@@ -42,9 +42,8 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                 >
                     <Link
                         to="/"
-                        className={`${
-                            isSatelliteView ? "text-light" : "text-dark"
-                        } text-decoration-none`}
+                        className={`${isSatelliteView ? "text-light" : "text-dark"
+                            } text-decoration-none`}
                         style={{ fontFamily: "fantasy" }}
                     >
                         Kiruna eXplorer

@@ -66,6 +66,49 @@ const getBoundaries = async () => {
     }
 };
 
+const fetchAreas = async () => {
+    const response = await fetch(`${baseURL}/api/areas`, {
+        method: "GET",
+        headers: authHeaders(),
+    });
+    if (response.ok) {
+        const doc = await response.json();
+        return doc.areas;
+    } else {
+        const errDetails = await response.text();
+        console.log(errDetails);
+        throw errDetails;
+
+    }
+};
+
+const createArea = async (area) => {
+    console.log(area);
+    try {
+        const response = await fetch(`${baseURL}/api/areas`, {
+            method: "POST",
+            headers: {
+                ...authHeaders(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(area),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error creating area:", error);
+        throw error;
+    }
+};
+
+
+
 
 const getDocuments = async () => {
     const response = await fetch(`${baseURL}/api/documents`, {
@@ -199,7 +242,9 @@ const API = {
     updateDocument,
     getConnections,
     getStakeholders,
-    getBoundaries
+    getBoundaries,
+    fetchAreas,
+    createArea
 };
 
 export default API;
