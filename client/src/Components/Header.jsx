@@ -19,16 +19,19 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
         >
             <div className="d-flex align-items-center">
                 {/* Toggle Sidebar Button */}
-                <button onClick={toggleSidebar} style={{
-                    backgroundColor: 'transparent',
-                    color: `${isSatelliteView ? "white" : "black"}`,
-                    border: 'none',
-                    fontSize: '1.5rem',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    marginRight: '10px'
-                }}>
+                <button
+                    onClick={toggleSidebar}
+                    style={{
+                        backgroundColor: "transparent",
+                        color: `${isSatelliteView ? "white" : "black"}`,
+                        border: "none",
+                        fontSize: "1.5rem",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        marginTop: "0",
+                    }}
+                >
                     <i className="bi bi-view-list"></i>
                 </button>
 
@@ -42,8 +45,9 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                 >
                     <Link
                         to="/"
-                        className={`${isSatelliteView ? "text-light" : "text-dark"
-                            } text-decoration-none`}
+                        className={`${
+                            isSatelliteView ? "text-light" : "text-dark"
+                        } text-decoration-none`}
                         style={{ fontFamily: "fantasy" }}
                     >
                         Kiruna eXplorer
