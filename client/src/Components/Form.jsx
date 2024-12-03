@@ -22,11 +22,13 @@ const initializeInputValues = (doc) => {
     return {
         title: doc?.document?.title || "",
         stakeholders: doc?.document?.stakeholders || [],
+        otherStakeholderName: doc?.document?.otherStakeholderName || [],
         scaleType: doc?.document?.scaleType || "",
         issuanceYear: dateParts[0] || "",
         issuanceMonth: dateParts[1] || "",
         issuanceDay: dateParts[2] || "",
         type: doc?.document?.type || "",
+        otherDocumentType: doc?.document?.otherDocumentType || "",
         language:
             doc?.document?.language && doc?.document?.language !== "-" ? doc.document.language : "",
         pages: doc?.document?.pages && doc?.document?.pages !== "-" ? doc.document.pages : "",

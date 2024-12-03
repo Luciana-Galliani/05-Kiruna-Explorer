@@ -13,6 +13,7 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
         "Conflict",
         "Consultation",
         "Action",
+        "Other"
     ];
     const scaleOptions = ["Text", "Concept", "Blueprints/actions", "Plan"];
 
@@ -32,10 +33,14 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                 <Form.Label className="fw-bold" style={{ fontSize: "1.2rem", color: "black" }}>
                     Type <span className="text-danger">*</span>
                 </Form.Label>
+                <div className="d-flex gap-2">
                 <Form.Control
                     as="select"
                     value={inputValues.type}
-                    onChange={(e) => setInputValues({ ...inputValues, type: e.target.value })}
+                    onChange={(e) => setInputValues({ 
+                        ...inputValues, 
+                        type: e.target.value,
+                        otherDocumentType: e.target.value === "Other" ? inputValues.otherDocumentType : "" /* Reset the field if it is not "Other" */ })}
                     required
                 >
                     <option value="">Select a type</option>
@@ -45,6 +50,17 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                         </option>
                     ))}
                 </Form.Control>
+                {inputValues.type === "Other" && (
+                        <Form.Control
+                            type="text"
+                            value={inputValues.otherDocumentType}
+                            onChange={(e) =>
+                                setInputValues({ ...inputValues, otherDocumentType: e.target.value })
+                            }
+                            placeholder="Enter a new document type"
+                        />
+                    )}
+                </div>
             </Form.Group>
 
             <Form.Group controlId="formScale" className="mb-2">
@@ -56,7 +72,10 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                         as="select"
                         value={inputValues.scaleType}
                         onChange={(e) =>
-                            setInputValues({ ...inputValues, scaleType: e.target.value })
+                            setInputValues({
+                                ...inputValues,
+                                scaleType: e.target.value,
+                                scaleType: e.target.value === "Plan" ? inputValues.scaleType : "" })
                         }
                         required
                     >
