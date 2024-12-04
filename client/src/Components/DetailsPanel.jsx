@@ -33,7 +33,6 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const { alldocuments } = useContext(AppContext);
     const [doc, setDoc] = useState(initialDocId);
 
-
     useEffect(() => {
         const fetchDocumentById = async () => {
             try {
@@ -49,7 +48,6 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
         }
     }, [doc, document, alldocuments]);
 
-
     if (!document) {
         return (
             <div className="details-panel-container border rounded shadow p-4 bg-light">
@@ -59,7 +57,13 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     }
 
     const stakeholdersList = document.stakeholders
-        ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
+        ? document.stakeholders
+              .map((stakeholder) => {
+                  return stakeholder.name === "Others" && document.otherStakeholderName
+                      ? document.otherStakeholderName
+                      : stakeholder.name;
+              })
+              .join(", ")
         : "N/A";
 
     const processedResources = document.originalResources.map((fileName) => {
@@ -99,7 +103,10 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
 
                 <ul className="list-unstyled">
                     <li>
-                        <strong>Type:</strong> {document.type || "N/A"}
+                        <strong>Type:</strong>{" "}
+                        {document.type === "Other"
+                            ? document.otherDocumentType || "Other"
+                            : document.type || "N/A"}
                     </li>
                     <li>
                         <strong>Scale:</strong>{" "}

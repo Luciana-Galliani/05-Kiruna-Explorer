@@ -9,10 +9,8 @@ import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { point, booleanPointInPolygon } from "@turf/turf";
-
-
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -22,16 +20,18 @@ const initializeInputValues = (doc) => {
     return {
         title: doc?.document?.title || "",
         stakeholders: doc?.document?.stakeholders || [],
+        otherStakeholderName: doc?.document?.otherStakeholderName || "",
         scaleType: doc?.document?.scaleType || "",
         issuanceYear: dateParts[0] || "",
         issuanceMonth: dateParts[1] || "",
         issuanceDay: dateParts[2] || "",
         type: doc?.document?.type || "",
+        otherDocumentType: doc?.document?.otherDocumentType || "",
         language:
             doc?.document?.language && doc?.document?.language !== "-" ? doc.document.language : "",
         pages: doc?.document?.pages && doc?.document?.pages !== "-" ? doc.document.pages : "",
         description: doc?.document?.description || "",
-        planScale: doc?.document?.scaleValue || "",
+        scaleValue: doc?.document?.scaleValue || "",
         allMunicipality: doc?.document?.allMunicipality || false,
         latitude: parseFloat(doc?.document?.latitude) || null,
         longitude: parseFloat(doc?.document?.longitude) || null,
@@ -43,7 +43,8 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
     return (
         <div className="step-progress-bar">
             {steps.map((step, index) => {
-                const isActive = existingDocument || validSteps.includes(index) || index <= currentStep;
+                const isActive =
+                    existingDocument || validSteps.includes(index) || index <= currentStep;
                 return (
                     <button
                         key={index}
@@ -65,9 +66,6 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
     );
 };
 
-
-
-
 export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates }) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
@@ -76,10 +74,9 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
-    const [validSteps, setValidSteps] = useState([]);  // Stato per tracciare gli step validati
+    const [validSteps, setValidSteps] = useState([]); // Stato per tracciare gli step validati
     const { isLoggedIn, setAllDocuments } = useContext(AppContext);
     const [kirunaGeoJSON, setKirunaGeoJSON] = useState(null);
-
 
     const steps = [
         {
@@ -169,12 +166,13 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
     const fetchInitialData = async () => {
         try {
-            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] = await Promise.all([
-                API.getStakeholders(),
-                API.getConnections(),
-                API.getDocuments(),
-                API.getBoundaries(),
-            ]);
+            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] =
+                await Promise.all([
+                    API.getStakeholders(),
+                    API.getConnections(),
+                    API.getDocuments(),
+                    API.getBoundaries(),
+                ]);
 
             setStakeholderOptions(
                 stakeholderResp.stakeholders.map(
@@ -236,7 +234,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 !inputValues.description ||
                 !inputValues.issuanceYear
             ) {
-                validationMessage = "Please complete title, stakeholders, description, and issuance date.";
+                validationMessage =
+                    "Please complete title, stakeholders, description, and issuance date.";
             } else {
                 setValidSteps((prev) => [...prev, 0]);
             }
@@ -245,7 +244,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         // Step 1: Verifica tipo e pagine
         if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
-                validationMessage = "Please complete type and scale type.";
+                validationMessage = "Please complete type and scale.";
             }
             if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
                 validationMessage = "Pages must be a number or a range (e.g., 1-32).";
@@ -259,19 +258,29 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 if (!inputValues.latitude || !inputValues.longitude) {
                     validationMessage = "Please provide latitude and longitude.";
                 } else {
-                    if (kirunaGeoJSON && kirunaGeoJSON.type === 'FeatureCollection' && kirunaGeoJSON.features) {
+                    if (
+                        kirunaGeoJSON &&
+                        kirunaGeoJSON.type === "FeatureCollection" &&
+                        kirunaGeoJSON.features
+                    ) {
                         const multipolygon = kirunaGeoJSON.features[0].geometry;
 
-                        if (multipolygon.type === 'MultiPolygon') {
+                        if (multipolygon.type === "MultiPolygon") {
                             const userPoint = point([inputValues.longitude, inputValues.latitude]);
 
-                            const isInsideKiruna = multipolygon.coordinates.some(polygonCoordinates => {
-                                const polygon = { type: 'Polygon', coordinates: polygonCoordinates };
-                                return booleanPointInPolygon(userPoint, polygon);
-                            });
+                            const isInsideKiruna = multipolygon.coordinates.some(
+                                (polygonCoordinates) => {
+                                    const polygon = {
+                                        type: "Polygon",
+                                        coordinates: polygonCoordinates,
+                                    };
+                                    return booleanPointInPolygon(userPoint, polygon);
+                                }
+                            );
 
                             if (!isInsideKiruna) {
-                                validationMessage = "The coordinates must be inside the Kiruna region.";
+                                validationMessage =
+                                    "The coordinates must be inside the Kiruna region.";
                             } else {
                                 setValidSteps((prev) => [...prev, 2]);
                             }
@@ -279,7 +288,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                             validationMessage = "GeoJSON is not a MultiPolygon.";
                         }
                     } else {
-                        validationMessage = "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
+                        validationMessage =
+                            "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
                     }
                 }
             } else {
@@ -289,7 +299,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
         return validationMessage;
     };
-
 
     const handleUpdateDocument = async (data) => {
         const response = await API.updateDocument(
@@ -301,7 +310,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         setCoordinates((prev) => ({
             ...prev,
             latitude: null,
-            longitude: null
+            longitude: null,
         }));
         updateDocumentList(response.document);
     };
@@ -312,7 +321,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         setCoordinates((prev) => ({
             ...prev,
             latitude: null,
-            longitude: null
+            longitude: null,
         }));
         setAllDocuments((prev) => [...prev, response.document]); // Update allDocuments
     };
@@ -324,7 +333,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const showNotification = (message, type) => {
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: "", type: "" }), 3000);
-
     };
 
     const handleNextStep = () => {
@@ -348,7 +356,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             <ProgressBar
                 percent={Math.min(Math.max((currentStep / (steps.length - 1)) * 100, 0), 100)}
                 filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
-            />            <StepProgressBar
+            />{" "}
+            <StepProgressBar
                 currentStep={currentStep}
                 steps={steps}
                 setCurrentStep={setCurrentStep}
@@ -356,12 +365,10 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 setValidSteps={setValidSteps}
                 existingDocument={existingDocument}
             />
-
             {/* Current step content */}
             <div className={`step-content ${steps[currentStep]?.className || ""}`}>
                 {steps[currentStep]?.component}
             </div>
-
             <div className="d-flex gap-5 mt-2">
                 {currentStep === 0 ? (
                     <div style={{ flex: 1 }}></div>

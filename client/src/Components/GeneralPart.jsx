@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Form, Modal, Button } from "react-bootstrap";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 export function GeneralPart({ inputValues, setInputValues, stakeholderOptions }) {
     const [showModal, setShowModal] = useState(false);
@@ -31,7 +30,12 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                 const stakeholders = isSelected
                     ? prev.stakeholders.filter((item) => item.id !== selectedStakeholder.id)
                     : [...prev.stakeholders, selectedStakeholder];
-                return { ...prev, stakeholders };
+
+                // Clear the "otherStakeholderName" field if "Others" is cleared
+                const otherStakeholderName = stakeholders.some((item) => item.name === "Others")
+                    ? prev.otherStakeholderName
+                    : "";
+                return { ...prev, stakeholders, otherStakeholderName };
             });
         } else {
             setInputValues((prev) => ({ ...prev, [activeField]: value }));
@@ -165,6 +169,25 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                                         style={{ width: "35%" }}
                                     />
                                 ))
+                            )}
+                            {/* Text field to write a new stakeholder */}
+                            {inputValues.stakeholders.some(
+                                (stakeholder) => stakeholder.name === "Others"
+                            ) && (
+                                <div className="mt-3 w-100">
+                                    <Form.Label className="fw-bold">Other Stakeholder</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter a name"
+                                        value={inputValues.otherStakeholderName || ""}
+                                        onChange={(e) =>
+                                            setInputValues({
+                                                ...inputValues,
+                                                otherStakeholderName: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </div>
                             )}
                         </div>
                     )}
