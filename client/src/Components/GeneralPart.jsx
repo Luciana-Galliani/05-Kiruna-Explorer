@@ -174,21 +174,21 @@ export function GeneralPart({ inputValues, setInputValues, stakeholderOptions })
                             {inputValues.stakeholders.some(
                                 (stakeholder) => stakeholder.name === "Others"
                             ) && (
-                                <div className="mt-3 w-100">
-                                    <Form.Label className="fw-bold">Other Stakeholder</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter a name"
-                                        value={inputValues.otherStakeholderName || ""}
-                                        onChange={(e) =>
-                                            setInputValues({
-                                                ...inputValues,
-                                                otherStakeholderName: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </div>
-                            )}
+                                    <div className="mt-3 w-100">
+                                        <Form.Label className="fw-bold">Other Stakeholder</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Enter a name"
+                                            value={inputValues.otherStakeholderName || ""}
+                                            onChange={(e) =>
+                                                setInputValues({
+                                                    ...inputValues,
+                                                    otherStakeholderName: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                )}
                         </div>
                     )}
                 </Modal.Body>
@@ -215,6 +215,7 @@ GeneralPart.propTypes = {
         issuanceMonth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         issuanceDay: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         description: PropTypes.string.isRequired,
+        otherStakeholderName: PropTypes.string
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
     stakeholderOptions: PropTypes.arrayOf(

@@ -32,7 +32,6 @@ const TableList = ({ filter }) => {
     const { isLoggedIn, allDocuments } = useContext(AppContext);
 
     const [documentsToShow, setDocumentsToShow] = useState([]);
-    const [hoveredItem, setHoveredItem] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isSelected, setIsSelected] = useState(false);
     const location = useLocation();

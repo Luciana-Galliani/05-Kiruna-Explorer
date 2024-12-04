@@ -122,6 +122,8 @@ Footer.propTypes = {
     location: PropTypes.object.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleSatelliteView: PropTypes.func.isRequired,
+    setnewArea: PropTypes.func.isRequired,
+    setCoordinates: PropTypes.func.isRequired,
 };
 
 export default Footer;

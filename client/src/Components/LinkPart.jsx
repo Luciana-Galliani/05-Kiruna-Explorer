@@ -123,7 +123,7 @@ export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
                 style={{ maxHeight: "150px", overflowY: "auto" }}
             >
                 {inputValues.connections.map((connection, index) => (
-                    <Card key={index} className="mb-2 me-1 position-relative">
+                    <Card key={connection.id} className="mb-2 me-1 position-relative">
                         <button
                             onClick={() => removeConnection(index)}
                             style={{
