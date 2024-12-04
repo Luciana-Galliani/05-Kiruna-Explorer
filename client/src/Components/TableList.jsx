@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
-import Modal from "react-bootstrap/Modal";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import DetailsPanel from "./DetailsPanel";

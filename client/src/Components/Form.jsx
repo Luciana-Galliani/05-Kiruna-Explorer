@@ -209,7 +209,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             }
         }
 
-        setNewAreaName("");
         setSecond(false);
         setIsSelectingArea(false);
         setAreaGeoJSON(null);
@@ -224,11 +223,9 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
 
     const handleSelectExistingArea = (areaselected) => {
-        // Verifica se l'area selezionata ha un geojson
         const geojson = areaselected?.geojson || null;
 
         if (!geojson) {
-            // Se non esiste il geojson, cerca l'area corrispondente in `areas`
             const matchingArea = areas.find((area) => area.name === areaselected.name);
             if (matchingArea) {
                 areaselected.geojson = matchingArea.geojson; // Aggiungi geojson all'area selezionata
@@ -239,7 +236,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         if (areaselected.name !== newAreaName) {
             setAreas((prevAreas) => prevAreas.filter((area) => area.id !== null));
             setArea(areas.find((area) => area.name === areaselected.name) || null);
-            setNewAreaName(null);
+            setNewAreaName("");
         }
 
         // Aggiorna i valori del form
@@ -415,18 +412,60 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     };
 
     const handleUpdateDocument = async (data) => {
-        const response = await API.updateDocument(
-            existingDocument.document.id,
-            data,
-            selectedFiles
-        );
-        showNotification("Document modified successfully!", "success");
-        setCoordinates((prev) => ({
-            ...prev,
-            latitude: "",
-            longitude: ""
-        }));
-        updateDocumentList(response.document);
+        try {
+            let areaId = null;
+
+            if (newAreaName) {
+                const geojson = {
+                    type: "Polygon",
+                    coordinates: [area],
+                };
+
+                const areaData = {
+                    name: inputValues.areaName,
+                    geojson: geojson,
+                };
+
+                console.log(areaData);
+
+                const createdArea = await API.createArea(areaData);
+                areaId = createdArea.area.id;
+                console.log(createdArea);
+            }
+            else if (selectedArea) {
+                const selected = areas.find((area) => area.name === selectedArea);
+                areaId = selected ? selected.id : null;
+            }
+
+            setArea(null);
+            setnewArea(null);
+
+            const documentData = {
+                ...data,
+                areaId,
+            };
+            console.log(documentData);
+
+            const response = await API.updateDocument(
+                existingDocument.document.id,
+                documentData,
+                selectedFiles
+            );
+
+            showNotification("Document updated successfully!", "success");
+
+            setCoordinates((prev) => ({
+                ...prev,
+                latitude: null,
+                longitude: null,
+            }));
+
+            updateDocumentList(response.document);
+
+        } catch (error) {
+            console.error("Error updating document:", error);
+            showNotification("Error updating document. Please try again.", "error");
+        }
     };
 
     const handleCreateDocument = async (data) => {
@@ -442,8 +481,10 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     name: inputValues.areaName,
                     geojson: geojson,
                 };
+                console.log(areaData);
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.area.id;
+                console.log(createdArea);
             } else if (selectedArea) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
@@ -454,7 +495,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 ...data,
                 areaId,
             };
-
+            console.log(documentData);
             const response = await API.createDocument(documentData, selectedFiles);
             showNotification("Document saved successfully!", "success");
 

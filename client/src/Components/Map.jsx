@@ -58,13 +58,25 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         let point;
         do {
             const extent = polygon.getExtent();
-            const x = Math.random() * (extent[2] - extent[0]) + extent[0];
-            const y = Math.random() * (extent[3] - extent[1]) + extent[1];
+
+            // Generazione di numeri casuali sicuri per le coordinate
+            const x = generateRandom(extent[0], extent[2]);
+            const y = generateRandom(extent[1], extent[3]);
+
             point = [x, y];
         } while (!polygon.intersectsCoordinate(point));
 
         return point;
     }
+
+    // Funzione per generare numeri casuali sicuri tra min e max
+    function generateRandom(min, max) {
+        const range = max - min;
+        const buffer = new Uint32Array(1);
+        window.crypto.getRandomValues(buffer);
+        return min + (buffer[0] / (0xFFFFFFFF + 1)) * range;
+    }
+
 
     const {
         setAllDocuments,
@@ -262,11 +274,9 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                         // Use document coordinates
                         location = fromLonLat([doc.longitude, doc.latitude]);
                     } else if (doc.areaId) {
-                        // Find the corresponding area and use its center coordinates
-                        const area = areas.find((a) => a.id === doc.areaId);
-                        if (area && area.centerLat && area.centerLon) {
+                        if (doc.area && doc.area.centerLat && doc.area.centerLon) {
                             //location = fromLonLat([area.centerLon, area.centerLat]);
-                            location = getRandomPointInArea(area.geojson);
+                            location = getRandomPointInArea(doc.area.geojson);
                         }
                     }
 
