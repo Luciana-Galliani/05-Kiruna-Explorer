@@ -52,7 +52,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         const [minX, minY, maxX, maxY] = geometryExtent.map((coord) => toLonLat([coord])[0]);
 
         // Calculate the maximum offsets (10% of the extent size)
-        const MIN_OFFSET = 0.01; // Minimum offset for small areas
+        const MIN_OFFSET = 0.001; // Minimum offset for small areas
         const latOffsetRange = Math.max((maxY - minY) * 0.1, MIN_OFFSET);
         const lonOffsetRange = Math.max((maxX - minX) * 0.1, MIN_OFFSET);
 
