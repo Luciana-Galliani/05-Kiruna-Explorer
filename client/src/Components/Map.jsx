@@ -35,13 +35,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const mapInstanceRef = useRef(null);
     const hoveredFeatureRef = useRef(null);
     const [drawnArea, setDrawnArea] = useState(null);
-    const [areas, setAreas] = useState([]); // Stato per memorizzare le aree
+    const [areas, setAreas] = useState([]);
     const drawInteractionRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
 
-    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates, isSelectingArea } =
+    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingCoordinates, isSelectingArea, areaGeoJSON, setAreaGeoJSON } =
         useContext(AppContext);
 
     const longitude = 20.22513;
@@ -58,12 +58,10 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Action: actionIcon,
     };
 
-    // Effetto per caricare le aree
     useEffect(() => {
         const loadAreas = async () => {
             try {
-                const fetchedAreas = await API.fetchAreas(); // Supponendo che l'API restituisca le aree in formato GeoJSON
-                console.log(fetchedAreas);
+                const fetchedAreas = await API.fetchAreas();
                 setAreas(fetchedAreas);
             } catch (error) {
                 console.error("Failed to load areas:", error);
@@ -133,7 +131,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             source: drawSource,
             style: new Style({
                 stroke: new Stroke({
-                    color: "rgba(0, 0, 255, 0.5)", // Colore blu per la linea
+                    color: "rgba(0, 0, 255, 0.5)",
                     width: 2,
                 }),
             }),
@@ -149,16 +147,20 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         drawInteraction.on("drawend", (event) => {
             const feature = event.feature;
             const geometry = feature.getGeometry();
-            const coordinates = geometry.getCoordinates();
+            const geojsonFormat = new GeoJSON();
 
-            const coordsIn4326 = coordinates[0].map(coord => {
-                const transformedCoord = transform([coord[0], coord[1]], 'EPSG:3857', 'EPSG:4326');
-                return transformedCoord;
+            const drawnGeoJSON = geojsonFormat.writeFeatureObject(feature, {
+                featureProjection: "EPSG:3857",
+                dataProjection: "EPSG:4326",
             });
-            setDrawnArea(coordsIn4326); // Salva l'area disegnata
-            handleAreaSelected(coordsIn4326); // Notifica il componente genitore
 
-            // Rimuovi la modalità di disegno
+            setAreaGeoJSON(drawnGeoJSON);
+
+            const coordinates = geometry.getCoordinates();
+            const coordsIn4326 = coordinates[0].map((coord) => transform(coord, "EPSG:3857", "EPSG:4326"));
+            setDrawnArea(coordsIn4326);
+            handleAreaSelected(coordsIn4326);
+
             map.removeInteraction(drawInteraction);
             map.removeLayer(drawLayer);
             drawInteractionRef.current = null;
@@ -173,9 +175,9 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             }
             map.removeLayer(drawLayer);
         };
-    }, [isSelectingArea, handleAreaSelected]);
+    }, [isSelectingArea, setAreaGeoJSON, handleAreaSelected]);
 
-
+    /*
     // Effect to show areas when isSelectingArea is true
     useEffect(() => {
         const map = mapInstanceRef.current;
@@ -211,7 +213,40 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             map.removeLayer(areaLayer);
         };
     }, [isSelectingArea, areas]);
+    */
 
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+        if (!map || !areaGeoJSON || isSelectingArea) return;
+
+        const areaSource = new VectorSource();
+        const areaLayer = new VectorLayer({
+            source: areaSource,
+            style: new Style({
+                stroke: new Stroke({
+                    color: "rgba(0, 255, 0, 0.8)",
+                    width: 2,
+                }),
+            }),
+        });
+
+        const geojsonFormat = new GeoJSON();
+        try {
+            console.log(areaGeoJSON);
+            const features = geojsonFormat.readFeatures(areaGeoJSON, {
+                featureProjection: "EPSG:3857",
+            });
+            areaSource.addFeatures(features);
+        } catch (error) {
+            console.error("Error in GeoJSON:", error);
+        }
+
+        map.addLayer(areaLayer);
+
+        return () => {
+            map.removeLayer(areaLayer);
+        };
+    }, [isSelectingArea, areaGeoJSON]);
 
 
     // Update map with documents and boundaries

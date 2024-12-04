@@ -79,7 +79,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
     const [validSteps, setValidSteps] = useState([]);
-    const { isLoggedIn, setAllDocuments, isSelectingArea, setIsSelectingArea } = useContext(AppContext);
+    const { isLoggedIn, setAllDocuments, isSelectingArea, setIsSelectingArea, setAreaGeoJSON } = useContext(AppContext);
     const [kirunaGeoJSON, setKirunaGeoJSON] = useState(null);
     const [selectedArea, setSelectedArea] = useState("");
     const [second, setSecond] = useState(false);
@@ -131,8 +131,11 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     }, [isLoggedIn, navigate]);
 
     useEffect(() => {
-        if (newarea)
+        if (newarea) {
             setArea(newarea);
+            setSelectedArea(newarea.name);
+
+        }
     }, [newarea]);
 
     // Validation function for form data
@@ -155,7 +158,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         const loadAreas = async () => {
             try {
                 const fetchedAreas = await API.fetchAreas();
-                console.log(fetchedAreas);
                 setAreas(fetchedAreas);
             } catch (error) {
                 console.error("Failed to load areas:", error);
@@ -164,31 +166,68 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         loadAreas();
     }, [newarea, area]);
 
-    const handleSaveArea = () => {
-        const areaToSave = selectedArea || newAreaName;  // Usa la selezione del dropdown se c'è, altrimenti usa il campo di input
 
-        if (areaToSave) {
-            setSelectedArea(areaToSave);  // Imposta l'area selezionata
-            setInputValues((prev) => ({
-                ...prev,
-                areaName: areaToSave,  // Salva il nome dell'area nei valori del modulo
-            }));
+    const handleSaveArea = () => {
+        if (area && !newAreaName) {
+            showNotification("Please provide the name of the area", "error");
+            return;
         }
 
-        setNewAreaName("");  // Pulisce il campo di input del nome dell'area
-        setSecond(false);  // Chiude la modalità di selezione area
-        setIsSelectingArea(false);  // Disabilita la selezione area
-    };
+        const areaToSave = selectedArea || newAreaName;
 
+        if (areaToSave) {
+            setSelectedArea(areaToSave);
+            setInputValues((prev) => ({
+                ...prev,
+                areaName: areaToSave,
+            }));
 
-    const handleSelectExistingArea = (area) => {
-        setSelectedArea(area.name);
+            if (newAreaName) {
+                const geojson = {
+                    type: "Polygon",
+                    coordinates: [area],
+                };
+                const areaData = {
+                    areaId: null,
+                    name: newAreaName,
+                    geojson: geojson,
+                };
+                setAreas((prevAreas) => [...prevAreas, areaData]);
+
+            }
+        }
+
+        setNewAreaName("");
+        setSecond(false);
+        setIsSelectingArea(false);
+        setAreaGeoJSON(null);
+
         setInputValues((prev) => ({
             ...prev,
-            selectedArea: area.name,
+            longitude: null,
+            latitude: null,
             allMunicipality: false,
         }));
     };
+
+
+    const handleSelectExistingArea = (areaselected) => {
+        if (areaselected.name !== newAreaName) {
+            setAreas(prevAreas => prevAreas.filter(area => area.id !== null));
+            setArea(null);
+            setNewAreaName(null);
+        }
+
+        setSelectedArea(areaselected.name);
+        setAreaGeoJSON(areaselected.geojson);
+
+        setInputValues((prev) => ({
+            ...prev,
+            selectedArea: areaselected.name,
+            allMunicipality: false,
+        }));
+    };
+
 
     const fetchFiles = async () => {
         if (!existingDocument || !existingDocument.document.originalResources) return;
@@ -239,6 +278,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         }
     };
     const handleCreateArea = () => {
+
         setIsSelectingArea((prev) => !prev);
         if (!isSelectingArea) {
             setSelectedArea("");
@@ -286,7 +326,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const handleValidation = (validateAllSteps = false) => {
         let validationMessage = null;
 
-        // Step 0: Verifica dei campi principali
         if (validateAllSteps || currentStep === 0) {
             if (
                 !inputValues.title ||
@@ -300,7 +339,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             }
         }
 
-        // Step 1: Verifica tipo e pagine
         if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
                 validationMessage = "Please complete type and scale type.";
@@ -367,8 +405,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const handleCreateDocument = async (data) => {
         try {
             let areaId = null;
-            setArea(null);
-            setnewArea(null);
             if (inputValues.areaName) {
                 const geojson = {
                     type: "Polygon",
@@ -379,7 +415,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     name: inputValues.areaName,
                     geojson: geojson,
                 };
-                console.log(areaData);
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.id;
             } else if (selectedArea) {
@@ -416,7 +451,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const showNotification = (message, type) => {
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: "", type: "" }), 3000);
-
     };
 
     const handleNextStep = () => {
@@ -499,6 +533,9 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 </div>
             ) : (
                 <div style={{ position: "absolute", top: "10%", left: "10%", zIndex: 1000, width: "300px" }}>
+                    {notification.message && (
+                        <div className={`notification ${notification.type}`}> {notification.message} </div>
+                    )}
                     <Card>
                         <Card.Body>
                             <Form>
@@ -523,7 +560,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                                         <Button
                                             variant="dark"
                                             onClick={handleCreateArea}>
-                                            {isSelectingArea ? `Hide areas` : (areas.length > 0 ? `Change Area` : `Create Area`)}
+                                            {area?.length > 0 ? `Change Area` : `Draw Area`}
                                         </Button>
                                     </div>
                                     {selectedArea && (

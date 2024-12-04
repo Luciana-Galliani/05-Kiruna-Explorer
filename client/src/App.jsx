@@ -35,7 +35,6 @@ function App() {
     };
     const handleAreaSelected = (newA) => {
         setnewArea(newA);
-        console.log(newA);
         setIsSelectingArea(false);
     }
 
@@ -128,6 +127,7 @@ function App() {
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
                 setnewArea={setnewArea}
+                setCoordinates={setCoordinates}
             />
 
             <ConfirmationModal

@@ -47,10 +47,9 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
             }
         };
 
-        // Reimposta `document` a null quando cambia `doc` e richiama l'API
         setDocument(null);
         fetchDocumentById();
-    }, [doc]); // Aggiungi `doc` come dipendenza
+    }, [doc]);
 
 
     if (!document) {

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { propTypes } from "react-bootstrap/esm/Image";
 
 export function GeoPart({ inputValues, setInputValues, setSecond, area }) {
-    const { setIsSelectingCoordinates } = useContext(AppContext);
+    const { setIsSelectingCoordinates, setAreaGeoJSON } = useContext(AppContext);
 
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
@@ -50,7 +50,7 @@ export function GeoPart({ inputValues, setInputValues, setSecond, area }) {
                         onClick={handleArea}
                         disabled={inputValues.allMunicipality}
                     >
-                        {area.length > 0 ? "Area Saved" : "Create Area"}
+                        {inputValues.areaName ? inputValues.areaName : "Draw new Area"}
                     </Button>
                 </div>
             </Form.Group>
@@ -94,5 +94,5 @@ GeoPart.propTypes = {
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
     area: PropTypes.any,
-    setSecond: propTypes.any
+    setSecond: propTypes.func
 };

@@ -5,14 +5,11 @@ import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
-    //const [allMunicipality, setAllMunicipality] = useState(false);
     const [filter, setFilter] = useState(new Filter());
-    //const [isFilterUpdated, setIsFilterUpdated] = useState(false);
 
     const handleMunicipality = () => {
         const updatedFilter = new Filter({ ...filter, allMunicipality: !filter.allMunicipality });
         setFilter(updatedFilter);
-        //setIsFilterUpdated(!isFilterUpdated);
     };
 
     const handleAuthor = (author) => {
@@ -66,7 +63,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <div
                 onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                        toggleSidebar(); // Chiude la sidebar con tastiera
+                        toggleSidebar();
                     }
                 }}
                 className={`sidebar ${isSidebarOpen ? "open" : ""}`}

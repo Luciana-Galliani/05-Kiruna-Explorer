@@ -131,8 +131,8 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                             key={index}
                             className="d-flex justify-content-between align-items-center border-bottom pb-1"
                             style={{
-                                fontSize: "0.8rem", // Riduci leggermente la dimensione del font
-                                height: "1.8rem", // Altezza di ciascun file (più compatto)
+                                fontSize: "0.8rem",
+                                height: "1.8rem",
                             }}
                         >
                             <span className="text-truncate">{file.name}</span>
@@ -143,7 +143,7 @@ export function TechnicalPart({ inputValues, setInputValues, selectedFiles, setS
                                 style={{
                                     lineHeight: "1",
                                     margin: "2px",
-                                }} // Riduci il padding interno del bottone
+                                }}
                             >
                                 x
                             </button>

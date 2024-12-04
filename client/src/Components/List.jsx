@@ -29,7 +29,7 @@ const List = ({ condition }) => {
 
     const handleKeyDown = (e, document) => {
         if (e.key === 'Enter' || e.key === ' ') {
-            setSelectedDocument(document); // Se premi Enter o Space, seleziona il documento
+            setSelectedDocument(document);
         }
     };
 

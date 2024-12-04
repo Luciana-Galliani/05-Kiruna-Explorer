@@ -6,7 +6,7 @@ import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 import PropTypes from "prop-types";
 
-const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setnewArea }) => {
+const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setnewArea, setCoordinates }) => {
     const navigate = useNavigate();
     const { isLoggedIn, setIsSelectingCoordinates } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
@@ -34,6 +34,11 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                         onClick={() => {
                             setShowCloseConfirmation(true);
                             setnewArea(null);
+                            setCoordinates((prev) => ({
+                                ...prev,
+                                latitude: null,
+                                longitude: null
+                            }));
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{

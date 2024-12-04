@@ -114,7 +114,7 @@ const TableList = ({ filter }) => {
                     }}
                     className="custom-modal-table-list"
                     unmountOnExit={false}
-                    animation={false} // Disabilita l'animazione del Modale
+                    animation={false}
                 >
                     <DetailsPanel
                         initialDocId={selectedDocument.id}

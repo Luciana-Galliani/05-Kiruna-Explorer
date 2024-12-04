@@ -8,6 +8,8 @@ export const AppProvider = ({ children }) => {
     const [allDocuments, setAllDocuments] = useState([]);
     const [isSelectingCoordinates, setIsSelectingCoordinates] = useState(false);
     const [isSelectingArea, setIsSelectingArea] = useState(false);
+    const [areaGeoJSON, setAreaGeoJSON] = useState(null);
+
 
     return (
         <AppContext.Provider
@@ -20,6 +22,8 @@ export const AppProvider = ({ children }) => {
                 setIsSelectingCoordinates,
                 isSelectingArea,
                 setIsSelectingArea,
+                areaGeoJSON,
+                setAreaGeoJSON
 
             }}
         >
