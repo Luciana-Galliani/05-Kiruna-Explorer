@@ -30,7 +30,6 @@ const getFileType = (fileName) => {
 const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
-    const { alldocuments } = useContext(AppContext);
     const [doc, setDoc] = useState(initialDocId);
 
     useEffect(() => {
