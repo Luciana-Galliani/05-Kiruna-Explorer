@@ -413,6 +413,42 @@ describe("DocumentsDAO", () => {
 
             expect(result).toEqual(document);
         });
+        it("should remove previous area if areaId is null", async () => {
+            const documentData = {
+                title: "Updated Title",
+                stakeholders: [{ id: 1 }, { id: 2 }],
+                connections: [
+                    { documentId: 2, relationship: "Prevision" },
+                    { documentId: 3, relationship: "Update" },
+                ],
+            };
+
+            documentsDAO.getDocumentById.mockResolvedValue(document);
+
+            const result = await documentsDAO.updateDocument(1, documentData);
+
+            expect(sequelize.transaction).toHaveBeenCalled();
+
+            expect(sequelize.models.Document.findByPk).toHaveBeenCalledWith(1, { transaction });
+
+            expect(document.update).toHaveBeenCalledWith(documentData, { transaction });
+
+            expect(document.setStakeholders).toHaveBeenCalledWith([1, 2], { transaction });
+
+            expect(document.setArea).toHaveBeenCalledWith(null, { transaction });
+
+            expect(documentsDAO._updateConnectedDocuments).toHaveBeenCalledWith(
+                document,
+                documentData.connections,
+                transaction
+            );
+
+            expect(transaction.commit).toHaveBeenCalled();
+
+            expect(documentsDAO.getDocumentById).toHaveBeenCalledWith(document.id);
+
+            expect(result).toEqual(document);
+        });
 
         it("should throw an error if the document is not found", async () => {
             sequelize.models.Document.findByPk.mockResolvedValue(null);

@@ -9,10 +9,8 @@ import { LinkPart } from "./LinkPart.jsx";
 import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { point, booleanPointInPolygon, area } from "@turf/turf";
-
-
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -39,7 +37,7 @@ const initializeInputValues = (doc) => {
         longitude: parseFloat(doc?.document?.longitude) || "",
         connections: doc?.document?.connections || [],
         areaId: doc?.document?.areaId || "",
-        areaName: ""
+        areaName: "",
     };
 };
 
@@ -70,9 +68,14 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
     );
 };
 
-
-
-export function DescriptionForm({ coordinates, existingDocument, className, setCoordinates, newarea, setnewArea }) {
+export function DescriptionForm({
+    coordinates,
+    existingDocument,
+    className,
+    setCoordinates,
+    newarea,
+    setnewArea,
+}) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
     const [stakeholderOptions, setStakeholderOptions] = useState([]);
@@ -81,7 +84,14 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
     const [validSteps, setValidSteps] = useState([]);
-    const { isLoggedIn, setAllDocuments, isSelectingArea, setIsSelectingArea, setAreaGeoJSON, setIsSelectingCoordinates } = useContext(AppContext);
+    const {
+        isLoggedIn,
+        setAllDocuments,
+        isSelectingArea,
+        setIsSelectingArea,
+        setAreaGeoJSON,
+        setIsSelectingCoordinates,
+    } = useContext(AppContext);
     const [kirunaGeoJSON, setKirunaGeoJSON] = useState(null);
     const [selectedArea, setSelectedArea] = useState("");
     const [second, setSecond] = useState(false);
@@ -93,10 +103,10 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         setAreaGeoJSON(null);
         setnewArea(null);
         setArea(null);
-        setNewAreaName(null)
+        setNewAreaName(null);
         setInputValues((prev) => ({
             ...prev,
-            areaId: "",
+            areaId: null,
             areaName: "",
         }));
         setAreas((prevAreas) => prevAreas.filter((area) => area.id !== null));
@@ -126,7 +136,14 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         },
         {
             label: "Geographic Info",
-            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} setSecond={setSecond} handleChooseInMap={handleChooseInMap} />,
+            component: (
+                <GeoPart
+                    inputValues={inputValues}
+                    setInputValues={setInputValues}
+                    setSecond={setSecond}
+                    handleChooseInMap={handleChooseInMap}
+                />
+            ),
         },
         {
             label: "Linked Documents",
@@ -149,7 +166,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         if (newarea) {
             setArea(newarea);
             setSelectedArea(newarea.name);
-
         }
     }, [newarea]);
 
@@ -217,7 +233,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     geojson: geojson,
                 };
                 setAreas((prevAreas) => [...prevAreas, areaData]);
-
             }
         }
 
@@ -260,8 +275,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             allMunicipality: false,
         }));
     };
-
-
 
     const fetchFiles = async () => {
         if (!existingDocument || !existingDocument.document.originalResources) return;
@@ -313,14 +326,12 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         }
     };
     const handleCreateArea = () => {
-
         setIsSelectingArea((prev) => !prev);
         if (!isSelectingArea) {
             setSelectedArea("");
             setNewAreaName("");
         }
     };
-
 
     const handleSaveForm = async () => {
         const validationMessage = handleValidation(true); // Validate all steps
@@ -392,16 +403,25 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             } else if (inputValues.areaName) {
                 setValidSteps((prev) => [...prev, 2]);
             } else if (inputValues.latitude && inputValues.longitude) {
-                if (kirunaGeoJSON && kirunaGeoJSON.type === 'FeatureCollection' && kirunaGeoJSON.features) {
+                if (
+                    kirunaGeoJSON &&
+                    kirunaGeoJSON.type === "FeatureCollection" &&
+                    kirunaGeoJSON.features
+                ) {
                     const multipolygon = kirunaGeoJSON.features[0].geometry;
 
-                    if (multipolygon.type === 'MultiPolygon') {
+                    if (multipolygon.type === "MultiPolygon") {
                         const userPoint = point([inputValues.longitude, inputValues.latitude]);
 
-                        const isInsideKiruna = multipolygon.coordinates.some(polygonCoordinates => {
-                            const polygon = { type: 'Polygon', coordinates: polygonCoordinates };
-                            return booleanPointInPolygon(userPoint, polygon);
-                        });
+                        const isInsideKiruna = multipolygon.coordinates.some(
+                            (polygonCoordinates) => {
+                                const polygon = {
+                                    type: "Polygon",
+                                    coordinates: polygonCoordinates,
+                                };
+                                return booleanPointInPolygon(userPoint, polygon);
+                            }
+                        );
 
                         if (isInsideKiruna) {
                             setValidSteps((prev) => [...prev, 2]);
@@ -412,10 +432,12 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                         validationMessage = "GeoJSON is not a MultiPolygon.";
                     }
                 } else {
-                    validationMessage = "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
+                    validationMessage =
+                        "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
                 }
             } else {
-                validationMessage = "Please provide either all municipality, an area, or valid coordinates.";
+                validationMessage =
+                    "Please provide either all municipality, an area, or valid coordinates.";
             }
         }
 
@@ -442,8 +464,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.area.id;
                 console.log(createdArea);
-            }
-            else if (selectedArea) {
+            } else if (selectedArea) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
             }
@@ -472,7 +493,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             }));
 
             updateDocumentList(response.document);
-
         } catch (error) {
             console.error("Error updating document:", error);
             showNotification("Error updating document. Please try again.", "error");
@@ -550,12 +570,19 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             {!second ? (
                 <div className={`form-container position-absolute ${className}`}>
                     {notification.message && (
-                        <div className={`notification ${notification.type}`}> {notification.message} </div>
+                        <div className={`notification ${notification.type}`}>
+                            {" "}
+                            {notification.message}{" "}
+                        </div>
                     )}
                     <ProgressBar
-                        percent={Math.min(Math.max((currentStep / (steps.length - 1)) * 100, 0), 100)}
+                        percent={Math.min(
+                            Math.max((currentStep / (steps.length - 1)) * 100, 0),
+                            100
+                        )}
                         filledBackground="linear-gradient(to right, #4e8d1f, #3b6c14)"
-                    />            <StepProgressBar
+                    />{" "}
+                    <StepProgressBar
                         currentStep={currentStep}
                         steps={steps}
                         setCurrentStep={setCurrentStep}
@@ -563,12 +590,10 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                         setValidSteps={setValidSteps}
                         existingDocument={existingDocument}
                     />
-
                     {/* Current step content */}
                     <div className={`step-content ${steps[currentStep]?.className || ""}`}>
                         {steps[currentStep]?.component}
                     </div>
-
                     <div className="d-flex gap-5 mt-2">
                         {currentStep === 0 ? (
                             <div style={{ flex: 1 }}></div>
@@ -611,42 +636,59 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     </div>
                 </div>
             ) : (
-                <div style={{ position: "absolute", top: "10%", left: "10%", zIndex: 1000, width: "300px" }}>
+                <div
+                    style={{
+                        position: "absolute",
+                        top: "10%",
+                        left: "5%",
+                        minWidth: "350px",
+                        zIndex: 1000,
+                    }}
+                >
                     {notification.message && (
-                        <div className={`notification ${notification.type}`}> {notification.message} </div>
+                        <div className={`notification ${notification.type}`}>
+                            {" "}
+                            {notification.message}{" "}
+                        </div>
                     )}
                     <Card>
                         <Card.Body>
                             <Form>
-                                <Form.Group controlId="formSelectArea" className="mb-3">
+                                <Form.Group controlId="formSelectArea" className="mb-2">
                                     <h5 className="display-6 mb-3">Manage Area</h5>
-                                    <div className="d-flex align-items-center">
-                                        <Dropdown className="me-2">
-                                            <Dropdown.Toggle style={{ backgroundColor: "white", color: "black", border: "1px solid #ccc" }} id="dropdown-basic">
-                                                {selectedArea ? `Selected Area: ${selectedArea}` : "No Area Selected"}
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <Dropdown className="me-2 flex-grow-1">
+                                            <Dropdown.Toggle
+                                                style={{
+                                                    backgroundColor: "white",
+                                                    color: "black",
+                                                    border: "1px solid #ccc",
+                                                    width: "100%",
+                                                }}
+                                                id="dropdown-basic"
+                                            >
+                                                {selectedArea ? selectedArea : "No Area Selected"}
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
                                                 {areas.map((area, index) => (
                                                     <Dropdown.Item
                                                         key={area.name}
-                                                        onClick={() => handleSelectExistingArea(area)}
+                                                        onClick={() =>
+                                                            handleSelectExistingArea(area)
+                                                        }
                                                     >
                                                         {area.name}
                                                     </Dropdown.Item>
                                                 ))}
                                             </Dropdown.Menu>
                                         </Dropdown>
-                                        <Button
-                                            variant="dark"
-                                            onClick={handleCreateArea}>
+                                        <Button variant="dark" onClick={handleCreateArea}>
                                             {area?.length > 0 ? `Change Area` : `Draw Area`}
                                         </Button>
                                     </div>
-                                    {selectedArea && (
-                                        <div className="mt-2">
-                                            <strong>Selected Area:</strong> {selectedArea}
-                                        </div>
-                                    )}
+                                    <div className="m-2 text-center">
+                                        <strong>Selected Area:</strong> {selectedArea || "-"}
+                                    </div>
                                 </Form.Group>
 
                                 <Form.Group controlId="formAreaName" className="mb-3">
@@ -659,20 +701,26 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                                         disabled={selectedArea}
                                     />
                                 </Form.Group>
-                                <Button variant="success" onClick={handleSaveArea}>
-                                    Save Area
-                                </Button>
-                                <Button
-                                    variant="danger"
-                                    className="ms-2"
-                                    onClick={() => {
-                                        setIsSelectingArea(false);
-                                        setSecond(false);
-                                        setAreaGeoJSON("");
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
+                                <div className="d-flex justify-content-between">
+                                    <Button
+                                        className="w-50"
+                                        variant="primary"
+                                        onClick={handleSaveArea}
+                                    >
+                                        OK
+                                    </Button>
+                                    <Button
+                                        variant="danger"
+                                        className="ms-2 w-50"
+                                        onClick={() => {
+                                            setIsSelectingArea(false);
+                                            setSecond(false);
+                                            setAreaGeoJSON("");
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </div>
                             </Form>
                         </Card.Body>
                     </Card>
@@ -693,8 +741,7 @@ DescriptionForm.propTypes = {
     newarea: PropTypes.shape({
         name: PropTypes.string,
     }),
-    setnewArea: PropTypes.func
-
+    setnewArea: PropTypes.func,
 };
 
 export function EditDocumentForm({ coordinates, className, setCoordinates, newarea, setnewArea }) {
@@ -758,7 +805,7 @@ EditDocumentForm.propTypes = {
     newarea: PropTypes.shape({
         name: PropTypes.string,
     }),
-    setnewArea: PropTypes.func
+    setnewArea: PropTypes.func,
 };
 
 StepProgressBar.propTypes = {

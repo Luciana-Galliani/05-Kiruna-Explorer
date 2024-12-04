@@ -180,6 +180,8 @@ class DocumentsDAO {
             // Update area with transaction
             if (documentData.areaId) {
                 await document.setArea(documentData.areaId, { transaction });
+            } else {
+                await document.setArea(null, { transaction });
             }
 
             // Update connected documents

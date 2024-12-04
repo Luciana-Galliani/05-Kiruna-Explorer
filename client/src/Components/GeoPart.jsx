@@ -45,7 +45,9 @@ export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseIn
                         onClick={handleArea}
                         disabled={inputValues.allMunicipality}
                     >
-                        {inputValues.areaName ? inputValues.areaName : "Draw new Area"}
+                        {inputValues.areaName
+                            ? 'Change Area : "' + inputValues.areaName + '"'
+                            : "Select or draw new Area"}
                     </Button>
                 </div>
             </Form.Group>
