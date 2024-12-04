@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, InputGroup, Row, Col } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const SearchBar = ({
     handleMunicipality,

@@ -81,13 +81,26 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const [notification, setNotification] = useState({ message: "", type: "" });
     const [currentStep, setCurrentStep] = useState(0);
     const [validSteps, setValidSteps] = useState([]);
-    const { isLoggedIn, setAllDocuments, isSelectingArea, setIsSelectingArea, setAreaGeoJSON } = useContext(AppContext);
+    const { isLoggedIn, setAllDocuments, isSelectingArea, setIsSelectingArea, setAreaGeoJSON, setIsSelectingCoordinates } = useContext(AppContext);
     const [kirunaGeoJSON, setKirunaGeoJSON] = useState(null);
     const [selectedArea, setSelectedArea] = useState("");
     const [second, setSecond] = useState(false);
     const [areas, setAreas] = useState([]);
     const [newAreaName, setNewAreaName] = useState("");
     const [area, setArea] = useState("");
+    const handleChooseInMap = () => {
+        setIsSelectingCoordinates(true);
+        setAreaGeoJSON(null);
+        setnewArea(null);
+        setArea(null);
+        setNewAreaName(null)
+        setInputValues((prev) => ({
+            ...prev,
+            areaId: "",
+            areaName: "",
+        }));
+        setAreas((prevAreas) => prevAreas.filter((area) => area.id !== null));
+    };
 
     const steps = [
         {
@@ -113,7 +126,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         },
         {
             label: "Geographic Info",
-            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} setSecond={setSecond} areas={areas} />,
+            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} setSecond={setSecond} handleChooseInMap={handleChooseInMap} />,
         },
         {
             label: "Linked Documents",
@@ -219,7 +232,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             allMunicipality: false,
         }));
     };
-
 
     const handleSelectExistingArea = (areaselected) => {
         const geojson = areaselected?.geojson || null;

@@ -192,7 +192,6 @@ TechnicalPart.propTypes = {
         scaleValue: PropTypes.string,
         language: PropTypes.string,
         pages: PropTypes.string,
-        otherDocumentType: otherDocumentType.string
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
     selectedFiles: PropTypes.arrayOf(PropTypes.object).isRequired,

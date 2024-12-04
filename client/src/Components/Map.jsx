@@ -419,11 +419,10 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
 
                     if (matchedDocument?.areaId) {
-                        const area = areas.find((a) => a.id === matchedDocument.areaId);
-                        if (area?.geojson) {
+                        if (matchedDocument?.area?.geojson) {
                             const geojsonFormat = new GeoJSON();
                             try {
-                                const areaFeatures = geojsonFormat.readFeatures(area.geojson, {
+                                const areaFeatures = geojsonFormat.readFeatures(matchedDocument?.area.geojson, {
                                     featureProjection: "EPSG:3857",
                                 });
                                 hoverSource.addFeatures(areaFeatures);

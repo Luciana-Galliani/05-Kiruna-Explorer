@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 
 const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setnewArea, setCoordinates }) => {
     const navigate = useNavigate();
-    const { isLoggedIn, setIsSelectingCoordinates } = useContext(AppContext);
+    const { isLoggedIn, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
     const isEditPage = matchPath("/edit/:documentId", location.pathname);
     return (
@@ -67,6 +67,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                             setIsSelectingCoordinates(false);
                             navigate("/");
                             setnewArea(null);
+                            setIsSelectingArea(false);
 
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
@@ -109,6 +110,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                 onConfirm={() => {
                     setShowCloseConfirmation(false);
                     setIsSelectingCoordinates(false);
+                    setIsSelectingArea(false);
                     navigate("/");
                 }}
                 message="Are you sure you want to close the form? Your changes will be lost."

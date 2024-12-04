@@ -3,12 +3,8 @@ import { Form, Button } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
 
-export function GeoPart({ inputValues, setInputValues, setSecond, areas }) {
+export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseInMap }) {
     const { setIsSelectingCoordinates } = useContext(AppContext);
-
-    const handleChooseInMap = () => {
-        setIsSelectingCoordinates(true);
-    };
 
     const handleArea = () => {
         setSecond(true);
@@ -90,7 +86,7 @@ GeoPart.propTypes = {
         allMunicipality: PropTypes.bool.isRequired,
         latitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         longitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        areaId: PropTypes.number,
+        areaId: PropTypes.any,
         areaName: PropTypes.string,
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
