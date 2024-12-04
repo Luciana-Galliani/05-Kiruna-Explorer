@@ -273,8 +273,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                         // Use document coordinates
                         location = fromLonLat([doc.longitude, doc.latitude]);
                     } else if (doc.areaId) {
-                        if (doc.area && doc.area.centerLat && doc.area.centerLon) {
-                            //location = fromLonLat([area.centerLon, area.centerLat]);
+                        if (doc?.area?.centerLat && doc?.area?.centerLon) {
                             location = getRandomPointInArea(doc.area.geojson);
                         }
                     }
@@ -415,13 +414,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
             if (hit) {
                 const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
-                if (feature && feature.get("documentId")) {
+                if (feature?.get("documentId")) {
                     const documentId = feature.get("documentId");
                     const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
 
-                    if (matchedDocument && matchedDocument.areaId) {
+                    if (matchedDocument?.areaId) {
                         const area = areas.find((a) => a.id === matchedDocument.areaId);
-                        if (area && area.geojson) {
+                        if (area?.geojson) {
                             const geojsonFormat = new GeoJSON();
                             try {
                                 const areaFeatures = geojsonFormat.readFeatures(area.geojson, {
@@ -463,6 +462,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 CityMap.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
+    handleAreaSelected: PropTypes.func.isRequired
 };
 
 export default CityMap;

@@ -157,7 +157,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     }, [inputValues.areaId, inputValues.areaName, areas, setInputValues]);
 
     useEffect(() => {
-        if (coordinates && coordinates.latitude && coordinates.longitude) {
+        if (coordinates?.latitude && coordinates?.longitude) {
             setInputValues((prev) => ({
                 ...prev,
                 latitude: coordinates.latitude,
@@ -616,7 +616,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                                             <Dropdown.Menu>
                                                 {areas.map((area, index) => (
                                                     <Dropdown.Item
-                                                        key={index}
+                                                        key={area.name}
                                                         onClick={() => handleSelectExistingArea(area)}
                                                     >
                                                         {area.name}
@@ -678,6 +678,11 @@ DescriptionForm.propTypes = {
     existingDocument: PropTypes.object,
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
+    newarea: PropTypes.shape({
+        name: PropTypes.string,
+    }),
+    setnewArea: PropTypes.func
+
 };
 
 export function EditDocumentForm({ coordinates, className, setCoordinates, newarea, setnewArea }) {
@@ -738,6 +743,10 @@ EditDocumentForm.propTypes = {
     }),
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
+    newarea: PropTypes.shape({
+        name: PropTypes.string,
+    }),
+    setnewArea: PropTypes.func
 };
 
 StepProgressBar.propTypes = {

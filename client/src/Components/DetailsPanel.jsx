@@ -8,9 +8,8 @@ import {
     faFileExcel,
     faFile,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
 import API from "../API/API.mjs";
 
 const getFileType = (fileName) => {
@@ -215,7 +214,7 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
 };
 
 DetailsPanel.propTypes = {
-    doc: PropTypes.number,
+    initialDocId: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
 };

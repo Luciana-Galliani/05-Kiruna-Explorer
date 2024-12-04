@@ -36,7 +36,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         toggleSidebar();
     };
 
-    const [hoveredItem, setHoveredItem] = useState(null);
 
     const handleOverlayClick = (e) => {
         // If the overlay was clicked, close the sidebar

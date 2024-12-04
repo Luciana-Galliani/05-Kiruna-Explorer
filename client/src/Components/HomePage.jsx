@@ -17,6 +17,7 @@ HomePage.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleSatelliteView: PropTypes.func.isRequired,
+    handleAreaSelected: PropTypes.func.isRequired
 };
 
 export default HomePage;

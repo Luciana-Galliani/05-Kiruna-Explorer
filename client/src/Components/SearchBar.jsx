@@ -110,4 +110,13 @@ const SearchBar = ({
     );
 };
 
+
+SearchBar.propTypes = {
+    handleMunicipality: PropTypes.func.isRequired,
+    handleAuthor: PropTypes.func.isRequired,
+    handleTitle: PropTypes.func.isRequired,
+    handleIssuanceDate: PropTypes.func.isRequired,
+    handleDescription: PropTypes.func.isRequired,
+};
+
 export default SearchBar;
