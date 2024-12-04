@@ -43,15 +43,18 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const [boundaryLayer, setBoundaryLayer] = useState(null);
 
     function getRandomPointNearAreaCenter(area) {
-        const { centerLat, centerLon, geojson } = area;
+        const centerLat = parseFloat(area.centerLat);
+        const centerLon = parseFloat(area.centerLon);
+        const geojson = area.geojson;
 
-        // Calculate extent of the area
+        // Calculate extent of the area in geographic coordinates
         const geometryExtent = boundingExtent(geojson.coordinates[0]); // Assumes Polygon or MultiPolygon
-        const [minLon, minLat, maxLon, maxLat] = toLonLat(geometryExtent);
+        const [minX, minY, maxX, maxY] = geometryExtent.map((coord) => toLonLat([coord])[0]);
 
         // Calculate the maximum offsets (10% of the extent size)
-        const latOffsetRange = (maxLat - minLat) * 0.1;
-        const lonOffsetRange = (maxLon - minLon) * 0.1;
+        const MIN_OFFSET = 0.01; // Minimum offset for small areas
+        const latOffsetRange = Math.max((maxY - minY) * 0.1, MIN_OFFSET);
+        const lonOffsetRange = Math.max((maxX - minX) * 0.1, MIN_OFFSET);
 
         // Generate random offsets
         const randomLatOffset = (Math.random() - 0.5) * 2 * latOffsetRange;
@@ -62,14 +65,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         const randomLon = centerLon + randomLonOffset;
 
         return [randomLon, randomLat];
-    }
-
-    // Funzione per generare numeri casuali sicuri tra min e max
-    function generateRandom(min, max) {
-        const range = max - min;
-        const buffer = new Uint32Array(1);
-        window.crypto.getRandomValues(buffer);
-        return min + (buffer[0] / (0xffffffff + 1)) * range;
     }
 
     const {
@@ -267,9 +262,9 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     if (doc.longitude !== null && doc.latitude !== null) {
                         // Use document coordinates
                         location = fromLonLat([doc.longitude, doc.latitude]);
-                    } else if (doc.areaId) {
+                    } else if (doc.area) {
                         if (doc?.area?.centerLat && doc?.area?.centerLon) {
-                            location = getRandomPointNearAreaCenter(doc.area);
+                            location = fromLonLat(getRandomPointNearAreaCenter(doc.area));
                         }
                     }
 
@@ -451,17 +446,20 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     if (feature?.get("documentId")) {
                         const documentId = feature.get("documentId");
                         const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
-
-                    if (matchedDocument?.areaId) {
-                        if (matchedDocument?.area?.geojson) {
-                            const geojsonFormat = new GeoJSON();
-                            try {
-                                const areaFeatures = geojsonFormat.readFeatures(matchedDocument?.area.geojson, {
-                                    featureProjection: "EPSG:3857",
-                                });
-                                hoverSource.addFeatures(areaFeatures);
-                            } catch (error) {
-                                console.error("Failed to parse GeoJSON for hover:", error);
+                        if (matchedDocument?.areaId) {
+                            if (matchedDocument?.area?.geojson) {
+                                const geojsonFormat = new GeoJSON();
+                                try {
+                                    const areaFeatures = geojsonFormat.readFeatures(
+                                        matchedDocument?.area.geojson,
+                                        {
+                                            featureProjection: "EPSG:3857",
+                                        }
+                                    );
+                                    hoverSource.addFeatures(areaFeatures);
+                                } catch (error) {
+                                    console.error("Failed to parse GeoJSON for hover:", error);
+                                }
                             }
                         }
                     }
@@ -494,7 +492,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 CityMap.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
-    handleAreaSelected: PropTypes.func.isRequired
+    handleAreaSelected: PropTypes.func.isRequired,
 };
 
 export default CityMap;

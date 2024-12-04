@@ -56,9 +56,7 @@ export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseIn
                 <Form.Control
                     type="number"
                     value={inputValues.latitude || ""}
-                    onChange={(e) =>
-                        setInputValues({ ...inputValues, latitude: e.target.value })
-                    }
+                    onChange={(e) => setInputValues({ ...inputValues, latitude: e.target.value })}
                     placeholder="Enter latitude"
                     disabled={inputValues.allMunicipality}
                 />
@@ -70,9 +68,7 @@ export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseIn
                 <Form.Control
                     type="number"
                     value={inputValues.longitude || ""}
-                    onChange={(e) =>
-                        setInputValues({ ...inputValues, longitude: e.target.value })
-                    }
+                    onChange={(e) => setInputValues({ ...inputValues, longitude: e.target.value })}
                     placeholder="Enter longitude"
                     disabled={inputValues.allMunicipality}
                 />
@@ -90,11 +86,5 @@ GeoPart.propTypes = {
         areaName: PropTypes.string,
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
-    areas: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.number,
-            name: PropTypes.string.isRequired,
-        })
-    ).isRequired,
     setSecond: PropTypes.func.isRequired,
 };
