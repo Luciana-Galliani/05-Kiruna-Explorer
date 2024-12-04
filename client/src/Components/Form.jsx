@@ -11,7 +11,6 @@ import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from 'prop-types';
 import { point, booleanPointInPolygon, area } from "@turf/turf";
-import { create } from "ol/transform.js";
 
 
 

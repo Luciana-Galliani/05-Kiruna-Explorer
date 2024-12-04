@@ -34,7 +34,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
-    const hoveredFeatureRef = useRef(null);
     const [drawnArea, setDrawnArea] = useState(null);
     const [areas, setAreas] = useState([]);
     const drawInteractionRef = useRef(null);
