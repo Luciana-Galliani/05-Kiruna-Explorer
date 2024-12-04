@@ -61,13 +61,13 @@ describe('Georeference Part Form Tests', () => {
     it('should disable "Choose on the Map" and "Draw new Area" when "All Municipality" is checked', () => {
         cy.get('input[type="checkbox"][id="formAllMunicipality"]').check();
         cy.get('button').contains('Choose on the Map').should('be.disabled');
-        cy.get('button').contains('Draw new Area').should('be.disabled');
+        cy.get('button').contains('Select or draw new Area').should('be.disabled');
     });
 
     it('should enable "Choose on the Map" and "Draw new Area" when "All Municipality" is not checked', () => {
         cy.get('input[type="checkbox"][id="formAllMunicipality"]').uncheck();
         cy.get('button').contains('Choose on the Map').should('not.be.disabled');
-        cy.get('button').contains('Draw new Area').should('not.be.disabled');
+        cy.get('button').contains('Select or draw new Area').should('not.be.disabled');
     });
     
     it('should set the value for latitude and longitude', () => {
@@ -91,7 +91,7 @@ describe('Georeference Part Form Tests', () => {
 
     it('should display the "Manage Area" form when "Draw new Area" is clicked', () => {
         cy.get('input[type="checkbox"][id="formAllMunicipality"]').uncheck();
-        cy.get('button').contains('Draw new Area').click();
+        cy.get('button').contains('Select or draw new Area').click();
         cy.get('form').contains('Manage Area').should('be.visible');
         cy.get('input[placeholder="Enter area name"]').should('exist');
         cy.get('input[placeholder="Enter area name"]').type('New Area 1');
@@ -109,13 +109,13 @@ describe('Georeference Part Form Tests', () => {
         cy.get('input[placeholder="Enter area name"]').should('be.disabled');
     }); */
 
-      it('should save the area when "Save Area" is clicked', () => {
+      it('should save the area when "OK" is clicked', () => {
     
-        cy.get('button').contains('Draw new Area').click();
+        cy.get('button').contains('Select or draw new Area').click();
     
         cy.get('input[placeholder="Enter area name"]').type('New Area2');
     
-        cy.get('button').contains('Save Area').click();
+        cy.get('button').contains('OK').click();
     
         cy.get('form').contains('Manage Area').should('not.exist');
         cy.get('button').contains('New Area2').should('exist');
@@ -123,7 +123,7 @@ describe('Georeference Part Form Tests', () => {
 
       it('should cancel the area creation when "Cancel" is clicked', () => {
         
-        cy.get('button').contains('Draw new Area').click();
+        cy.get('button').contains('Select or draw new Area').click();
     
         cy.get('button').contains('Cancel').click();
     
