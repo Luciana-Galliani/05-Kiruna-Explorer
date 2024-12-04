@@ -23,16 +23,18 @@ const initializeInputValues = (doc) => {
     return {
         title: doc?.document?.title || "",
         stakeholders: doc?.document?.stakeholders || [],
+        otherStakeholderName: doc?.document?.otherStakeholderName || "",
         scaleType: doc?.document?.scaleType || "",
         issuanceYear: dateParts[0] || "",
         issuanceMonth: dateParts[1] || "",
         issuanceDay: dateParts[2] || "",
         type: doc?.document?.type || "",
+        otherDocumentType: doc?.document?.otherDocumentType || "",
         language:
             doc?.document?.language && doc?.document?.language !== "-" ? doc.document.language : "",
         pages: doc?.document?.pages && doc?.document?.pages !== "-" ? doc.document.pages : "",
         description: doc?.document?.description || "",
-        planScale: doc?.document?.scaleValue || "",
+        scaleValue: doc?.document?.scaleValue || "",
         allMunicipality: doc?.document?.allMunicipality || false,
         latitude: parseFloat(doc?.document?.latitude) || "",
         longitude: parseFloat(doc?.document?.longitude) || "",
@@ -46,7 +48,8 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
     return (
         <div className="step-progress-bar">
             {steps.map((step, index) => {
-                const isActive = existingDocument || validSteps.includes(index) || index <= currentStep;
+                const isActive =
+                    existingDocument || validSteps.includes(index) || index <= currentStep;
                 return (
                     <button
                         key={index}
@@ -67,7 +70,6 @@ const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, exist
         </div>
     );
 };
-
 
 
 
@@ -282,12 +284,13 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
     const fetchInitialData = async () => {
         try {
-            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] = await Promise.all([
-                API.getStakeholders(),
-                API.getConnections(),
-                API.getDocuments(),
-                API.getBoundaries(),
-            ]);
+            const [stakeholderResp, relationshipResp, documentsResp, geoJSONData] =
+                await Promise.all([
+                    API.getStakeholders(),
+                    API.getConnections(),
+                    API.getDocuments(),
+                    API.getBoundaries(),
+                ]);
 
             setStakeholderOptions(
                 stakeholderResp.stakeholders.map(
@@ -357,7 +360,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                 !inputValues.description ||
                 !inputValues.issuanceYear
             ) {
-                validationMessage = "Please complete title, stakeholders, description, and issuance date.";
+                validationMessage =
+                    "Please complete title, stakeholders, description, and issuance date.";
             } else {
                 setValidSteps((prev) => [...prev, 0]);
             }
@@ -365,7 +369,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
         if (validateAllSteps || currentStep === 1) {
             if (!inputValues.type || !inputValues.scaleType) {
-                validationMessage = "Please complete type and scale type.";
+                validationMessage = "Please complete type and scale.";
             }
             if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
                 validationMessage = "Pages must be a number or a range (e.g., 1-32).";
@@ -409,7 +413,6 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
         return validationMessage;
     };
-
 
     const handleUpdateDocument = async (data) => {
         const response = await API.updateDocument(

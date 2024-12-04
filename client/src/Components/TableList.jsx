@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
+import Table from "react-bootstrap/Table";
+import Modal from "react-bootstrap/Modal";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import DetailsPanel from "./DetailsPanel";
@@ -12,6 +14,7 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
+import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
 
@@ -25,6 +28,7 @@ const TableList = ({ filter }) => {
         Conflict: conflictIcon,
         Consultation: consultationIcon,
         Action: actionIcon,
+        Other: otherIcon,
     };
 
     const { isLoggedIn, allDocuments } = useContext(AppContext);

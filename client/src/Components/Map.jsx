@@ -23,6 +23,7 @@ import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
+import otherIcon from "../Icons/other.svg";
 import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -87,6 +88,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Conflict: conflictIcon,
         Consultation: consultationIcon,
         Action: actionIcon,
+        Other: otherIcon,
+
     };
 
     useEffect(() => {
@@ -282,7 +285,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                             image: new Icon({
                                 anchor: [0.5, 0.5],
                                 img: img,
-                                scale: 0.4,
+                                scale: 0.5,
                                 imgSize: [img.width, img.height],
                                 color: doc.stakeholders?.[0]?.color || "purple",
                             }),

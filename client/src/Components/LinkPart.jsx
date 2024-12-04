@@ -3,6 +3,7 @@ import { Form, Button, Card, Dropdown } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
+import Filter from "../API/Filters/Filter";
 
 export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
     const [isTypeOfEnabled, setIsTypeOfEnabled] = useState(false);
@@ -13,9 +14,12 @@ export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
     const [filteredDocuments, setFilteredDocuments] = useState(allDocuments);
 
     useEffect(() => {
-        setFilteredDocuments(
-            allDocuments.filter((doc) => doc.title.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
+        const handleSearch = () => {
+            const filter = new Filter({ title: searchTerm });
+            setFilteredDocuments(allDocuments.filter((doc) => filter.matchFilter(doc)));
+        };
+
+        handleSearch();
     }, [searchTerm, allDocuments]);
 
     const handleSearchChange = (e) => {

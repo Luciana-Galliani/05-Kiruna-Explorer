@@ -22,17 +22,6 @@ class Filter {
     }
 
     matchFilter(document) {
-        /*return (
-            (this.title === null || this.title === "" || document.title === this.title) &&
-            (this.scaleType === null || this.scaleType === "" || document.scaleType === this.scaleType) &&
-            (this.scaleValue === null || this.scaleValue === "" || document.scaleValue === this.scaleValue) &&
-            (this.author === null || this.author === "" || document.author === this.author) &&
-            (this.issuanceDate === null || this.issuanceDate === "" || document.issuanceDate === this.issuanceDate) &&
-            (this.type === null || this.type === "" || document.type === this.type) &&
-            (this.language === null || this.language === "" || document.language === this.language) &&
-            (this.description === null || this.description === "" || document.description === this.description) &&
-            (this.allMunicipality === false || document.allMunicipality === this.allMunicipality)
-        );*/
 
         const titleMatch = this.title === null || this.title === "" || document.title.toLowerCase().includes(this.title.toLowerCase());
         const scaleTypeMatch = this.scaleType === null || this.scaleType === "" || document.scaleType.toLowerCase().includes(this.scaleType.toLowerCase());

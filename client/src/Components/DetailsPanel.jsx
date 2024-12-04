@@ -61,7 +61,13 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     }
 
     const stakeholdersList = document.stakeholders
-        ? document.stakeholders.map((stakeholder) => stakeholder.name).join(", ")
+        ? document.stakeholders
+            .map((stakeholder) => {
+                return stakeholder.name === "Others" && document.otherStakeholderName
+                    ? document.otherStakeholderName
+                    : stakeholder.name;
+            })
+            .join(", ")
         : "N/A";
 
     const processedResources = document.originalResources.map((fileName) => {
@@ -101,7 +107,10 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
 
                 <ul className="list-unstyled">
                     <li>
-                        <strong>Type:</strong> {document.type || "N/A"}
+                        <strong>Type:</strong>{" "}
+                        {document.type === "Other"
+                            ? document.otherDocumentType || "Other"
+                            : document.type || "N/A"}
                     </li>
                     <li>
                         <strong>Scale:</strong>{" "}
