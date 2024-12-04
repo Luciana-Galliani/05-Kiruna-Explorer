@@ -10,7 +10,8 @@ import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from 'prop-types';
-import { point, booleanPointInPolygon } from "@turf/turf";
+import { point, booleanPointInPolygon, area } from "@turf/turf";
+import { create } from "ol/transform.js";
 
 
 
@@ -33,11 +34,11 @@ const initializeInputValues = (doc) => {
         description: doc?.document?.description || "",
         planScale: doc?.document?.scaleValue || "",
         allMunicipality: doc?.document?.allMunicipality || false,
-        latitude: parseFloat(doc?.document?.latitude) || null,
-        longitude: parseFloat(doc?.document?.longitude) || null,
+        latitude: parseFloat(doc?.document?.latitude) || "",
+        longitude: parseFloat(doc?.document?.longitude) || "",
         connections: doc?.document?.connections || [],
-        idArea: doc?.document?.idArea || null,
-        areaName: doc?.document?.areaName
+        areaId: doc?.document?.areaId || "",
+        areaName: ""
     };
 };
 
@@ -111,7 +112,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         },
         {
             label: "Geographic Info",
-            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} setSecond={setSecond} area={area} />,
+            component: <GeoPart inputValues={inputValues} setInputValues={setInputValues} setSecond={setSecond} areas={areas} />,
         },
         {
             label: "Linked Documents",
@@ -145,6 +146,16 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     }, []);
 
     useEffect(() => {
+        if (!inputValues.areaName && inputValues.areaId) {
+            const matchingArea = areas.find((area) => area.id === inputValues.areaId);
+            if (matchingArea) {
+                setInputValues((prev) => ({ ...prev, areaName: matchingArea.name }));
+                setSelectedArea(matchingArea.name);
+            }
+        }
+    }, [inputValues.areaId, inputValues.areaName, areas, setInputValues]);
+
+    useEffect(() => {
         if (coordinates && coordinates.latitude && coordinates.longitude) {
             setInputValues((prev) => ({
                 ...prev,
@@ -166,9 +177,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         loadAreas();
     }, [newarea, area]);
 
-
     const handleSaveArea = () => {
-        if (area && !newAreaName) {
+        if (area && !newAreaName && !selectedArea) {
             showNotification("Please provide the name of the area", "error");
             return;
         }
@@ -188,7 +198,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     coordinates: [area],
                 };
                 const areaData = {
-                    areaId: null,
+                    idArea: null,
                     name: newAreaName,
                     geojson: geojson,
                 };
@@ -212,14 +222,27 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
 
 
     const handleSelectExistingArea = (areaselected) => {
+        // Verifica se l'area selezionata ha un geojson
+        const geojson = areaselected?.geojson || null;
+
+        if (!geojson) {
+            // Se non esiste il geojson, cerca l'area corrispondente in `areas`
+            const matchingArea = areas.find((area) => area.name === areaselected.name);
+            if (matchingArea) {
+                areaselected.geojson = matchingArea.geojson; // Aggiungi geojson all'area selezionata
+            }
+        }
+
+        // Imposta l'area se l'area selezionata non è la stessa del newAreaName
         if (areaselected.name !== newAreaName) {
-            setAreas(prevAreas => prevAreas.filter(area => area.id !== null));
-            setArea(null);
+            setAreas((prevAreas) => prevAreas.filter((area) => area.id !== null));
+            setArea(areas.find((area) => area.name === areaselected.name) || null);
             setNewAreaName(null);
         }
 
+        // Aggiorna i valori del form
         setSelectedArea(areaselected.name);
-        setAreaGeoJSON(areaselected.geojson);
+        setAreaGeoJSON(areaselected.geojson || area);
 
         setInputValues((prev) => ({
             ...prev,
@@ -227,6 +250,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
             allMunicipality: false,
         }));
     };
+
 
 
     const fetchFiles = async () => {
@@ -318,8 +342,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         return {
             ...inputValues,
             issuanceDate,
-            latitude: inputValues.allMunicipality ? null : inputValues.latitude,
-            longitude: inputValues.allMunicipality ? null : inputValues.longitude,
+            latitude: inputValues.allMunicipality ? "" : inputValues.latitude,
+            longitude: inputValues.allMunicipality ? "" : inputValues.longitude,
         };
     };
 
@@ -396,8 +420,8 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
         showNotification("Document modified successfully!", "success");
         setCoordinates((prev) => ({
             ...prev,
-            latitude: null,
-            longitude: null
+            latitude: "",
+            longitude: ""
         }));
         updateDocumentList(response.document);
     };
@@ -405,7 +429,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
     const handleCreateDocument = async (data) => {
         try {
             let areaId = null;
-            if (inputValues.areaName) {
+            if (newAreaName) {
                 const geojson = {
                     type: "Polygon",
                     coordinates: [area],
@@ -416,7 +440,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                     geojson: geojson,
                 };
                 const createdArea = await API.createArea(areaData);
-                areaId = createdArea.id;
+                areaId = createdArea.area.id;
             } else if (selectedArea) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
@@ -589,6 +613,7 @@ export function DescriptionForm({ coordinates, existingDocument, className, setC
                                     onClick={() => {
                                         setIsSelectingArea(false);
                                         setSecond(false);
+                                        setAreaGeoJSON("");
                                     }}
                                 >
                                     Cancel

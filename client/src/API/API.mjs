@@ -76,14 +76,12 @@ const fetchAreas = async () => {
         return doc.areas;
     } else {
         const errDetails = await response.text();
-        console.log(errDetails);
         throw errDetails;
 
     }
 };
 
 const createArea = async (area) => {
-    console.log(area);
     try {
         const response = await fetch(`${baseURL}/api/areas`, {
             method: "POST",

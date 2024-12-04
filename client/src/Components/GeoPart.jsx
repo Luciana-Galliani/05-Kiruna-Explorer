@@ -1,11 +1,10 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
-import { propTypes } from "react-bootstrap/esm/Image";
 
-export function GeoPart({ inputValues, setInputValues, setSecond, area }) {
-    const { setIsSelectingCoordinates, setAreaGeoJSON } = useContext(AppContext);
+export function GeoPart({ inputValues, setInputValues, setSecond, areas }) {
+    const { setIsSelectingCoordinates } = useContext(AppContext);
 
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
@@ -91,8 +90,15 @@ GeoPart.propTypes = {
         allMunicipality: PropTypes.bool.isRequired,
         latitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         longitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        areaId: PropTypes.number,
+        areaName: PropTypes.string,
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
-    area: PropTypes.any,
-    setSecond: propTypes.func
+    areas: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    setSecond: PropTypes.func.isRequired,
 };

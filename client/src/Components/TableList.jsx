@@ -124,7 +124,6 @@ const TableList = ({ filter }) => {
                         setIsSelected(false);
                     }}
                     className="custom-modal-table-list"
-                    unmountOnExit={false}
                     animation={false}
                 >
                     <DetailsPanel
