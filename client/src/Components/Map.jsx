@@ -28,12 +28,13 @@ import DetailsPanel from "./DetailsPanel";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
-import { Polygon } from "ol/geom";
+import { boundingExtent } from "ol/extent";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
     const location = useLocation();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const hoveredFeatureRef = useRef(null);
     const [drawnArea, setDrawnArea] = useState(null);
     const [areas, setAreas] = useState([]);
     const drawInteractionRef = useRef(null);
@@ -41,31 +42,26 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
 
-    function getRandomPointInArea(areaGeoJSON) {
-        const geojsonFormat = new GeoJSON();
-        const features = geojsonFormat.readFeatures(areaGeoJSON, {
-            featureProjection: "EPSG:3857",
-        });
+    function getRandomPointNearAreaCenter(area) {
+        const { centerLat, centerLon, geojson } = area;
 
-        // Assumiamo un unico poligono
-        const polygon = features[0].getGeometry();
+        // Calculate extent of the area
+        const geometryExtent = boundingExtent(geojson.coordinates[0]); // Assumes Polygon or MultiPolygon
+        const [minLon, minLat, maxLon, maxLat] = toLonLat(geometryExtent);
 
-        if (!(polygon instanceof Polygon)) {
-            throw new Error("La geometria non è un poligono!");
-        }
+        // Calculate the maximum offsets (10% of the extent size)
+        const latOffsetRange = (maxLat - minLat) * 0.1;
+        const lonOffsetRange = (maxLon - minLon) * 0.1;
 
-        let point;
-        do {
-            const extent = polygon.getExtent();
+        // Generate random offsets
+        const randomLatOffset = (Math.random() - 0.5) * 2 * latOffsetRange;
+        const randomLonOffset = (Math.random() - 0.5) * 2 * lonOffsetRange;
 
-            // Generazione di numeri casuali sicuri per le coordinate
-            const x = generateRandom(extent[0], extent[2]);
-            const y = generateRandom(extent[1], extent[3]);
+        // Calculate the random point near the center
+        const randomLat = centerLat + randomLatOffset;
+        const randomLon = centerLon + randomLonOffset;
 
-            point = [x, y];
-        } while (!polygon.intersectsCoordinate(point));
-
-        return point;
+        return [randomLon, randomLat];
     }
 
     // Funzione per generare numeri casuali sicuri tra min e max
@@ -73,9 +69,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         const range = max - min;
         const buffer = new Uint32Array(1);
         window.crypto.getRandomValues(buffer);
-        return min + (buffer[0] / (0xFFFFFFFF + 1)) * range;
+        return min + (buffer[0] / (0xffffffff + 1)) * range;
     }
-
 
     const {
         setAllDocuments,
@@ -84,7 +79,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         isSelectingCoordinates,
         isSelectingArea,
         areaGeoJSON,
-        setAreaGeoJSON
+        setAreaGeoJSON,
     } = useContext(AppContext);
 
     const longitude = 20.22513;
@@ -100,7 +95,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Consultation: consultationIcon,
         Action: actionIcon,
         Other: otherIcon,
-
     };
 
     useEffect(() => {
@@ -203,7 +197,9 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             setAreaGeoJSON(drawnGeoJSON);
 
             const coordinates = geometry.getCoordinates();
-            const coordsIn4326 = coordinates[0].map((coord) => transform(coord, "EPSG:3857", "EPSG:4326"));
+            const coordsIn4326 = coordinates[0].map((coord) =>
+                transform(coord, "EPSG:3857", "EPSG:4326")
+            );
             setDrawnArea(coordsIn4326);
             handleAreaSelected(coordsIn4326);
 
@@ -255,7 +251,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         };
     }, [isSelectingArea, areaGeoJSON]);
 
-
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map) return;
@@ -275,7 +270,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     } else if (doc.areaId) {
                         if (doc.area && doc.area.centerLat && doc.area.centerLon) {
                             //location = fromLonLat([area.centerLon, area.centerLat]);
-                            location = getRandomPointInArea(doc.area.geojson);
+                            location = getRandomPointNearAreaCenter(doc.area);
                         }
                     }
 
@@ -308,7 +303,10 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 .filter((feature) => feature !== null); // Remove null features
 
             const vectorSource = new VectorSource({ features });
-            const newDocumentLayer = new VectorLayer({ source: vectorSource });
+            const newDocumentLayer = new VectorLayer({
+                name: "documentLayer",
+                source: vectorSource,
+            });
 
             map.addLayer(newDocumentLayer);
 
@@ -353,7 +351,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             setBoundaryLayer(null);
         }
     }, [allDocuments, areas, location.pathname, isSelectingCoordinates]);
-
 
     // Center the map on the selected document
     useEffect(() => {
@@ -407,29 +404,67 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         map.addLayer(hoverLayer);
 
         const handlePointerMove = (event) => {
-            const hit = map.hasFeatureAtPixel(event.pixel);
-            map.getTargetElement().style.cursor = hit ? "pointer" : "";
-
             // Reset hover layer
             hoverSource.clear();
+            if (isSelectingCoordinates) {
+                map.getTargetElement().style.cursor = "pointer";
+            } else {
+                const hit = map.hasFeatureAtPixel(event.pixel);
+                map.getTargetElement().style.cursor = hit ? "pointer" : "";
+                // If we hover a feature
+                const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
+                    if (layer?.get("name") === "documentLayer") return feature;
+                });
+                if (featureAtPixel) {
+                    if (hoveredFeatureRef.current !== featureAtPixel) {
+                        if (hoveredFeatureRef.current) {
+                            hoveredFeatureRef.current.setStyle(
+                                hoveredFeatureRef.current.initialStyle
+                            );
+                        }
+                        const currentFeatureStyle = featureAtPixel.getStyle();
+                        const icon = currentFeatureStyle.getImage();
+                        const img = new Image();
+                        img.src = icon.getSrc();
+                        img.onload = () => {
+                            featureAtPixel.setStyle(
+                                new Style({
+                                    image: new Icon({
+                                        anchor: [0.5, 0.5],
+                                        img: img,
+                                        scale: 0.55,
+                                        imgSize: [img.width, img.height],
+                                        color: icon.getColor(),
+                                    }),
+                                    zIndex: 2,
+                                })
+                            );
+                        };
+                        hoveredFeatureRef.current = featureAtPixel;
+                    }
+                } else if (hoveredFeatureRef.current) {
+                    hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
+                    hoveredFeatureRef.current = null;
+                }
 
-            if (hit) {
-                const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
-                if (feature && feature.get("documentId")) {
-                    const documentId = feature.get("documentId");
-                    const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
+                if (hit) {
+                    const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
+                    if (feature && feature.get("documentId")) {
+                        const documentId = feature.get("documentId");
+                        const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
 
-                    if (matchedDocument && matchedDocument.areaId) {
-                        const area = areas.find((a) => a.id === matchedDocument.areaId);
-                        if (area && area.geojson) {
-                            const geojsonFormat = new GeoJSON();
-                            try {
-                                const areaFeatures = geojsonFormat.readFeatures(area.geojson, {
-                                    featureProjection: "EPSG:3857",
-                                });
-                                hoverSource.addFeatures(areaFeatures);
-                            } catch (error) {
-                                console.error("Failed to parse GeoJSON for hover:", error);
+                        if (matchedDocument && matchedDocument.areaId) {
+                            const area = areas.find((a) => a.id === matchedDocument.areaId);
+                            if (area && area.geojson) {
+                                const geojsonFormat = new GeoJSON();
+                                try {
+                                    const areaFeatures = geojsonFormat.readFeatures(area.geojson, {
+                                        featureProjection: "EPSG:3857",
+                                    });
+                                    hoverSource.addFeatures(areaFeatures);
+                                } catch (error) {
+                                    console.error("Failed to parse GeoJSON for hover:", error);
+                                }
                             }
                         }
                     }
@@ -444,7 +479,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             map.removeLayer(hoverLayer);
         };
     }, [allDocuments, areas, isSelectingCoordinates, isSatelliteView]);
-
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
