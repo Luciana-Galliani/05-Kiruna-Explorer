@@ -24,7 +24,7 @@ This document outlines the strategy for managing technical debt in the project u
 
 ### 2. Automatic Analysis
 
--   **Triggers**: Set up automatic analysis to run on every pull request, and merge commits.
+-   **Triggers**: Set up automatic analysis to run on every pull request, and main commits.
 -   **Reports**: Generate and review reports for each analysis.
 
 ### 3. Managing Technical Debt

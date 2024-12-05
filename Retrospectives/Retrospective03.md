@@ -41,20 +41,23 @@ sections:
 ## QUALITY MEASURES
 
 -   Unit Testing:
-    -   Total hours estimated :
-    -   Total hours spent :
-    -   Nr of automated unit test cases :
+    -   Total hours estimated : 3h
+    -   Total hours spent : 3h
+    -   Nr of automated unit test cases : 73
     -   Coverage (if available) : 100% of the tested files (controllers, DAOs, middlewares and utils functions) Only on the backend
 -   E2E testing:
-    -   Total hours estimated :
-    -   Total hours spent :
+    -   Total hours estimated : 9h
+    -   Total hours spent : 9h30m
 -   Code review
-    -   Total hours estimated :
-    -   Total hours spent :
+    -   Total hours estimated : 3h
+    -   Total hours spent : 3h
 -   Technical Debt management:
-    -   Strategy adopted
-    -   Total hours estimated estimated at sprint planning
-    -   Total hours spent
+    -   Strategy adopted : See TD_Strategy but basically :
+        -   High severity issues and and security hotspots are priority
+        -   All the team members should work for minimizing technical debt, and are responsible for the issues on the code they write : if an issue with high severity is detected by sonar or security hotspot, the author should try to fix it as soon as possible (possibly asking for help from the teammates if needed).
+        -   Analysis conducted on pull requests and main commits
+    -   Total hours estimated estimated at sprint planning : 4h30m
+    -   Total hours spent : 4h on the estimated tasks but in reality more because everybody fix the issues that sonar detected on their code -> hard to measure exactly because they are not specific tasks.
 
 ## ASSESSMENT
 
