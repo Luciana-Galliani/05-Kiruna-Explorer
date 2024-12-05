@@ -77,7 +77,9 @@ describe('Link Part Form Tests', () => {
         cy.get('button').contains('Add Connection').should('be.disabled');
     });
     
- /*   it('should remove a connection from the list', () => {
+    /* La connessione viene tolta ma non rimane nel form, mi rimanda al login
+    
+    it('should remove a connection from the list', () => {
         cy.get('button[id="dropdown-basic-button"]').click();
         cy.get('.dropdown-menu').contains('Development Plan (41)').click();
     
@@ -90,11 +92,17 @@ describe('Link Part Form Tests', () => {
         cy.get('.connections').should('contain', 'Document: Development Plan (41)');
         cy.get('.connections').should('contain', 'Type: Prevision');
     
-        cy.get('.connections').find('button').contains('✖').click(); // Clicca sul pulsante "✖"
-    
-        cy.get('.connections').should('not.contain', 'Document: Development Plan (41)');
-        cy.get('.connections').should('not.contain', 'Type: Prevision');
+        cy.get('.connections')
+            .contains('Document: Development Plan (41)')
+            .closest('.card')
+            .find('button')
+            .should('exist')
+            .click();
     }); */
-      
 
+    it('should save the form when save button is clicked', () => {
+        cy.get('button').contains('Save').click();
+        cy.url().should("eq", `${clientUrl}/`);
+    });
+    
 });
