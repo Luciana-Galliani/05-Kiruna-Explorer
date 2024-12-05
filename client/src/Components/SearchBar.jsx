@@ -86,7 +86,7 @@ const SearchBar = ({
                     <Col>
                         <Form.Control
                             type="text"
-                            placeholder="Author"
+                            placeholder="Stakeholder"
                             value={searchAuthor}
                             onChange={handleSearchAuthor}
                         />

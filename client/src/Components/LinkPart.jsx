@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Card, Dropdown } from "react-bootstrap";
 import { Connection } from "../models.mjs";
 import { AppContext } from "../context/AppContext";
-import PropTypes from "prop-types";
+import PropTypes, { object } from "prop-types";
 import Filter from "../API/Filters/Filter";
 
 export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
@@ -157,8 +157,8 @@ export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
 
 LinkPart.propTypes = {
     inputValues: PropTypes.shape({
-        connections: PropTypes.arrayOf(PropTypes.instanceOf(Connection)).isRequired,
-    }).isRequired,
+        connections: PropTypes.arrayOf(object),
+    }),
     setInputValues: PropTypes.func.isRequired,
-    relationshipOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+    relationshipOptions: PropTypes.arrayOf(PropTypes.string),
 };

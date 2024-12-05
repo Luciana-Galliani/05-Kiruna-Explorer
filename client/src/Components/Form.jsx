@@ -10,7 +10,8 @@ import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from "prop-types";
-import { point, booleanPointInPolygon, area } from "@turf/turf";
+import { point, booleanPointInPolygon } from "@turf/turf";
+import StepProgressBar from "./StepProgressBar.jsx";
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -39,33 +40,6 @@ const initializeInputValues = (doc) => {
         areaId: doc?.document?.areaId || "",
         areaName: "",
     };
-};
-
-const StepProgressBar = ({ currentStep, steps, setCurrentStep, validSteps, existingDocument }) => {
-    return (
-        <div className="step-progress-bar">
-            {steps.map((step, index) => {
-                const isActive =
-                    existingDocument || validSteps.includes(index) || index <= currentStep;
-                return (
-                    <button
-                        key={index}
-                        className={`step ${isActive ? "active" : ""} custom-button`}
-                        onClick={() => isActive && setCurrentStep(index)}
-                        onKeyDown={(e) => {
-                            if (isActive && (e.key === "Enter" || e.key === " ")) {
-                                setCurrentStep(index);
-                            }
-                        }}
-                        aria-disabled={!isActive}
-                    >
-                        <div className={`circle ${isActive ? "blue" : ""}`}>{index + 1}</div>
-                        <div className="label">{step.label}</div>
-                    </button>
-                );
-            })}
-        </div>
-    );
 };
 
 export function DescriptionForm({
@@ -461,15 +435,12 @@ export function DescriptionForm({
                     geojson: geojson,
                 };
 
-                console.log(areaData);
 
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.area.id;
-                console.log(createdArea);
             } else if (selectedArea && (!inputValues.latitude && !inputValues.longitude)) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
-                console.log(selected);
             }
 
             setArea(null);
@@ -479,7 +450,6 @@ export function DescriptionForm({
                 ...data,
                 areaId,
             };
-            console.log(documentData);
 
             const response = await API.updateDocument(
                 existingDocument.document.id,
@@ -515,10 +485,8 @@ export function DescriptionForm({
                     name: inputValues.areaName,
                     geojson: geojson,
                 };
-                console.log(areaData);
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.area.id;
-                console.log(createdArea);
             } else if (selectedArea) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
@@ -529,7 +497,6 @@ export function DescriptionForm({
                 ...data,
                 areaId,
             };
-            console.log(documentData);
             const response = await API.createDocument(documentData, selectedFiles);
             showNotification("Document saved successfully!", "success");
 
@@ -741,85 +708,7 @@ DescriptionForm.propTypes = {
     existingDocument: PropTypes.object,
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
-    newarea: PropTypes.shape({
-        name: PropTypes.string,
-    }),
+    newarea: PropTypes.array,
     setnewArea: PropTypes.func,
 };
 
-export function EditDocumentForm({ coordinates, className, setCoordinates, newarea, setnewArea }) {
-    const { documentId } = useParams(); //Get the document ID
-    const navigate = useNavigate();
-    const [existingDocument, setExistingDocument] = useState();
-    const [loading, setLoading] = useState(true); // Loading status
-    const { isLoggedIn } = useContext(AppContext);
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate("/login");
-        }
-    }, [isLoggedIn, navigate]);
-
-    useEffect(() => {
-        const fetchDocumentById = async () => {
-            try {
-                const resp = await API.getDocument(documentId);
-                setExistingDocument(resp);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching document:", error);
-            }
-        };
-
-        fetchDocumentById();
-    }, [documentId]);
-
-    if (!loading && existingDocument) {
-        return (
-            <DescriptionForm
-                coordinates={coordinates}
-                existingDocument={existingDocument}
-                className={className}
-                setCoordinates={setCoordinates}
-                newarea={newarea}
-                setnewArea={setnewArea}
-            />
-        );
-    } else {
-        return (
-            <div className="position-absolute top-50 start-50 translate-middle w-25">
-                <Card className="shadow-sm">
-                    <Card.Body>
-                        <p className="text-center mb-4">Document not found!</p>
-                    </Card.Body>
-                </Card>
-            </div>
-        );
-    }
-}
-
-EditDocumentForm.propTypes = {
-    coordinates: PropTypes.shape({
-        latitude: PropTypes.number,
-        longitude: PropTypes.number,
-    }),
-    className: PropTypes.string,
-    setCoordinates: PropTypes.func.isRequired,
-    newarea: PropTypes.shape({
-        name: PropTypes.string,
-    }),
-    setnewArea: PropTypes.func,
-};
-
-StepProgressBar.propTypes = {
-    currentStep: PropTypes.number.isRequired,
-    steps: PropTypes.arrayOf(
-        PropTypes.shape({
-            label: PropTypes.string.isRequired,
-            component: PropTypes.node.isRequired,
-        })
-    ).isRequired,
-    setCurrentStep: PropTypes.func.isRequired,
-    validSteps: PropTypes.arrayOf(PropTypes.number).isRequired,
-    existingDocument: PropTypes.object,
-};
