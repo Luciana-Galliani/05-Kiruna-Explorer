@@ -22,32 +22,21 @@ sections:
 -   Code present on VCS
 -   End-to-End tests performed
 
-> Please refine your DoD if required (you cannot remove items!)
+> Please refine your DoD
 
 ### Detailed statistics
 
 | Story | # Tasks | Points | Hours est. | Hours actual |
 | ----- | ------- | ------ | ---------- | ------------ |
-| _#0_  | 16      |        | 40h        | ?            |
+| _#0_  | 16      | -      | 40h        | ?            |
 | 8     | 4       | 5      | 8h         | 8h           |
 | 9     | 7       | 8      | ?          | ?            |
 | 19    | 4       | 5      | ?          | ?            |
 
-> story `#0` is for technical tasks, leave out story points (not applicable in this case)
+> place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
--   Hours per task average, standard deviation (estimate and actual)
-
-    ESTIMATE: -- ACTUAL:
-
--   Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
-
-    $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
-    VALUE: %
-
--   Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
-
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
-    VALUE: %
+-   Hours per task (average, standard deviation)
+-   Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
 
 ## QUALITY MEASURES
 
@@ -62,6 +51,10 @@ sections:
 -   Code review
     -   Total hours estimated :
     -   Total hours spent :
+-   Technical Debt management:
+    -   Strategy adopted
+    -   Total hours estimated estimated at sprint planning
+    -   Total hours spent
 
 ## ASSESSMENT
 

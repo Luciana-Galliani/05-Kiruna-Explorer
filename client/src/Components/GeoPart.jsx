@@ -1,11 +1,8 @@
-import { useContext } from "react";
 import { Form, Button } from "react-bootstrap";
-import { AppContext } from "../context/AppContext";
 import PropTypes from "prop-types";
 
 export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseInMap }) {
-    const { setIsSelectingCoordinates } = useContext(AppContext);
-
+    
     const handleArea = () => {
         setSecond(true);
     };

@@ -364,8 +364,10 @@ export function DescriptionForm({
         return {
             ...inputValues,
             issuanceDate,
-            latitude: inputValues.allMunicipality ? "" : inputValues.latitude,
-            longitude: inputValues.allMunicipality ? "" : inputValues.longitude,
+            latitude: inputValues.allMunicipality ? null : inputValues.latitude,
+            longitude: inputValues.allMunicipality ? null : inputValues.longitude,
+            areaId: inputValues.allMunicipality ? null : inputValues.areaId,
+            areaName: inputValues.allMunicipality ? null : inputValues.areaName,
         };
     };
 
@@ -464,9 +466,10 @@ export function DescriptionForm({
                 const createdArea = await API.createArea(areaData);
                 areaId = createdArea.area.id;
                 console.log(createdArea);
-            } else if (selectedArea) {
+            } else if (selectedArea && (!inputValues.latitude && !inputValues.longitude)) {
                 const selected = areas.find((area) => area.name === selectedArea);
                 areaId = selected ? selected.id : null;
+                console.log(selected);
             }
 
             setArea(null);

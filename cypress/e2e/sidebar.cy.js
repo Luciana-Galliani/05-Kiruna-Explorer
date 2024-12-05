@@ -10,31 +10,31 @@ describe('Sidebar Tests', () => {
     it("opens the sidebar when the menu button is clicked", () => {
         
         // Check that the sidebar is not visible initially
-        cy.get(".sidebar").should("not.have.class", "open");
+        cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, -950, 0)");
         
         // Click the button to open the sidebar
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         
         // Verify that the sidebar opens
-        cy.get(".sidebar").should("have.class", "open");
+        cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
     });
     
     it("closes the sidebar when the overlay is clicked", () => {
       
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
       
-        cy.get(".sidebar").should("have.class", "open");
+        cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
       
         // Click the overlay to close the sidebar
         cy.get(".overlay").should('be.visible').click();
       
         // Verify that the sidebar has been closed
-        cy.get(".sidebar").should("not.have.class", "open");
+        cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, -950, 0)");
     });
     
     it('Search a document using the title', () => {
 
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
 
         // Enter a title
         cy.get('input[placeholder="Title..."]').type('Development Plan (41)');
@@ -57,7 +57,7 @@ describe('Sidebar Tests', () => {
 
     it('Should toggle "All Municipality" switch', () => {
         
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
 
         // Find the switch via the label text and activate it
         cy.contains('label', 'All Municipality')
@@ -87,7 +87,7 @@ describe('Sidebar Tests', () => {
 
     it('Should reset filters when navigating away', () => {
         // Open the sidebar and enter values
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         cy.get('input[placeholder="Title..."]').type('Temporary Title');
 
         // Change page (simulation of a path change)
@@ -95,7 +95,7 @@ describe('Sidebar Tests', () => {
 
         // Go back and check that the filters are reset
         cy.visit(`${clientUrl}/`);
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         cy.get('input[placeholder="Title..."]').should('have.value', '');
     });
 
@@ -115,7 +115,7 @@ describe('Sidebar Tests', () => {
     
     it('Should open details panel when a document is selected', () => {
     
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         // Select a document from the table
         cy.get('table tbody tr').first().click();
     
@@ -125,7 +125,7 @@ describe('Sidebar Tests', () => {
  
     it('Should close the details panel when the close button is clicked', () => {
         
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
 
         // Select a document and open the panel
         cy.get('table tbody tr').first().click();
