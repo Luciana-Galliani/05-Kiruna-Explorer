@@ -1,19 +1,21 @@
+import { useAreaDrawing } from "./UseAreaDrawing";
+import { useMapSetup } from "./UseMapSetup";
+// external libraries
 import React, { useEffect, useRef, useState, useContext } from "react";
+import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
+
+// OpenLayers
 import "ol/ol.css";
-import Map from "ol/Map";
-import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
+import { Map, View } from "ol";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { OSM, Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat, transformExtent, transform } from "ol/proj";
-import Feature from "ol/Feature";
-import Point from "ol/geom/Point";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import Style from "ol/style/Style";
-import Icon from "ol/style/Icon";
-import Stroke from "ol/style/Stroke";
 import { GeoJSON } from "ol/format";
-import Draw from "ol/interaction/Draw";
+import { Draw } from "ol/interaction";
+import { Style, Icon, Stroke } from "ol/style";
+
+// Icons and API
 import API from "../API/API.mjs";
 import designIcon from "../Icons/design.svg";
 import informativeIcon from "../Icons/informative.svg";
@@ -24,61 +26,27 @@ import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
 import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
+
+// internal components and appContext
 import DetailsPanel from "./DetailsPanel";
-import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import PropTypes from "prop-types";
-import { boundingExtent } from "ol/extent";
+import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
     const location = useLocation();
-    const mapRef = useRef(null);
-    const mapInstanceRef = useRef(null);
     const hoveredFeatureRef = useRef(null);
-    const [drawnArea, setDrawnArea] = useState(null);
     const [areas, setAreas] = useState([]);
-    const drawInteractionRef = useRef(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
-
-    function getRandomPointNearAreaCenter(area) {
-        const centerLat = parseFloat(area.centerLat);
-        const centerLon = parseFloat(area.centerLon);
-        const geojson = area.geojson;
-
-        // Calculate extent of the area in geographic coordinates
-        const geometryExtent = boundingExtent(geojson.coordinates[0]); // Assumes Polygon or MultiPolygon
-        const [minX, minY, maxX, maxY] = geometryExtent.map((coord) => toLonLat([coord])[0]);
-
-        // Calculate the maximum offsets (10% of the extent size)
-        const MIN_OFFSET = 0.001; // Minimum offset for small areas
-        const latOffsetRange = Math.max((maxY - minY) * 0.1, MIN_OFFSET);
-        const lonOffsetRange = Math.max((maxX - minX) * 0.1, MIN_OFFSET);
-
-        // Generate random offsets
-        const randomLatOffset = (Math.random() - 0.5) * 2 * latOffsetRange;
-        const randomLonOffset = (Math.random() - 0.5) * 2 * lonOffsetRange;
-
-        // Calculate the random point near the center
-        const randomLat = centerLat + randomLatOffset;
-        const randomLon = centerLon + randomLonOffset;
-
-        return [randomLon, randomLat];
-    }
 
     const {
         setAllDocuments,
         allDocuments,
         isLoggedIn,
-        isSelectingCoordinates,
         isSelectingArea,
         areaGeoJSON,
-        setAreaGeoJSON,
     } = useContext(AppContext);
-
-    const longitude = 20.22513;
-    const latitude = 67.85572;
 
     const iconMap = {
         "Design Document": designIcon,
@@ -91,6 +59,16 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Action: actionIcon,
         Other: otherIcon,
     };
+    const mapRef = useRef(null);
+    const { isSelectingCoordinates, setAreaGeoJSON } = useContext(AppContext);
+
+    const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView });
+    useAreaDrawing({
+        mapInstanceRef,
+        isSelectingArea,
+        setAreaGeoJSON,
+        handleAreaSelected,
+    });
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -102,7 +80,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             }
         };
         loadAreas();
-    }, [drawnArea]);
+    }, []);
 
     // Fetch all documents on load
     useEffect(() => {
@@ -117,102 +95,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         fetchAllDocuments();
     }, [isSatelliteView]);
-
-    // Initialize map
-    useEffect(() => {
-        const extent = transformExtent(
-            [17.53, 67.21, 23.17, 69.3], // Bounding box for Kiruna
-            "EPSG:4326",
-            "EPSG:3857"
-        );
-        const cityCenter = fromLonLat([longitude, latitude]);
-
-        const satelliteLayer = new TileLayer({
-            source: new OSM({
-                url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-            }),
-        });
-
-        const standardLayer = new TileLayer({
-            source: new OSM(),
-        });
-
-        const map = new Map({
-            target: mapRef.current,
-            layers: [isSatelliteView ? satelliteLayer : standardLayer],
-            view: new View({
-                center: cityCenter,
-                zoom: 14,
-                minZoom: 1,
-                maxZoom: 20,
-                extent: extent,
-            }),
-        });
-
-        mapInstanceRef.current = map;
-
-        return () => {
-            map.setTarget(null);
-        };
-    }, [isSatelliteView]);
-
-    // Drawing area interaction
-    useEffect(() => {
-        const map = mapInstanceRef.current;
-        if (!map || !isSelectingArea) return;
-
-        const drawSource = new VectorSource();
-        const drawLayer = new VectorLayer({
-            source: drawSource,
-            style: new Style({
-                stroke: new Stroke({
-                    color: "rgba(0, 0, 255, 0.5)",
-                    width: 2,
-                }),
-            }),
-        });
-
-        map.addLayer(drawLayer);
-
-        const drawInteraction = new Draw({
-            source: drawSource,
-            type: "Polygon",
-        });
-
-        drawInteraction.on("drawend", (event) => {
-            const feature = event.feature;
-            const geometry = feature.getGeometry();
-            const geojsonFormat = new GeoJSON();
-
-            const drawnGeoJSON = geojsonFormat.writeFeatureObject(feature, {
-                featureProjection: "EPSG:3857",
-                dataProjection: "EPSG:4326",
-            });
-
-            setAreaGeoJSON(drawnGeoJSON);
-
-            const coordinates = geometry.getCoordinates();
-            const coordsIn4326 = coordinates[0].map((coord) =>
-                transform(coord, "EPSG:3857", "EPSG:4326")
-            );
-            setDrawnArea(coordsIn4326);
-            handleAreaSelected(coordsIn4326);
-
-            map.removeInteraction(drawInteraction);
-            map.removeLayer(drawLayer);
-            drawInteractionRef.current = null;
-        });
-
-        map.addInteraction(drawInteraction);
-        drawInteractionRef.current = drawInteraction;
-
-        return () => {
-            if (drawInteractionRef.current) {
-                map.removeInteraction(drawInteractionRef.current);
-            }
-            map.removeLayer(drawLayer);
-        };
-    }, [isSelectingArea, setAreaGeoJSON, handleAreaSelected]);
 
     useEffect(() => {
         const map = mapInstanceRef.current;
@@ -238,7 +120,6 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         } catch (error) {
             console.error("Error in GeoJSON:", error);
         }
-
         map.addLayer(areaLayer);
 
         return () => {
@@ -254,57 +135,18 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             !(location.pathname === "/add" || location.pathname.includes("edit")) ||
             isSelectingCoordinates;
 
-        // Update document layer (icons)
+        // if `shouldShow` is true and there are documents, create layer
         if (shouldShow && allDocuments?.length > 0) {
-            const features = allDocuments
-                .map((doc) => {
-                    let location;
-                    if (doc.longitude !== null && doc.latitude !== null) {
-                        // Use document coordinates
-                        location = fromLonLat([doc.longitude, doc.latitude]);
-                    } else if (doc.area) {
-                        if (doc?.area?.centerLat && doc?.area?.centerLon) {
-                            location = fromLonLat(getRandomPointNearAreaCenter(doc.area));
-                        }
-                    }
-
-                    if (!location) return null; // Skip if no valid coordinates
-
-                    const feature = new Feature({
-                        geometry: new Point(location),
-                        documentId: doc.id,
-                        documentTitle: doc.title,
-                    });
-
-                    const img = new Image();
-                    img.src = iconMap[doc.type];
-                    img.onload = () => {
-                        const initialStyle = new Style({
-                            image: new Icon({
-                                anchor: [0.5, 0.5],
-                                img: img,
-                                scale: 0.5,
-                                imgSize: [img.width, img.height],
-                                color: doc.stakeholders?.[0]?.color || "purple",
-                            }),
-                        });
-                        feature.setStyle(initialStyle);
-                        feature.initialStyle = initialStyle;
-                    };
-
-                    return feature;
-                })
-                .filter((feature) => feature !== null); // Remove null features
-
-            const vectorSource = new VectorSource({ features });
-            const newDocumentLayer = new VectorLayer({
-                name: "documentLayer",
-                source: vectorSource,
-            });
-
-            map.addLayer(newDocumentLayer);
-
-            if (documentLayer) map.removeLayer(documentLayer); // Remove old layer
+            const newDocumentLayer = createDocumentLayer(allDocuments, iconMap);
+            // Add layer to the map
+            if (newDocumentLayer) {
+                map.addLayer(newDocumentLayer);
+            }
+            // Remove old layer
+            if (documentLayer) {
+                map.removeLayer(documentLayer);
+            }
+            // set new layer
             setDocumentLayer(newDocumentLayer);
         } else if (documentLayer) {
             map.removeLayer(documentLayer);
@@ -355,6 +197,10 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             const location = fromLonLat([selectedDocument.longitude, selectedDocument.latitude]);
             map.getView().setCenter(location);
             map.getView().setZoom(14); // Adjust zoom level as needed
+        } else if (selectedDocument.area) {
+            const location = fromLonLat([selectedDocument.area.centerLon, selectedDocument.area.centerLat]);
+            map.getView().setCenter(location);
+            map.getView().setZoom(14); // Adjust zoom level as needed
         }
     }, [selectedDocument]);
 
@@ -368,112 +214,58 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 const [lon, lat] = toLonLat(event.coordinate);
                 handleCoordinatesSelected(lon, lat);
             } else {
+                let clickedOnFeature = false;
+
+                // Controlla se il click è su una feature della mappa
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
                     const documentId = feature.get("documentId");
                     const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
                     setSelectedDocument(matchedDocument);
+                    clickedOnFeature = true;
                 });
+
+                // Se non è stata selezionata una feature, chiudi il pannello
+                if (!clickedOnFeature) {
+                    setSelectedDocument(null);
+                }
             }
         };
 
+        const handleGlobalClick = (event) => {
+            const mapElement = mapRef.current;
+
+            // Se il click è fuori dalla mappa e dal pannello, chiudi il pannello
+            if (
+                mapElement &&
+                !mapElement.contains(event.target) && // Fuori dalla mappa
+                !event.target.closest(".details-panel") // Fuori dal pannello dei dettagli
+            ) {
+                setSelectedDocument(null);
+            }
+        };
+
+        // Aggiungi gli event listener
         map.on("click", handleMapClick);
+        document.addEventListener("click", handleGlobalClick);
+
+        // Cleanup per entrambi gli event listener
         return () => {
             map.un("click", handleMapClick);
+            document.removeEventListener("click", handleGlobalClick);
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected, allDocuments]);
 
+
     useEffect(() => {
-        const map = mapInstanceRef.current;
-        const hoverSource = new VectorSource();
-        const hoverLayer = new VectorLayer({
-            source: hoverSource,
-            style: new Style({
-                stroke: new Stroke({
-                    color: "rgba(255, 165, 0, 0.8)", // Orange color for hover effect
-                    width: 3,
-                }),
-            }),
+        const cleanup = handleMapPointerMove({
+            mapInstanceRef,
+            hoveredFeatureRef,
+            isSelectingCoordinates,
+            allDocuments,
         });
 
-        map.addLayer(hoverLayer);
-
-        const handlePointerMove = (event) => {
-            // Reset hover layer
-            hoverSource.clear();
-            if (isSelectingCoordinates) {
-                map.getTargetElement().style.cursor = "pointer";
-            } else {
-                const hit = map.hasFeatureAtPixel(event.pixel);
-                map.getTargetElement().style.cursor = hit ? "pointer" : "";
-                // If we hover a feature
-                const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
-                    if (layer?.get("name") === "documentLayer") return feature;
-                });
-                if (featureAtPixel) {
-                    if (hoveredFeatureRef.current !== featureAtPixel) {
-                        if (hoveredFeatureRef.current) {
-                            hoveredFeatureRef.current.setStyle(
-                                hoveredFeatureRef.current.initialStyle
-                            );
-                        }
-                        const currentFeatureStyle = featureAtPixel.getStyle();
-                        const icon = currentFeatureStyle.getImage();
-                        const img = new Image();
-                        img.src = icon.getSrc();
-                        img.onload = () => {
-                            featureAtPixel.setStyle(
-                                new Style({
-                                    image: new Icon({
-                                        anchor: [0.5, 0.5],
-                                        img: img,
-                                        scale: 0.55,
-                                        imgSize: [img.width, img.height],
-                                        color: icon.getColor(),
-                                    }),
-                                    zIndex: 2,
-                                })
-                            );
-                        };
-                        hoveredFeatureRef.current = featureAtPixel;
-                    }
-                } else if (hoveredFeatureRef.current) {
-                    hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
-                    hoveredFeatureRef.current = null;
-                }
-
-                if (hit) {
-                    const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
-                    if (feature?.get("documentId")) {
-                        const documentId = feature.get("documentId");
-                        const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
-                        if (matchedDocument?.areaId) {
-                            if (matchedDocument?.area?.geojson) {
-                                const geojsonFormat = new GeoJSON();
-                                try {
-                                    const areaFeatures = geojsonFormat.readFeatures(
-                                        matchedDocument?.area.geojson,
-                                        {
-                                            featureProjection: "EPSG:3857",
-                                        }
-                                    );
-                                    hoverSource.addFeatures(areaFeatures);
-                                } catch (error) {
-                                    console.error("Failed to parse GeoJSON for hover:", error);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        map.on("pointermove", handlePointerMove);
-
-        return () => {
-            map.un("pointermove", handlePointerMove);
-            map.removeLayer(hoverLayer);
-        };
-    }, [allDocuments, areas, isSelectingCoordinates, isSatelliteView]);
+        return cleanup; // remove effects when unmount component
+    }, [allDocuments, areas, isSelectingCoordinates]);
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
