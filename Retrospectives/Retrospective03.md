@@ -11,9 +11,9 @@ sections:
 
 ### Macro statistics
 
--   Number of stories committed vs. done : 3 vs ?
--   Total points committed vs. done : 18 vs ?
--   Nr of hours planned vs. spent (as a team) : 64h vs ?
+-   Number of stories committed vs. done : 3 vs 3
+-   Total points committed vs. done : 18 vs 18
+-   Nr of hours planned vs. spent (as a team) : 66h vs 67h15m
 
 **Remember** a story is done ONLY if it fits the Definition of Done:
 
@@ -26,19 +26,18 @@ sections:
 
 ### Detailed statistics
 
-| Story  | # Tasks | Points | Hours est. | Hours actual |
-|--------|---------|--------|------------|--------------|
-| _#0_   |   16    |        |   40h      |    ?    |
-| 8      |   4     |   5    |    8h      |    8h    |
-| 9      |   7     |   8    |   ?   |    ?     |
-| 19     |   4     |   5    |   ?   |    ?     |
-
+| Story | # Tasks | Points | Hours est. | Hours actual |
+| ----- | ------- | ------ | ---------- | ------------ |
+| _#0_  | 16      |        | 40h        | ?            |
+| 8     | 4       | 5      | 8h         | 8h           |
+| 9     | 7       | 8      | ?          | ?            |
+| 19    | 4       | 5      | ?          | ?            |
 
 > story `#0` is for technical tasks, leave out story points (not applicable in this case)
 
 -   Hours per task average, standard deviation (estimate and actual)
 
-    ESTIMATE:   -- ACTUAL: 
+    ESTIMATE: -- ACTUAL:
 
 -   Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
@@ -53,42 +52,41 @@ sections:
 ## QUALITY MEASURES
 
 -   Unit Testing:
-    -   Total hours estimated : 
-    -   Total hours spent : 
-    -   Nr of automated unit test cases : 
+    -   Total hours estimated :
+    -   Total hours spent :
+    -   Nr of automated unit test cases :
     -   Coverage (if available) : 100% of the tested files (controllers, DAOs, middlewares and utils functions) Only on the backend
 -   E2E testing:
     -   Total hours estimated :
-    -   Total hours spent : 
+    -   Total hours spent :
 -   Code review
-    -   Total hours estimated : 
-    -   Total hours spent : 
+    -   Total hours estimated :
+    -   Total hours spent :
 
 ## ASSESSMENT
 
 -   What caused your errors in estimation (if any)?
 
-    -   The form component became too big and when we work on it we loose some time
+    -   Map component became too big and we didn't simplify it before adding new features.
+    -   Form component refactoring and style changes took more time than expected
 
 -   What lessons did you learn (both positive and negative) in this sprint?
 
-    -   Negative aspect: github branches organisation could be improved
-    -   Positive aspect: well completed all the stories we were expected to do
+    -   Negative aspect: Too much work and stories commited, on top of TD and feedbacks
+    -   Positive aspect: Organization of the branches was way better, no merge conflicts
 
 -   Which improvement goals set in the previous retrospective were you able to achieve?
-    -   We have more equality in the hours for each person
-    -   We did more scrum meetings and a middle sprint demo to show the progress of the different tasks
+
+    -   Organization of the blocking tasks was good, everybody could work on their task without waiting for someone else
 
 -   Which ones you were not able to achieve? Why?
 
-    -   Better identify the blocking tasks and don't assign them to someone who cannot work on the begginning of the sprint : otherwise, the others are stuck waiting
-    -> we had better task assignmemt, the people could work but some tasks took more time than expected so we still had people waiting for tasks to finish 
-
+    -   Time management : 2 people have more than 16h
 
 -   Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-    - When facing an unexpected issue and working on a blocking task, we need to improve commumication of the problem, and assign people to help solving the issue instead of waiting
-    - On github, try to do more branches of smaller size to facilitate code review and problem solving
-    -> at least one branch per story
+
+    -   Dont underestimate the amount of time the tasks and feedbacks to avoid overload of work
+    -   Dont let a component/file get too big, otherwise refactors are heavy tasks
 
 -   One thing you are proud of as a Team!!
-    -   Proud of the 4 US done working nicely
+    -   Technical debt was well managed, no security hotspots left, not much duplication, and remaining issues are not with high severity level

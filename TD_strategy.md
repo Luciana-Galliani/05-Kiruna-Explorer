@@ -6,44 +6,43 @@ This document outlines the strategy for managing technical debt in the project u
 
 ## Tools
 
-- **SonarCloud**: A cloud-based code quality and security service.
+-   **SonarCloud**: A cloud-based code quality and security service.
 
 ## Objectives
 
-- Identify and manage technical debt.
-- Ensure code quality and security (manteinibility, reliability and code duplication).
-- Automate the detection of code issues.
+-   Identify and manage technical debt.
+-   Ensure code quality and security (manteinibility, reliability and code duplication).
+-   Automate the detection of code issues.
 
 ## Strategy
 
 ### 1. Integration with SonarCloud
 
-- **Organizations**: Create a GH organization that are used for share the code in the group.
-- **Setup**: Integrate the project repository with SonarCloud.
-- **Configuration**: Configure SonarCloud to analyze the codebase.
+-   **Organizations**: Create a GH organization that are used for share the code in the group.
+-   **Setup**: Integrate the project repository with SonarCloud.
+-   **Configuration**: Configure SonarCloud to analyze the codebase.
 
 ### 2. Automatic Analysis
 
-- **Triggers**: Set up automatic analysis to run on every pull request.
-- **Reports**: Generate and review reports for each analysis.
+-   **Triggers**: Set up automatic analysis to run on every pull request, and merge commits.
+-   **Reports**: Generate and review reports for each analysis.
 
 ### 3. Managing Technical Debt
 
-- **Debt Ratio**: Monitor the technical debt ratio provided by SonarCloud.
-- **Prioritization**: Prioritize issues based on severity and impact.
-- **Action Plan**: Develop an action plan to address high-priority issues. All the team members should work for minimizing technical debt.
+-   **Debt Ratio**: Monitor the technical debt ratio provided by SonarCloud.
+-   **Prioritization**: Prioritize issues based on severity and impact.
+-   **Action Plan**: Develop an action plan to address high-priority issues. All the team members should work for minimizing technical debt, and are responsible for the issues on the code they write : if an issue with high severity is detected by sonar or security hotspot, the author should try to fix it as soon as possible (possibly asking for help from the teammates if needed).
 
 ### 4. Code Quality Gates
 
-- **Quality Gates**: Define and enforce quality gates in SonarCloud.
-- **Enforcement**: Ensure that code changes meet quality gate criteria before merging.
-- **Pull request**: Never merge a pull request with high severity problem.
+-   **Enforcement**: Ensure that code changes meet quality gate criteria before merging.
+-   **Pull request**: Never merge a pull request with high severity problem.
 
 ## Reporting
 
-- **Dashboard**: Use SonarCloud dashboards to monitor code quality and technical debt.
-- **Notifications**: Set up notifications for critical issues and debt accumulation.
-- **Regular Reviews**: Conduct regular (every pull request) reviews of technical debt and code quality reports.
+-   **Dashboard**: Use SonarCloud dashboards to monitor code quality and technical debt.
+-   **Notifications**: Set up notifications for critical issues and debt accumulation.
+-   **Regular Reviews**: Conduct regular (every pull request) reviews of technical debt and code quality reports.
 
 ## Conclusion
 
