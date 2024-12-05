@@ -22,8 +22,6 @@ sections:
 -   Code present on VCS
 -   End-to-End tests performed
 
-> Please refine your DoD
-
 ### Detailed statistics
 
 | Story | # Tasks | Points | Hours est. | Hours actual |
@@ -35,8 +33,17 @@ sections:
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
--   Hours per task (average, standard deviation)
--   Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
+-   Hours per task (average, standard deviation) :
+
+    On stories :
+
+    -   Estimate : avg : 16.5h, std dev : 16.03h
+
+    -   Actual : avg : 16.8h, std dev : 15.42h
+
+-   Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1 :
+
+$$(\frac{66}{67.25} - 1)*100 = 1.9\%$$
 
 ## QUALITY MEASURES
 
@@ -64,12 +71,14 @@ sections:
 -   What caused your errors in estimation (if any)?
 
     -   Map component became too big and we didn't simplify it before adding new features.
-    -   Form component refactoring and style changes took more time than expected
+
+-   Form component refactoring and style changes took more time than expected
 
 -   What lessons did you learn (both positive and negative) in this sprint?
 
     -   Negative aspect: Too much work and stories commited, on top of TD and feedbacks
-    -   Positive aspect: Organization of the branches was way better, no merge conflicts
+
+-   Positive aspect: Organization of the branches was way better, no time lost on merge conflicts
 
 -   Which improvement goals set in the previous retrospective were you able to achieve?
 
@@ -82,7 +91,8 @@ sections:
 -   Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
 
     -   Dont underestimate the amount of time the tasks and feedbacks to avoid overload of work
-    -   Dont let a component/file get too big, otherwise refactors are heavy tasks
+
+-   Dont let a component/file get too big, otherwise refactors are heavy tasks
 
 -   One thing you are proud of as a Team!!
-    -   Technical debt was well managed, no security hotspots left, not much duplication, and remaining issues are not with high severity level
+-   Technical debt was well managed, no security hotspots left, not much duplication, and remaining issues are not with high severity level
