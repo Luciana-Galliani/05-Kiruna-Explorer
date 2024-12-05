@@ -249,6 +249,7 @@ export default async function populateDB(sequelize) {
         await documents[9].setStakeholders(stakeholders[0]);
 
         await Connection.bulkCreate([
+            // Original connections
             {
                 sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[4].id,
@@ -272,6 +273,32 @@ export default async function populateDB(sequelize) {
             {
                 sourceDocumentId: documents[8].id,
                 targetDocumentId: documents[9].id,
+            },
+
+            // Reverse connections
+            {
+                sourceDocumentId: documents[4].id,
+                targetDocumentId: documents[0].id,
+            },
+            {
+                sourceDocumentId: documents[2].id,
+                targetDocumentId: documents[3].id,
+            },
+            {
+                sourceDocumentId: documents[1].id,
+                targetDocumentId: documents[0].id,
+            },
+            {
+                sourceDocumentId: documents[6].id,
+                targetDocumentId: documents[5].id,
+            },
+            {
+                sourceDocumentId: documents[7].id,
+                targetDocumentId: documents[5].id,
+            },
+            {
+                sourceDocumentId: documents[9].id,
+                targetDocumentId: documents[8].id,
             },
         ]);
 
