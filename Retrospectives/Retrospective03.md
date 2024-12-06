@@ -37,9 +37,9 @@ sections:
 
     On stories :
 
-    -   Estimate : avg : 16.5h, std dev : 16.03h
+    -   Estimate : avg : 2.06h, std dev : 0.94h
 
-    -   Actual : avg : 16.8h, std dev : 15.42h
+    -   Actual : avg : 2.10h, std dev : 0.98h
 
 -   Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1 :
 
