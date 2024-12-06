@@ -6,42 +6,32 @@ import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Stroke, Icon } from 'ol/style';
 import { GeoJSON } from 'ol/format';
-import { useRef } from 'react';
 
-export default function getRandomPointNearAreaCenter(area) {
+function getRandomPointNearAreaCenter(area) {
     const centerLat = parseFloat(area.centerLat);
     const centerLon = parseFloat(area.centerLon);
     const geojson = area.geojson;
 
-    // Calcola i limiti dell'area in coordinate geografiche
-    const geometryExtent = boundingExtent(geojson.coordinates[0]); // Supponendo Polygon o MultiPolygon
+    // Calculate extent of the area in geographic coordinates
+    const geometryExtent = boundingExtent(geojson.coordinates[0]); // Assumes Polygon or MultiPolygon
     const [minX, minY, maxX, maxY] = geometryExtent.map((coord) => toLonLat([coord])[0]);
 
-    // Calcola gli offset massimi (10% delle dimensioni dell'area)
-    const MIN_OFFSET = 0.001; // Offset minimo per aree piccole
+    // Calculate the maximum offsets (10% of the extent size)
+    const MIN_OFFSET = 0.001; // Minimum offset for small areas
     const latOffsetRange = Math.max((maxY - minY) * 0.1, MIN_OFFSET);
     const lonOffsetRange = Math.max((maxX - minX) * 0.1, MIN_OFFSET);
 
-    // Genera offset casuali usando un generatore di numeri più esplicito
-    const randomLatOffset = getPseudoRandomInRange(-latOffsetRange, latOffsetRange);
-    const randomLonOffset = getPseudoRandomInRange(-lonOffsetRange, lonOffsetRange);
+    // Generate random offsets
+    const randomLatOffset = (Math.random() - 0.5) * 2 * latOffsetRange;
+    const randomLonOffset = (Math.random() - 0.5) * 2 * lonOffsetRange;
 
-    // Calcola il punto casuale vicino al centro
+    // Calculate the random point near the center
     const randomLat = centerLat + randomLatOffset;
     const randomLon = centerLon + randomLonOffset;
 
     return [randomLon, randomLat];
 }
 
-// Funzione per generare numeri pseudocasuali in un intervallo
-function getPseudoRandomInRange(min, max) {
-    return min + (max - min) * pseudoRandom();
-}
-
-// Semplice pseudorandom basato su Math.random()
-function pseudoRandom() {
-    return Math.random();
-}
 
 
 export const createDocumentLayer = (allDocuments, iconMap) => {
