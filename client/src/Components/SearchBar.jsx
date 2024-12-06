@@ -8,6 +8,7 @@ const SearchBar = ({
     handleTitle,
     handleIssuanceDate,
     handleDescription,
+    stakeholders,
 }) => {
     const [searchTitle, setSearchTitle] = useState("");
     const [searchAuthor, setSearchAuthor] = useState("");
@@ -84,12 +85,14 @@ const SearchBar = ({
                         />
                     </Col>
                     <Col>
-                        <Form.Control
-                            type="text"
-                            placeholder="Stakeholder"
+                        <Form.Control as="select"
                             value={searchAuthor}
-                            onChange={handleSearchAuthor}
-                        />
+                            onChange={handleSearchAuthor}>
+                            <option value="" selected style={{color: "lightgray"}}>Stakeholder</option>
+                            {stakeholders.map((stakeholder) => (
+                                <option key={stakeholder.id}>{stakeholder.name}</option>
+                            ))}
+                        </Form.Control>
                     </Col>
                     <Col>
                         <Form.Control

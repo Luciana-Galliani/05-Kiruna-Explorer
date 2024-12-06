@@ -3,9 +3,29 @@ import PropTypes from "prop-types";
 import TableList from "./TableList";
 import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
+import API from "../API/API";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const [filter, setFilter] = useState(new Filter());
+    const [stakeholders, setStakeholders] = useState([]);
+
+    useEffect(() => {
+        // Fetch stakeholders
+        const fetchStakeholders = async () => {
+            try {
+                const stakeholders = await API.getStakeholders();
+                // Two times stakeholders.stakeholders because the API returns an object with the stakeholders array inside
+                setStakeholders(stakeholders.stakeholders);
+                console.log("Stakeholders fetched:");
+                console.log(stakeholders);
+            } catch (error) {
+                console.error("Error fetching stakeholders:", error);
+            }
+        };
+
+        fetchStakeholders();
+    }, []);
+        
 
     const handleMunicipality = () => {
         const updatedFilter = new Filter({ ...filter, allMunicipality: !filter.allMunicipality });
@@ -91,6 +111,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         handleTitle={handleTitle}
                         handleIssuanceDate={handleIssuanceDate}
                         handleDescription={handleDescription}
+                        stakeholders={stakeholders}
                     />
                 </div>
                 <TableList filter={filter} />
