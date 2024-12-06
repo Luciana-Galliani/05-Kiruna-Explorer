@@ -99,81 +99,105 @@ export function handleMapPointerMove({
     map.addLayer(hoverLayer);
 
     const handlePointerMove = (event) => {
-        // Reset hover layer
         hoverSource.clear();
         if (isSelectingCoordinates) {
-            map.getTargetElement().style.cursor = "pointer";
+            setCursorStyle("pointer");
         } else {
             const hit = map.hasFeatureAtPixel(event.pixel);
-            map.getTargetElement().style.cursor = hit ? "pointer" : "";
+            setCursorStyle(hit ? "pointer" : "");
+            handleFeatureHover(event.pixel);
+            if (hit) handleHoverLayer(event.pixel);
+        }
+    };
 
-            // Se si passa sopra una feature
-            const featureAtPixel = map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
-                if (layer?.get("name") === "documentLayer") return feature;
-            });
+    const setCursorStyle = (style) => {
+        map.getTargetElement().style.cursor = style;
+    };
 
-            if (featureAtPixel) {
-                if (hoveredFeatureRef.current !== featureAtPixel) {
-                    if (hoveredFeatureRef.current) {
-                        hoveredFeatureRef.current.setStyle(
-                            hoveredFeatureRef.current.initialStyle
-                        );
-                    }
-                    const currentFeatureStyle = featureAtPixel.getStyle();
-                    const icon = currentFeatureStyle.getImage();
-                    const img = new Image();
-                    img.src = icon.getSrc();
-                    img.onload = () => {
-                        featureAtPixel.setStyle(
-                            new Style({
-                                image: new Icon({
-                                    anchor: [0.5, 0.5],
-                                    img: img,
-                                    scale: 0.55,
-                                    imgSize: [img.width, img.height],
-                                    color: icon.getColor(),
-                                }),
-                                zIndex: 2,
-                            })
-                        );
-                    };
-                    hoveredFeatureRef.current = featureAtPixel;
-                }
-            } else if (hoveredFeatureRef.current) {
-                hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
-                hoveredFeatureRef.current = null;
-            }
+    const handleFeatureHover = (pixel) => {
+        const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
+        if (featureAtPixel) {
+            updateFeatureHighlight(featureAtPixel);
+        } else {
+            resetHighlightedFeature();
+        }
+    };
 
-            if (hit) {
-                const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
-                if (feature?.get("documentId")) {
-                    const documentId = feature.get("documentId");
-                    const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
-                    if (matchedDocument?.areaId) {
-                        if (matchedDocument?.area?.geojson) {
-                            const geojsonFormat = new GeoJSON();
-                            try {
-                                const areaFeatures = geojsonFormat.readFeatures(
-                                    matchedDocument?.area.geojson,
-                                    {
-                                        featureProjection: "EPSG:3857",
-                                    }
-                                );
-                                hoverSource.addFeatures(areaFeatures);
-                            } catch (error) {
-                                console.error("Errore nel parsing del GeoJSON per hover:", error);
-                            }
-                        }
-                    }
-                }
+    const findFeatureAtPixel = (pixel, layerName) => {
+        return map.forEachFeatureAtPixel(pixel, (feature, layer) => {
+            if (layer?.get("name") === layerName) return feature;
+        });
+    };
+
+    const updateFeatureHighlight = (feature) => {
+        if (hoveredFeatureRef.current !== feature) {
+            resetHighlightedFeature();
+            applyHoverStyle(feature);
+            hoveredFeatureRef.current = feature;
+        }
+    };
+
+    const resetHighlightedFeature = () => {
+        if (hoveredFeatureRef.current) {
+            hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
+            hoveredFeatureRef.current = null;
+        }
+    };
+
+    const applyHoverStyle = (feature) => {
+        const currentStyle = feature.getStyle();
+        const icon = currentStyle.getImage();
+        const img = new Image();
+        img.src = icon.getSrc();
+        img.onload = () => {
+            feature.setStyle(
+                new Style({
+                    image: new Icon({
+                        anchor: [0.5, 0.5],
+                        img: img,
+                        scale: 0.55,
+                        imgSize: [img.width, img.height],
+                        color: icon.getColor(),
+                    }),
+                    zIndex: 2,
+                })
+            );
+        };
+    };
+
+    const handleHoverLayer = (pixel) => {
+        const feature = map.forEachFeatureAtPixel(pixel, (f) => f);
+        if (feature?.get("documentId")) {
+            const documentId = feature.get("documentId");
+            const matchedDocument = findMatchedDocument(documentId);
+            if (matchedDocument?.areaId && matchedDocument?.area?.geojson) {
+                addGeoJSONToHoverSource(matchedDocument.area.geojson);
             }
         }
     };
 
+    const findMatchedDocument = (documentId) => {
+        return allDocuments.find((doc) => doc.id === documentId);
+    };
+
+    const addGeoJSONToHoverSource = (geojson) => {
+        const geojsonFormat = new GeoJSON();
+        try {
+            const areaFeatures = geojsonFormat.readFeatures(geojson, {
+                featureProjection: "EPSG:3857",
+            });
+            hoverSource.addFeatures(areaFeatures);
+        } catch (error) {
+            console.error("Error parsing GeoJSON for hover:", error);
+        }
+    };
+
+    // Attach and detach the pointermove event
     map.on("pointermove", handlePointerMove);
 
     return () => {
         map.un("pointermove", handlePointerMove);
         map.removeLayer(hoverLayer);
     };
+
 }
