@@ -349,76 +349,84 @@ export function DescriptionForm({
         let validationMessage = null;
 
         if (validateAllSteps || currentStep === 0) {
-            if (
-                !inputValues.title ||
-                !inputValues.stakeholders.length ||
-                !inputValues.description ||
-                !inputValues.issuanceYear
-            ) {
-                validationMessage =
-                    "Please complete title, stakeholders, description, and issuance date.";
-            } else {
-                setValidSteps((prev) => [...prev, 0]);
-            }
+            validationMessage = validateStep0();
         }
 
-        if (validateAllSteps || currentStep === 1) {
-            if (!inputValues.type || !inputValues.scaleType) {
-                validationMessage = "Please complete type and scale.";
-            }
-            if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
-                validationMessage = "Pages must be a number or a range (e.g., 1-32).";
-            } else {
-                setValidSteps((prev) => [...prev, 1]);
-            }
+        if (!validationMessage && (validateAllSteps || currentStep === 1)) {
+            validationMessage = validateStep1();
         }
 
-        if (validateAllSteps || currentStep === 2) {
-            if (inputValues.allMunicipality) {
-                setValidSteps((prev) => [...prev, 2]);
-            } else if (inputValues.areaName) {
-                setValidSteps((prev) => [...prev, 2]);
-            } else if (inputValues.latitude && inputValues.longitude) {
-                if (
-                    kirunaGeoJSON &&
-                    kirunaGeoJSON.type === "FeatureCollection" &&
-                    kirunaGeoJSON.features
-                ) {
-                    const multipolygon = kirunaGeoJSON.features[0].geometry;
-
-                    if (multipolygon.type === "MultiPolygon") {
-                        const userPoint = point([inputValues.longitude, inputValues.latitude]);
-
-                        const isInsideKiruna = multipolygon.coordinates.some(
-                            (polygonCoordinates) => {
-                                const polygon = {
-                                    type: "Polygon",
-                                    coordinates: polygonCoordinates,
-                                };
-                                return booleanPointInPolygon(userPoint, polygon);
-                            }
-                        );
-
-                        if (isInsideKiruna) {
-                            setValidSteps((prev) => [...prev, 2]);
-                        } else {
-                            validationMessage = "The coordinates must be inside the Kiruna region.";
-                        }
-                    } else {
-                        validationMessage = "GeoJSON is not a MultiPolygon.";
-                    }
-                } else {
-                    validationMessage =
-                        "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
-                }
-            } else {
-                validationMessage =
-                    "Please provide either all municipality, an area, or valid coordinates.";
-            }
+        if (!validationMessage && (validateAllSteps || currentStep === 2)) {
+            validationMessage = validateStep2();
         }
 
         return validationMessage;
     };
+
+    const validateStep0 = () => {
+        if (
+            !inputValues.title ||
+            !inputValues.stakeholders.length ||
+            !inputValues.description ||
+            !inputValues.issuanceYear
+        ) {
+            return "Please complete title, stakeholders, description, and issuance date.";
+        }
+        setValidSteps((prev) => [...prev, 0]);
+        return null;
+    };
+
+    const validateStep1 = () => {
+        if (!inputValues.type || !inputValues.scaleType) {
+            return "Please complete type and scale.";
+        }
+        if (inputValues.pages && !/^(\d+|\d+-\d+)$/.test(inputValues.pages)) {
+            return "Pages must be a number or a range (e.g., 1-32).";
+        }
+        setValidSteps((prev) => [...prev, 1]);
+        return null;
+    };
+
+    const validateStep2 = () => {
+        if (inputValues.allMunicipality || inputValues.areaName) {
+            setValidSteps((prev) => [...prev, 2]);
+            return null;
+        }
+        if (inputValues.latitude && inputValues.longitude) {
+            return validateCoordinates();
+        }
+        return "Please provide either all municipality, an area, or valid coordinates.";
+    };
+
+    const validateCoordinates = () => {
+        if (
+            kirunaGeoJSON &&
+            kirunaGeoJSON.type === "FeatureCollection" &&
+            kirunaGeoJSON.features
+        ) {
+            const multipolygon = kirunaGeoJSON.features[0].geometry;
+            if (multipolygon.type === "MultiPolygon") {
+                return checkPointInKiruna(multipolygon);
+            }
+            return "GeoJSON is not a MultiPolygon.";
+        }
+        return "GeoJSON data for Kiruna is not loaded or has an invalid structure.";
+    };
+
+    const checkPointInKiruna = (multipolygon) => {
+        const userPoint = point([inputValues.longitude, inputValues.latitude]);
+        const isInsideKiruna = multipolygon.coordinates.some((polygonCoordinates) => {
+            const polygon = { type: "Polygon", coordinates: polygonCoordinates };
+            return booleanPointInPolygon(userPoint, polygon);
+        });
+
+        if (isInsideKiruna) {
+            setValidSteps((prev) => [...prev, 2]);
+            return null;
+        }
+        return "The coordinates must be inside the Kiruna region.";
+    };
+
 
     const handleUpdateDocument = async (data) => {
         try {
