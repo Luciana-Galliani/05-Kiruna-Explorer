@@ -57,19 +57,6 @@ describe("CityMap Tests", () => {
         });
     });
     
-/*    it("opens the details panel when clicking on a document marker", () => {
-
-        // Aspetta il caricamento dei marker
-        cy.wait(2000);
-
-        
-        // Simula un clic in un punto noto della mappa (coordinata o posizione del marker)
-        cy.get(".ol-layer canvas").click(20.222444, 67.8525, {force: true}); // marker noto
-
-        // Controlla che il pannello dettagli sia visibile
-        cy.get(".details-panel-container").should("exist");
-    }); */
-    
     it("changes the cursor to a pointer when hovering over a document marker", () => {
         cy.wait(2000);
         // Simula un movimento del mouse sopra un marker
@@ -119,7 +106,6 @@ describe("CityMap Tests", () => {
             const updatedHasContent = Array.from(updatedPixelData).some((value) => value !== 0);
             expect(updatedHasContent).to.be.true;
         });
-    });     
-      
+    });       
 
 });
