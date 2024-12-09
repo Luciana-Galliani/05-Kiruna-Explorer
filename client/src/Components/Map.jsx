@@ -22,8 +22,9 @@ import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
+//import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
+import actionIcon from "./reactIcons/actionIcon.jsx";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";

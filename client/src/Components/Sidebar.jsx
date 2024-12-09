@@ -8,6 +8,7 @@ import API from "../API/API";
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const [filter, setFilter] = useState(new Filter());
     const [stakeholders, setStakeholders] = useState([]);
+    const [types, setTypes] = useState([]);
 
     useEffect(() => {
         // Fetch stakeholders
@@ -22,7 +23,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 console.error("Error fetching stakeholders:", error);
             }
         };
-
+        
         fetchStakeholders();
     }, []);
         
@@ -49,6 +50,21 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
     const handleDescription = (description) => {
         const updatedFilter = new Filter({ ...filter, description: description });
+        setFilter(updatedFilter);
+    };
+
+    const handleRange = (startRange, endRange) => {
+        const updatedFilter = new Filter({ ...filter, startRange: startRange, endRange: endRange });
+        setFilter(updatedFilter);
+    };
+
+    const handleType = (type) => {
+        const updatedFilter = new Filter({ ...filter, type: type });
+        setFilter(updatedFilter);
+    };
+
+    const handleLanguage = (language) => {
+        const updatedFilter = new Filter({ ...filter, language: language });
         setFilter(updatedFilter);
     };
 
@@ -111,6 +127,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         handleTitle={handleTitle}
                         handleIssuanceDate={handleIssuanceDate}
                         handleDescription={handleDescription}
+                        handleRange={handleRange}
+                        handleType={handleType}
+                        handleLanguage={handleLanguage}
                         stakeholders={stakeholders}
                     />
                 </div>

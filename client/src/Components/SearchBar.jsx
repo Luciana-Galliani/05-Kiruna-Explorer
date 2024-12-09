@@ -8,6 +8,9 @@ const SearchBar = ({
     handleTitle,
     handleIssuanceDate,
     handleDescription,
+    handleRange,
+    handleType,
+    handleLanguage,
     stakeholders,
 }) => {
     const [searchTitle, setSearchTitle] = useState("");
@@ -15,6 +18,23 @@ const SearchBar = ({
     const [searchDescription, setSearchDescription] = useState("");
     const [searchIssuanceDate, setSearchIssuanceDate] = useState("");
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
+    const [startRange, setStartRange] = useState("");
+    const [endRange, setEndRange] = useState("");
+    const [searchType, setSearchType] = useState("");
+    const  [searchLanguage, setSearchLanguage] = useState("");
+
+    // Type of possible documents
+    const typeOptions = [
+        "Design Document",
+        "Informative Document",
+        "Prescriptive Document",
+        "Technical Document",
+        "Agreement",
+        "Conflict",
+        "Consultation",
+        "Action",
+        "Other",
+    ];
 
     //One useEffect for each search parameter, for now only works in that way
     useEffect(() => {
@@ -32,6 +52,19 @@ const SearchBar = ({
     useEffect(() => {
         handleAuthor(searchAuthor);
     }, [searchAuthor]);
+
+    useEffect(() => {
+        handleRange(startRange, endRange);
+    }, [startRange, endRange]);
+
+    useEffect(() => {
+        handleType(searchType);
+    }, [searchType]);
+
+    useEffect(() => {
+        handleLanguage(searchLanguage);
+    }, [searchLanguage]);
+
 
     const handleDeteiledSearch = (e) => {
         setShowDetailedSearch(!showDetailedSearch);
@@ -52,6 +85,23 @@ const SearchBar = ({
     const handleSearchAuthor = (e) => {
         setSearchAuthor(e.target.value);
     };
+
+    const handleSearchStartRange = (e) => {
+        setStartRange(e.target.value);
+    };
+
+    const handleSearchEndRange = (e) => {
+        setEndRange(e.target.value);
+    };
+
+    const handleSearchType = (e) => {
+        setSearchType(e.target.value);
+    };
+
+    const handleSearchLanguage = (e) => {
+        setSearchLanguage(e.target.value);
+    };
+
 
     const handleSwitchChange = (e) => {
         handleMunicipality();
@@ -75,6 +125,7 @@ const SearchBar = ({
                 </Button>
             </InputGroup>
             {showDetailedSearch && (
+                <div>
                 <Row className="mt-2">
                     <Col>
                         <Form.Control
@@ -83,6 +134,27 @@ const SearchBar = ({
                             value={searchDescription}
                             onChange={handleSearchDescription}
                         />
+                    </Col>
+                    <Col>
+                        <Form.Control
+                            type="text"
+                            placeholder="Language"
+                            value={searchLanguage}
+                            onChange={handleSearchLanguage}
+                        />
+                    </Col>
+                </Row>
+
+                <Row className="mt-2">
+                    <Col>
+                        <Form.Control as="select"
+                            value={searchType}
+                            onChange={handleSearchType}>
+                            <option value="" selected style={{color: "lightgray"}}>Document Type</option>
+                            {typeOptions.map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                            ))}
+                        </Form.Control>
                     </Col>
                     <Col>
                         <Form.Control as="select"
@@ -94,15 +166,27 @@ const SearchBar = ({
                             ))}
                         </Form.Control>
                     </Col>
+                </Row>
+
+                <Row className="mt-2">
                     <Col>
                         <Form.Control
-                            type="text"
-                            placeholder="Year"
-                            value={searchIssuanceDate}
-                            onChange={handleIssuanceDateChange}
+                            type="date"
+                            placeholder="Start Date"
+                            value={startRange}
+                            onChange={handleSearchStartRange}
+                        />
+                    </Col>
+                    <Col>
+                        <Form.Control
+                            type="date"
+                            placeholder="End Date"
+                            value={endRange}
+                            onChange={handleSearchEndRange}
                         />
                     </Col>
                 </Row>
+                </div>
             )}
             <Form.Check
                 type="switch"

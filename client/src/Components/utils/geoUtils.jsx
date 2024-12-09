@@ -6,6 +6,7 @@ import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Stroke, Icon } from 'ol/style';
 import { GeoJSON } from 'ol/format';
+import { getIconForType } from './iconUtils';
 
 function getRandomPointNearAreaCenter(area) {
     const centerLat = parseFloat(area.centerLat);
@@ -54,7 +55,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
         });
 
         const img = new Image();
-        img.src = iconMap[doc.type];
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type))}`;
         img.onload = () => {
             const initialStyle = new Style({
                 image: new Icon({
