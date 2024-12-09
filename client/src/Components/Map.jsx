@@ -7,13 +7,11 @@ import { useLocation } from "react-router-dom";
 
 // OpenLayers
 import "ol/ol.css";
-import { Map, View } from "ol";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
-import { OSM, Vector as VectorSource } from "ol/source";
-import { fromLonLat, toLonLat, transformExtent, transform } from "ol/proj";
+import { Vector as VectorSource } from "ol/source";
+import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
-import { Draw } from "ol/interaction";
-import { Style, Icon, Stroke } from "ol/style";
+import { Style, Stroke } from "ol/style";
 
 // Icons and API
 import API from "../API/API.mjs";
@@ -33,6 +31,7 @@ import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
+    const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
     const [areas, setAreas] = useState([]);
@@ -40,13 +39,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
 
-    const {
-        setAllDocuments,
-        allDocuments,
-        isLoggedIn,
-        isSelectingArea,
-        areaGeoJSON,
-    } = useContext(AppContext);
+    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingArea, areaGeoJSON, setAreaGeoJSON, isSelectingCoordinates } = useContext(AppContext);
 
     const iconMap = {
         "Design Document": designIcon,
@@ -59,16 +52,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Action: actionIcon,
         Other: otherIcon,
     };
-    const mapRef = useRef(null);
-    const { isSelectingCoordinates, setAreaGeoJSON } = useContext(AppContext);
-
     const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView });
-    useAreaDrawing({
-        mapInstanceRef,
-        isSelectingArea,
-        setAreaGeoJSON,
-        handleAreaSelected,
-    });
+    useAreaDrawing({ mapInstanceRef, isSelectingArea, setAreaGeoJSON, handleAreaSelected });
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -96,6 +81,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         fetchAllDocuments();
     }, [isSatelliteView]);
 
+    //draw new area
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map || !areaGeoJSON || isSelectingArea) return;
@@ -127,6 +113,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         };
     }, [isSelectingArea, areaGeoJSON]);
 
+    //draw documents and boundaries
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map) return;
@@ -211,51 +198,65 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleMapClick = (event) => {
             if (isSelectingCoordinates) {
-                const [lon, lat] = toLonLat(event.coordinate);
-                handleCoordinatesSelected(lon, lat);
+                handleCoordinateSelection(event);
             } else {
-                let clickedOnFeature = false;
-
-                // Controlla se il click è su una feature della mappa
-                map.forEachFeatureAtPixel(event.pixel, (feature) => {
-                    const documentId = feature.get("documentId");
-                    const matchedDocument = allDocuments.find((doc) => doc.id === documentId);
-                    setSelectedDocument(matchedDocument);
-                    clickedOnFeature = true;
-                });
-
-                // Se non è stata selezionata una feature, chiudi il pannello
-                if (!clickedOnFeature) {
-                    setSelectedDocument(null);
-                }
+                handleFeatureSelection(event);
             }
+        };
+
+        const handleCoordinateSelection = (event) => {
+            const [lon, lat] = toLonLat(event.coordinate);
+            handleCoordinatesSelected(lon, lat);
+        };
+
+        const handleFeatureSelection = (event) => {
+            const clickedFeature = findClickedFeature(event.pixel);
+
+            if (clickedFeature) {
+                const documentId = clickedFeature.get("documentId");
+                const matchedDocument = findMatchedDocument(documentId);
+                setSelectedDocument(matchedDocument);
+            } else {
+                setSelectedDocument(null);
+            }
+        };
+
+        const findClickedFeature = (pixel) => {
+            let clickedFeature = null;
+
+            map.forEachFeatureAtPixel(pixel, (feature) => {
+                clickedFeature = feature;
+            });
+
+            return clickedFeature;
+        };
+
+        const findMatchedDocument = (documentId) => {
+            return allDocuments.find((doc) => doc.id === documentId) || null;
         };
 
         const handleGlobalClick = (event) => {
             const mapElement = mapRef.current;
 
-            // Se il click è fuori dalla mappa e dal pannello, chiudi il pannello
             if (
                 mapElement &&
-                !mapElement.contains(event.target) && // Fuori dalla mappa
-                !event.target.closest(".details-panel") // Fuori dal pannello dei dettagli
+                !mapElement.contains(event.target) &&
+                !event.target.closest(".details-panel")
             ) {
                 setSelectedDocument(null);
             }
         };
 
-        // Aggiungi gli event listener
         map.on("click", handleMapClick);
         document.addEventListener("click", handleGlobalClick);
 
-        // Cleanup per entrambi gli event listener
         return () => {
             map.un("click", handleMapClick);
             document.removeEventListener("click", handleGlobalClick);
         };
     }, [isSelectingCoordinates, handleCoordinatesSelected, allDocuments]);
 
-
+    //hover effect
     useEffect(() => {
         const cleanup = handleMapPointerMove({
             mapInstanceRef,

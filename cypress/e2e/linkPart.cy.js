@@ -77,24 +77,9 @@ describe('Link Part Form Tests', () => {
         cy.get('button').contains('Add Connection').should('be.disabled');
     });
     
- /*   it('should remove a connection from the list', () => {
-        cy.get('button[id="dropdown-basic-button"]').click();
-        cy.get('.dropdown-menu').contains('Development Plan (41)').click();
+    it('should save the form when save button is clicked', () => {
+        cy.get('button').contains('Save').click();
+        cy.url().should("eq", `${clientUrl}/`);
+    });
     
-        cy.get('select').select('Prevision');
-    
-        cy.get('button').contains('Add Connection').should('not.be.disabled');
-    
-        cy.get('button').contains('Add Connection').click();
-    
-        cy.get('.connections').should('contain', 'Document: Development Plan (41)');
-        cy.get('.connections').should('contain', 'Type: Prevision');
-    
-        cy.get('.connections').find('button').contains('✖').click(); // Clicca sul pulsante "✖"
-    
-        cy.get('.connections').should('not.contain', 'Document: Development Plan (41)');
-        cy.get('.connections').should('not.contain', 'Type: Prevision');
-    }); */
-      
-
 });

@@ -41,5 +41,38 @@ describe('General Part Form Tests', () => {
   
       cy.get('button').contains('Next').click();
     });
+
+    it('should write a new stakeholder', () => {
+      cy.get('input[placeholder="Click to select stakeholders"]').click();
+
+      cy.get('.modal')
+      .should('be.visible');
+    
+      cy.get('input[type="checkbox"][value="Others"]')
+      .check();
+
+      cy.get('input[placeholder="Enter a name"]')
+      .should('be.visible')
+      .type('Stake 1');
+
+      cy.contains('OK').click();
+    });
+
+    it('should hide the text field of a new stakeholder', () => {
+      cy.get('input[placeholder="Click to select stakeholders"]').click();
+
+      cy.get('.modal')
+      .should('be.visible');
+    
+      cy.get('input[type="checkbox"][value="Others"]')
+      .check();
+
+      cy.get('input[placeholder="Enter a name"]')
+      .should('be.visible');
+
+      cy.get('input[type="checkbox"][value="Others"]')
+      .uncheck();
+      
+    });
   });
   

@@ -98,35 +98,35 @@ describe('Georeference Part Form Tests', () => {
         cy.get('input[placeholder="Enter area name"]').should('have.value', 'New Area 1');
       });
 
-/*    it('should allow selecting an existing area in "Manage Area"', () => {
+    it('should allow selecting an existing area in "Manage Area"', () => {
     
-        cy.get('button').contains('Draw new Area').click();
+        cy.get('button').contains('Select or draw new Area').click();
 
         cy.get('button').contains('No Area Selected').click();
 
-        cy.get('.span.area-name').should('contain', 'Area 1');
+        cy.get('.dropdown-menu.show').should('contain', 'Area 2').click();
 
         cy.get('input[placeholder="Enter area name"]').should('be.disabled');
-    }); */
+    });
 
-      it('should save the area when "OK" is clicked', () => {
-    
-        cy.get('button').contains('Select or draw new Area').click();
-    
-        cy.get('input[placeholder="Enter area name"]').type('New Area2');
-    
-        cy.get('button').contains('OK').click();
-    
-        cy.get('form').contains('Manage Area').should('not.exist');
-        cy.get('button').contains('New Area2').should('exist');
-      });
+    it('should save the area when "OK" is clicked', () => {
 
-      it('should cancel the area creation when "Cancel" is clicked', () => {
-        
-        cy.get('button').contains('Select or draw new Area').click();
+    cy.get('button').contains('Select or draw new Area').click();
+
+    cy.get('input[placeholder="Enter area name"]').type('New Area2');
+
+    cy.get('button').contains('OK').click();
+
+    cy.get('form').contains('Manage Area').should('not.exist');
+    cy.get('button').contains('New Area2').should('exist');
+    });
+
+    it('should cancel the area creation when "Cancel" is clicked', () => {
     
-        cy.get('button').contains('Cancel').click();
-    
-        cy.get('form').contains('Manage Area').should('not.exist');
-      });
+    cy.get('button').contains('Select or draw new Area').click();
+
+    cy.get('button').contains('Cancel').click();
+
+    cy.get('form').contains('Manage Area').should('not.exist');
+    });
   });
