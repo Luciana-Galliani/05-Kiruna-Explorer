@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import PropTypes from "prop-types";
 
-const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
+const Header = ({ handleLogout, headerClass, isSatelliteView, seeOnMap }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { isLoggedIn } = useContext(AppContext);
 
@@ -45,9 +45,8 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
                 >
                     <Link
                         to="/"
-                        className={`${
-                            isSatelliteView ? "text-light" : "text-dark"
-                        } text-decoration-none`}
+                        className={`${isSatelliteView ? "text-light" : "text-dark"
+                            } text-decoration-none`}
                         style={{ fontFamily: "fantasy" }}
                     >
                         Kiruna eXplorer
@@ -76,7 +75,7 @@ const Header = ({ handleLogout, headerClass, isSatelliteView }) => {
             </div>
 
             {/* Sidebar Component */}
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={setIsSidebarOpen} />
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={setIsSidebarOpen} seeOnMap={seeOnMap} />
         </header>
     );
 };

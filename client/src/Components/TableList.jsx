@@ -16,7 +16,7 @@ import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
 
-const TableList = ({ filter }) => {
+const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     const icon = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
@@ -131,6 +131,9 @@ const TableList = ({ filter }) => {
                         initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
+                        seeOnMap={seeOnMap}
+                        toggleSidebar={toggleSidebar}
+                        see={true}
                     />
                 </Modal>
             )}

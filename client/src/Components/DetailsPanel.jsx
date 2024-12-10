@@ -1,5 +1,28 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
+import designIcon from "../Icons/design.svg";
+import informativeIcon from "../Icons/informative.svg";
+import prescriptiveIcon from "../Icons/prescriptive.svg";
+import technicalIcon from "../Icons/technical.svg";
+import agreementIcon from "../Icons/agreement.svg";
+import conflictIcon from "../Icons/conflict.svg";
+import consultationIcon from "../Icons/consultation.svg";
+import actionIcon from "../Icons/action.svg";
+import otherIcon from "../Icons/other.svg";
+import { Button } from "react-bootstrap";
+
+// Mappa delle icone per tipo di documento
+const documentIcons = {
+    Design: designIcon,
+    Informative: informativeIcon,
+    Prescriptive: prescriptiveIcon,
+    Technical: technicalIcon,
+    Agreement: agreementIcon,
+    Conflict: conflictIcon,
+    Consultation: consultationIcon,
+    Action: actionIcon,
+    Other: otherIcon,
+};
 
 import {
     faFilePdf,
@@ -26,10 +49,15 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
+const DetailsPanel = ({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSidebar, see }) => {
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
     const [doc, setDoc] = useState(initialDocId);
+
+    const getDocumentIcon = (type) => {
+        return documentIcons[type] || otherIcon;
+    };
+
 
     useEffect(() => {
         if (initialDocId) setDoc(initialDocId);
@@ -49,6 +77,22 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
         fetchDocumentById();
     }, [doc]);
 
+    const handleSeeOnMap = () => {
+        if (!document) return;
+
+        if (document.allMunicipality === false) {
+            if (document.area) {
+                // Pass the area
+                seeOnMap({ area: document.area });
+
+            } else if (document.latitude && document.longitude) {
+                // Pass the coordinates
+                seeOnMap([document.longitude, document.latitude]);
+            }
+            toggleSidebar();
+            onClose();
+        }
+    };
 
     if (!document) {
         return (
@@ -101,7 +145,26 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     return (
         <div className="details-panel-container">
             <div>
-                <h2 className="text-center mb-4">{document.title}</h2>
+                <div className="d-flex align-items-center justify-content-center mb-4">
+                    {/* Render document icon */}
+                    <img
+                        src={getDocumentIcon(document.type)}
+                        alt={`${document.type} icon`}
+                        style={{ width: "40px", height: "40px", marginRight: "10px" }}
+                    />
+                    {/* Document title */}
+                    <h2 className="text-center m-0">{document.title}</h2>
+                </div>
+
+                {/* Pulsante "See on Map" subito dopo il titolo */}
+                {see == true && document.allMunicipality === false && (
+                    <div className="d-flex justify-content-center mb-4">
+                        <Button variant="dark" onClick={handleSeeOnMap}>
+                            See on Map <i className="bi bi-geo-alt"></i>
+                        </Button>
+                    </div>
+                )}
+
 
                 <ul className="list-unstyled">
                     <li>
@@ -217,6 +280,7 @@ DetailsPanel.propTypes = {
     initialDocId: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
+    seeOnMap: PropTypes.any,
 };
 
 export default DetailsPanel;

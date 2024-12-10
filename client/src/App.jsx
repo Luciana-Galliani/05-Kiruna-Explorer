@@ -17,6 +17,7 @@ import { AppContext } from "./context/AppContext";
 function App() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [confirmationMessage] = useState("Do you really want to logout?");
+    const [centerIn, setCenterIn] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -61,6 +62,10 @@ function App() {
         setShowLogoutModal(false);
     };
 
+    const seeOnMap = (info) => {
+        setCenterIn(info);
+    }
+
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
     const contentPadding = isHomePage ? "60px" : "0";
@@ -72,6 +77,7 @@ function App() {
                 headerClass={headerClass}
                 isHomePage={isHomePage}
                 isSatelliteView={isSatelliteView}
+                seeOnMap={seeOnMap}
             />
 
             <HomePage
@@ -79,6 +85,8 @@ function App() {
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
                 handleAreaSelected={handleAreaSelected}
+                centerIn={centerIn}
+                setCenterIn={setCenterIn}
             />
 
             <Routes>

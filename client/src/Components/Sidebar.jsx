@@ -4,7 +4,7 @@ import TableList from "./TableList";
 import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
     const [filter, setFilter] = useState(new Filter());
 
     const handleMunicipality = () => {
@@ -93,7 +93,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         handleDescription={handleDescription}
                     />
                 </div>
-                <TableList filter={filter} />
+                <TableList filter={filter} seeOnMap={seeOnMap} toggleSidebar={toggleSidebar} />
             </div>
 
             {/* Overlay */}

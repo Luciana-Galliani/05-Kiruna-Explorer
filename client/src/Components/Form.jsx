@@ -12,6 +12,8 @@ import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from "prop-types";
 import { point, booleanPointInPolygon } from "@turf/turf";
 import StepProgressBar from "./StepProgressBar.jsx";
+import { booleanWithin } from "@turf/turf";
+
 
 // Function to initialize form values
 const initializeInputValues = (doc) => {
@@ -190,6 +192,31 @@ export function DescriptionForm({
         const areaToSave = selectedArea || newAreaName;
 
         if (areaToSave) {
+            const geojson = {
+                type: "Polygon",
+                coordinates: [area],
+            };
+
+            if (!kirunaGeoJSON || kirunaGeoJSON.type !== "FeatureCollection") {
+                showNotification("GeoJSON data for Kiruna is not loaded or invalid.", "error");
+                return;
+            }
+
+            const isAreaInsideKiruna = kirunaGeoJSON.features.some((feature) => {
+                if (feature.geometry.type === "MultiPolygon") {
+                    return feature.geometry.coordinates.some((polygonCoordinates) => {
+                        const polygon = { type: "Polygon", coordinates: polygonCoordinates };
+                        return booleanWithin(geojson, polygon);
+                    });
+                }
+                return false;
+            });
+
+            if (!isAreaInsideKiruna) {
+                showNotification("The selected area must be inside the Kiruna region.", "error");
+                return;
+            }
+
             setSelectedArea(areaToSave);
             setInputValues((prev) => ({
                 ...prev,
@@ -197,10 +224,6 @@ export function DescriptionForm({
             }));
 
             if (newAreaName) {
-                const geojson = {
-                    type: "Polygon",
-                    coordinates: [area],
-                };
                 const areaData = {
                     idArea: null,
                     name: newAreaName,
@@ -221,6 +244,7 @@ export function DescriptionForm({
             allMunicipality: false,
         }));
     };
+
 
     const handleSelectExistingArea = (areaselected) => {
         const geojson = areaselected?.geojson || null;

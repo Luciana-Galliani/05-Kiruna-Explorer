@@ -30,7 +30,7 @@ import DetailsPanel from "./DetailsPanel";
 import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
+const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn }) => {
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
@@ -52,7 +52,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Action: actionIcon,
         Other: otherIcon,
     };
-    const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView });
+    const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView, centerIn });
     useAreaDrawing({ mapInstanceRef, isSelectingArea, setAreaGeoJSON, handleAreaSelected });
 
     useEffect(() => {
@@ -276,6 +276,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
+                    see={false}
                 />
             )}
         </div>
