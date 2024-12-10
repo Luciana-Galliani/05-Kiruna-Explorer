@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, Form, Dropdown } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../API/API.mjs";
 import { Stakeholder } from "../models.mjs";
 import { GeneralPart } from "./GeneralPart.jsx";
@@ -10,9 +10,8 @@ import { GeoPart } from "./GeoPart.jsx";
 import { AppContext } from "../context/AppContext.jsx";
 import { ProgressBar } from "react-step-progress-bar";
 import PropTypes from "prop-types";
-import { point, booleanPointInPolygon } from "@turf/turf";
+import { point, booleanPointInPolygon, booleanWithin } from "@turf/turf";
 import StepProgressBar from "./StepProgressBar.jsx";
-import { booleanWithin } from "@turf/turf";
 
 
 // Function to initialize form values
@@ -50,7 +49,7 @@ export function DescriptionForm({
     className,
     setCoordinates,
     newarea,
-    setnewArea,
+    setNewArea,
 }) {
     const navigate = useNavigate();
     const [inputValues, setInputValues] = useState(() => initializeInputValues(existingDocument));
@@ -77,7 +76,7 @@ export function DescriptionForm({
     const handleChooseInMap = () => {
         setIsSelectingCoordinates(true);
         setAreaGeoJSON(null);
-        setnewArea(null);
+        setNewArea(null);
         setArea(null);
         setNewAreaName(null);
         setInputValues((prev) => ({
@@ -275,7 +274,7 @@ export function DescriptionForm({
     };
 
     const fetchFiles = async () => {
-        if (!existingDocument || !existingDocument.document.originalResources) return;
+        if (!existingDocument?.document?.originalResources) return;
 
         const documentId = existingDocument.document.id;
         const resources = existingDocument.document.originalResources;
@@ -476,7 +475,7 @@ export function DescriptionForm({
             }
 
             setArea(null);
-            setnewArea(null);
+            setNewArea(null);
 
             const documentData = {
                 ...data,
@@ -524,7 +523,7 @@ export function DescriptionForm({
                 areaId = selected ? selected.id : null;
             }
             setArea(null);
-            setnewArea(null);
+            setNewArea(null);
             const documentData = {
                 ...data,
                 areaId,
@@ -669,7 +668,7 @@ export function DescriptionForm({
                                                 }}
                                                 id="dropdown-basic"
                                             >
-                                                {selectedArea ? selectedArea : "No Area Selected"}
+                                                {selectedArea || "No Area Selected"}
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
                                                 {areas.map((area, index) => (
@@ -741,6 +740,6 @@ DescriptionForm.propTypes = {
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
     newarea: PropTypes.array,
-    setnewArea: PropTypes.func,
+    setNewArea: PropTypes.func,
 };
 

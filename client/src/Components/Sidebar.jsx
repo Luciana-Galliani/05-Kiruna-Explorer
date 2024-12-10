@@ -124,6 +124,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
 Sidebar.propTypes = {
     isSidebarOpen: PropTypes.bool,
     toggleSidebar: PropTypes.func.isRequired,
+    seeOnMap: PropTypes.func
 };
 
 export default Sidebar;

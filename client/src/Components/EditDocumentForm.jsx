@@ -6,7 +6,7 @@ import { AppContext } from "../context/AppContext.jsx";
 import PropTypes from "prop-types";
 import { DescriptionForm } from "./Form.jsx";
 
-export function EditDocumentForm({ coordinates, className, setCoordinates, newarea, setnewArea }) {
+export function EditDocumentForm({ coordinates, className, setCoordinates, newarea, setNewArea }) {
     const { documentId } = useParams(); //Get the document ID
     const navigate = useNavigate();
     const [existingDocument, setExistingDocument] = useState();
@@ -41,7 +41,7 @@ export function EditDocumentForm({ coordinates, className, setCoordinates, newar
                 className={className}
                 setCoordinates={setCoordinates}
                 newarea={newarea}
-                setnewArea={setnewArea}
+                setNewArea={setNewArea}
             />
         );
     } else {
@@ -65,5 +65,5 @@ EditDocumentForm.propTypes = {
     className: PropTypes.string,
     setCoordinates: PropTypes.func.isRequired,
     newarea: PropTypes.any,
-    setnewArea: PropTypes.func,
+    setNewArea: PropTypes.func,
 };

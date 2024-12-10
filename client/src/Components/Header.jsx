@@ -84,6 +84,7 @@ Header.propTypes = {
     handleLogout: PropTypes.func.isRequired,
     headerClass: PropTypes.string,
     isSatelliteView: PropTypes.bool.isRequired,
+    seeOnMap: PropTypes.func
 };
 
 export default Header;

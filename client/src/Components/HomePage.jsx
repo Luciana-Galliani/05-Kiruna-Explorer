@@ -2,7 +2,7 @@ import React from 'react';
 import CityMap from './Map.jsx';
 import PropTypes from 'prop-types';
 
-const HomePage = ({ handleCoordinatesSelected, isSatelliteView, handleSatelliteView, handleAreaSelected, centerIn, setCenterIn }) => {
+const HomePage = ({ handleCoordinatesSelected, isSatelliteView, handleSatelliteView, handleAreaSelected, centerIn }) => {
     return (
         <CityMap
             handleCoordinatesSelected={handleCoordinatesSelected}
@@ -18,7 +18,8 @@ HomePage.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleSatelliteView: PropTypes.func.isRequired,
-    handleAreaSelected: PropTypes.func.isRequired
+    handleAreaSelected: PropTypes.func.isRequired,
+    centerIn: PropTypes.any
 };
 
 export default HomePage;

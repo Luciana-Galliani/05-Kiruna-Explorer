@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 
 // OpenLayers
 import "ol/ol.css";
-import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
@@ -31,6 +31,7 @@ import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn }) => {
+    const see = false;
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
@@ -276,7 +277,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
-                    see={false}
+                    see={see}
                 />
             )}
         </div>
@@ -287,6 +288,7 @@ CityMap.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleAreaSelected: PropTypes.func.isRequired,
+    centerIn: PropTypes.any
 };
 
 export default CityMap;

@@ -281,6 +281,8 @@ DetailsPanel.propTypes = {
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
     seeOnMap: PropTypes.any,
+    toggleSidebar: PropTypes.func.isRequired,
+    see: PropTypes.bool.isRequired
 };
 
 export default DetailsPanel;

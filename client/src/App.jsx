@@ -23,7 +23,7 @@ function App() {
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSatelliteView, setIsSatelliteView] = useState(true);
-    const [newArea, setnewArea] = useState(null);
+    const [newArea, setNewArea] = useState(null);
 
     const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
 
@@ -36,7 +36,7 @@ function App() {
         setIsSelectingCoordinates(false);
     };
     const handleAreaSelected = (newA) => {
-        setnewArea(newA);
+        setNewArea(newA);
         setIsSelectingArea(false);
     }
 
@@ -98,7 +98,7 @@ function App() {
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                             newarea={newArea}
-                            setnewArea={setnewArea}
+                            setNewArea={setNewArea}
 
                         />
                     }
@@ -111,7 +111,7 @@ function App() {
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                             newarea={newArea}
-                            setnewArea={setnewArea}
+                            setNewArea={setNewArea}
                         />
                     }
                 />
@@ -135,7 +135,7 @@ function App() {
                 location={location}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
-                setnewArea={setnewArea}
+                setNewArea={setNewArea}
                 setCoordinates={setCoordinates}
             />
 
