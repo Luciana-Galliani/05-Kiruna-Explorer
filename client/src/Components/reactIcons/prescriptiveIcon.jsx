@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionIcon = ({
+const PrescriptiveIcon = ({
   size = 24,
   fillPrimary = "white",
   fillSecondary = "gray",
@@ -46,12 +46,12 @@ const ActionIcon = ({
         style={{strokeWidth:1.02852, fill:"#000000"}}
         r="56.568539%" />
      <circle
-        style={{fill:"#ffffff", strokeWidth:58.5187}}
+        style={{fill:fillPrimary, strokeWidth:58.5187}}
         id="path2"
         cx="192"
         cy="256"
         r="224"
-        fill={{fillPrimary}}/>
+        />
      <g
         id="g1"
         transform="matrix(0.7,0,0,0.6125,57.6,99.2)">
@@ -66,7 +66,7 @@ const ActionIcon = ({
             points="49.2,529.1 59.2,529.1 59.2,532.1 69.2,527.1 59.2,522.1 59.2,525.1 49.2,525.1 "
             stroke="#ffffff"
             stroke-width="2"
-            fill="#ffffff"
+            style={{fill:fillPrimary}}
             id="polygon1" />
        </g>
      </g>
@@ -75,4 +75,4 @@ const ActionIcon = ({
     
 );
 
-export default ActionIcon;
+export default PrescriptiveIcon;

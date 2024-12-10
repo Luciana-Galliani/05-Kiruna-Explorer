@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionIcon = ({
+const InformativeIcon = ({
   size = 24,
   fillPrimary = "white",
   fillSecondary = "gray",
@@ -46,12 +46,12 @@ const ActionIcon = ({
         style={{strokeWidth:1.02852, fill:"#000000"}}
         r="56.568539%" />
      <circle
-        style={{fill:"#ffffff", strokeWidth:10.7682}}
+        style={{fill:fillPrimary, strokeWidth:10.7682}}
         id="path4"
         cx="192"
         cy="256"
         r="224" 
-        fill={{fillPrimary}}/>
+        />
      <g
         id="g4"
         transform="translate(-21.857699,-1.324709)">
@@ -63,7 +63,7 @@ const ActionIcon = ({
        <ellipse
           cx="126.17056"
           cy="232.49042"
-          stroke="#ffffff"
+          style={{stroke:fillPrimary, strokeWidth:11.6364}}
           stroke-width="11.6364"
           fill="none"
           id="circle2"
@@ -75,12 +75,12 @@ const ActionIcon = ({
           x="106.63596"
           y="278.69421"
           text-anchor="middle"
-          fill="#ffffff"
+          fill={{fillPrimary}}
           font-size="73.0873px"
           font-family="Arial"
           dy="21.926174"
           id="text2"
-          style="stroke-width:6.09061">i</text>
+          style={{strokeWidth:6.09061}}>i</text>
        <g
           id="g3"
           transform="translate(35.742304,102.51177)" />
@@ -92,4 +92,4 @@ const ActionIcon = ({
 
 );
 
-export default ActionIcon;
+export default InformativeIcon;

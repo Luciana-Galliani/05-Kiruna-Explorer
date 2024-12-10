@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionIcon = ({
+const ConsultationIcon = ({
   size = 24,
   fillPrimary = "white",
   fillSecondary = "gray",
@@ -46,12 +46,12 @@ const ActionIcon = ({
       id="circle1"
       style={{strokeWidth:1, fill:"#000000"}}
       r="50.000053%" /><circle
-      style={{fill:"#ffffff", strokeWidth:41.9546}}
+      style={{fill:fillPrimary, strokeWidth:41.9546}}
       id="path4"
       cx="234.3065"
       cy="234.30701"
       r="205.01863"
-      fill={{fillPrimary}} /><g
+      /><g
       id="g3"
       transform="matrix(0.62558343,0,0,0.8276804,270.38278,34.324288)">
    	<g
@@ -92,4 +92,4 @@ const ActionIcon = ({
     
 );
 
-export default ActionIcon;
+export default ConsultationIcon;

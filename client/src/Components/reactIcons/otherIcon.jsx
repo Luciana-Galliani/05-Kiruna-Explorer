@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionIcon = ({
+const OtherIcon = ({
   size = 24,
   fillPrimary = "white",
   fillSecondary = "gray",
@@ -46,23 +46,23 @@ const ActionIcon = ({
         style={{strokeWidth:1.02852, fill:"#000000"}}
         r="56.568539%" />
      <circle
-        style={{fill:"#ffffff", strokeWidth:10.7682}}
+        style={{fill:fillPrimary, strokeWidth:10.7682}}
         id="path4"
         cx="192"
         cy="256"
         r="224" 
-        fill={{fillPrimary}}/>
+        />
      <g
         id="g4"
         transform="translate(-21.857699,-1.324709)">
        <path
           d="m 9.9353169,41.849418 c 0,-21.62125 20.0900001,-39.2000001 44.8000001,-39.2000001 H 166.73532 V 81.049418 c 0,10.84125 10.01,19.600002 22.4,19.600002 h 89.6 v 176.4 c 0,21.62125 -20.09,39.2 -44.8,39.2 H 54.735317 c -24.71,0 -44.8000001,-17.57875 -44.8000001,-39.2 z m 268.8000031,39.2 h -89.6 V 2.6494179 Z"
           id="path1"
-          style="stroke-width:0.65479"
+          style={{strokeWidth:0.65479}}
           transform="translate(69.522381,97.87529)" />
      </g>
    </svg>
     
 );
 
-export default ActionIcon;
+export default OtherIcon;

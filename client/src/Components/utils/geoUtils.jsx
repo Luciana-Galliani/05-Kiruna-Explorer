@@ -55,7 +55,10 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
         });
 
         const img = new Image();
-        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type))}`;
+        
+        // if length of stakeholders is equal to 1, get the color of the first stakeholder, else use purple
+        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor))}`;
         img.onload = () => {
             const initialStyle = new Style({
                 image: new Icon({
@@ -63,7 +66,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
                     img: img,
                     scale: 0.5,
                     imgSize: [img.width, img.height],
-                    color: doc.stakeholders?.[0]?.color || "purple",
+                    //color: doc.stakeholders?.[0]?.color || "purple",
                 }),
             });
             feature.setStyle(initialStyle);
