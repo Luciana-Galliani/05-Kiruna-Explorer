@@ -5,6 +5,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { DescriptionForm } from "./Components/Form";
 import { EditDocumentForm } from "./Components/EditDocumentForm";
 import HomePage from "./Components/HomePage";
+import DiagramPage from "./Components/DiagramPage";
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
 import Header from "./Components/Header";
@@ -24,7 +25,8 @@ function App() {
     const [isSatelliteView, setIsSatelliteView] = useState(true);
     const [newArea, setnewArea] = useState(null);
 
-    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
+    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } =
+        useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
@@ -37,7 +39,7 @@ function App() {
     const handleAreaSelected = (newA) => {
         setnewArea(newA);
         setIsSelectingArea(false);
-    }
+    };
 
     const handleLogin = async (username, password) => {
         try {
@@ -74,12 +76,14 @@ function App() {
                 isSatelliteView={isSatelliteView}
             />
 
-            <HomePage
-                handleCoordinatesSelected={handleCoordinatesSelected}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                handleAreaSelected={handleAreaSelected}
-            />
+            {location.pathname !== "/diagram" && (
+                <HomePage
+                    handleCoordinatesSelected={handleCoordinatesSelected}
+                    isSatelliteView={isSatelliteView}
+                    handleSatelliteView={handleSatelliteView}
+                    handleAreaSelected={handleAreaSelected}
+                />
+            )}
 
             <Routes>
                 <Route
@@ -91,10 +95,10 @@ function App() {
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                             newarea={newArea}
                             setnewArea={setnewArea}
-
                         />
                     }
                 />
+                <Route path="/diagram" element={<DiagramPage />} />
                 <Route
                     path="edit/:documentId"
                     element={
@@ -112,14 +116,8 @@ function App() {
                     path="/registration"
                     element={<RegistrationForm handleLogin={handleLogin} />}
                 />
-                <Route
-                    path="/allDocuments"
-                    element={<ListDocuments condition="false" />}
-                />
-                <Route
-                    path="/municipality"
-                    element={<ListDocuments condition="true" />}
-                />
+                <Route path="/allDocuments" element={<ListDocuments condition="false" />} />
+                <Route path="/municipality" element={<ListDocuments condition="true" />} />
             </Routes>
 
             <Footer
