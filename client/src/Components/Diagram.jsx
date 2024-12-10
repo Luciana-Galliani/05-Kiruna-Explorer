@@ -3,7 +3,7 @@ import API from "../API/API.mjs";
 import * as d3 from "d3";
 import { min, max, range } from "d3-array";
 
-// Transformer les documents pour extraire les échelles et les années
+// Function to process the documents and return the nodes and links
 const processDocuments = (documents) => {
     const scales = new Map();
     const nodes = [];
@@ -16,7 +16,7 @@ const processDocuments = (documents) => {
         const issuanceDate = new Date(doc.issuanceDate);
         const year = issuanceDate.getFullYear();
 
-        // Gestion des échelles verticales
+        // Vertical scale
         let scaleKey = doc.scaleType;
         if (doc.scaleType === "Plan") {
             scaleKey = doc.scaleValue;
@@ -25,7 +25,7 @@ const processDocuments = (documents) => {
             scales.set(scaleKey, scales.size);
         }
 
-        // Ajouter le nœud
+        // Add nodes
         nodes.push({
             id: doc.id,
             title: doc.title,
@@ -36,7 +36,7 @@ const processDocuments = (documents) => {
             stakeholders: doc.stakeholders,
         });
 
-        // Ajouter les connexions
+        // Add connections
         doc.connections.forEach((connection) => {
             links.push({
                 source: doc.id,
@@ -87,7 +87,6 @@ export default function Diagram() {
         const width = dimensions.width - margin.left - margin.right;
         const height = dimensions.height - 60 - margin.top - margin.bottom;
 
-        // Créer le SVG
         const svg = d3.select(svgRef.current);
 
         svg.selectAll("*").remove();
@@ -98,7 +97,7 @@ export default function Diagram() {
             .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-        // Définir les échelles
+        // Scales
         const xScale = d3
             .scaleTime()
             .domain([new Date(years[0], 0, 1), new Date(years[years.length - 1], 11, 31)])
@@ -106,37 +105,37 @@ export default function Diagram() {
 
         const yScale = d3.scaleBand().domain(scales).range([0, height]);
 
-        // Ajouter les colonnes blanches alternées
+        // white alternating columns
         g.selectAll(".year-column")
-            .data(years.filter((y) => y % 2 === 0)) // Une colonne sur deux
+            .data(years.filter((y) => y % 2 === 0))
             .enter()
             .append("rect")
             .attr("class", "year-column")
-            .attr("x", (d) => xScale(new Date(d, 0, 1))) // Position horizontale selon l'année
-            .attr("y", 0) // Départ en haut
-            .attr("width", xScale(new Date(years[1], 0, 1)) - xScale(new Date(years[0], 0, 1))) // Largeur de la colonne
-            .attr("height", height) // Couvrir toute la hauteur
-            .attr("fill", "white") // Couleur de la colonne
-            .attr("opacity", 0.2); // Légèrement transparent pour ne pas cacher complètement le fond
+            .attr("x", (d) => xScale(new Date(d, 0, 1)))
+            .attr("y", 0)
+            .attr("width", xScale(new Date(years[1], 0, 1)) - xScale(new Date(years[0], 0, 1)))
+            .attr("height", height)
+            .attr("fill", "white")
+            .attr("opacity", 0.2);
 
-        // Ajouter des lignes horizontales
+        // Horizontal lines
         g.selectAll(".horizontal-grid")
-            .data(scales) // Les échelles sont les différentes valeurs sur l'axe Y
+            .data(scales)
             .enter()
             .append("line")
             .attr("class", "horizontal-grid")
-            .attr("x1", (d, i) => ((d[0] !== "1" || scales[i - 1][0]) !== "1" ? -80 : 0)) // Début de la ligne à gauche
-            .attr("x2", width) // Fin de la ligne à droite
-            .attr("y1", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // Aligner avec le centre de chaque bande
-            .attr("y2", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // Aligner avec le centre de chaque bande
-            .attr("stroke", "black") // Couleur de la grille
+            .attr("x1", (d, i) => ((d[0] !== "1" || scales[i - 1][0]) !== "1" ? -80 : 0))
+            .attr("x2", width)
+            .attr("y1", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // add 0.5 to avoid weird graphical glitches
+            .attr("y2", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // add 0.5 to avoid weird graphical glitches
+            .attr("stroke", "black")
             .attr("stroke-width", "1");
 
-        // Ajouter les axes
+        // Axis
         g.append("g").call(d3.axisLeft(yScale));
         g.append("g").call(d3.axisTop(xScale));
 
-        // Dessiner les liens
+        // Connections
         g.selectAll(".link")
             .data(links)
             .enter()
@@ -155,7 +154,7 @@ export default function Diagram() {
             .attr("stroke", "black")
             .attr("stroke-width", 1);
 
-        // Dessiner les nœuds
+        // Nodes
         g.selectAll(".node")
             .data(nodes)
             .enter()
