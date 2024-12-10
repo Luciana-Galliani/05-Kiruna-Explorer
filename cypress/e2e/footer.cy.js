@@ -10,17 +10,6 @@ describe('Footer Tests', () => {
         cy.url().should('eq', `${clientUrl}/`);
     });
 
-  /*  beforeEach(() => {
-        cy.task("checkOrRegisterAndLogin", {
-            username: "username",        // Enter the username    
-            password: "password123",     // Enter your password
-        }).then(() => {
-            // Once logged in, visit the home page
-            cy.visit(clientUrl);
-        });
-    }); */
-      
-
     it("renders 'Add Document' and 'Satellite View' buttons on the homepage for logged-in users", () => {
       
         // Check the presence of the buttons

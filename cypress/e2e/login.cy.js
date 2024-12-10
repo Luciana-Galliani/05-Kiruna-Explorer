@@ -21,7 +21,6 @@ describe('Login Page Tests', () => {
     cy.url().should('eq', `${clientUrl}/login`);
   });
 
-
   it('Login successfully with valid credentials', () => {
 
     cy.get("input[placeholder='Enter your Username']").type('username');

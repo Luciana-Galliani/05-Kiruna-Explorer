@@ -26,7 +26,7 @@ describe('Sidebar Tests', () => {
         cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
       
         // Click the overlay to close the sidebar
-        cy.get(".overlay").should('be.visible').click();
+        cy.get(".overlay").click({ force: true }); //force because it has CSS property: position: fixed and it's being covered by another element: <td>Develop...</td>
       
         // Verify that the sidebar has been closed
         cy.get(".sidebar").should("have.css", "transform", "matrix(1, 0, 0, 1, -950, 0)");
@@ -41,19 +41,18 @@ describe('Sidebar Tests', () => {
         cy.get('.sidebar').should('contain', 'Development Plan (41)');
     });
 
-/*    it('Search a document using filters', () => {
+    it('Search a document using filters', () => {
 
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
 
-        cy.get('input[placeholder="Title..."]').type('Development Plan (41)');
-        cy.get('.sidebar').should('contain', 'Development Plan (41)');
-
+        cy.get('input[placeholder="Title..."]').type('fore');
+        
         // Enable detailed search
-        cy.get('.bi.bi-sliders').click();
-        cy.get('input[placeholder="Description"]').type('document');
-        cy.get('input[placeholder="Author"]').type('LKAB');
+        cy.get('.bi.bi-sliders').click({force: true});
+        cy.get('input[placeholder="Description"]').type('plan');
+        cy.get('input[placeholder="Stakeholder"]').type('LKAB');
         cy.get('input[placeholder="Year"]').type('2014');
-    }); */
+    });
 
     it('Should toggle "All Municipality" switch', () => {
         
@@ -72,19 +71,6 @@ describe('Sidebar Tests', () => {
             .should('not.be.checked'); // Verify that the switch is disabled
     });
 
-/*    it('Should persist filters when sidebar is reopened', () => {
-        
-        cy.get('.bi.bi-list').click();
-
-        // Insert values ​​into the filters
-        cy.get('input[placeholder="Title..."]').type('Persistent Title');
-        cy.get('.overlay').click();
-
-        // Reopen the sidebar and verify that the values ​​are present
-        cy.get('.bi.bi-list').click();
-        cy.get('input[placeholder="Title..."]').should('have.value', 'Persistent Title');
-    }); */
-
     it('Should reset filters when navigating away', () => {
         // Open the sidebar and enter values
         cy.get("button i.bi.bi-view-list").click();
@@ -99,19 +85,21 @@ describe('Sidebar Tests', () => {
         cy.get('input[placeholder="Title..."]').should('have.value', '');
     });
 
-/*    it('Should display filtered documents in the table', () => {
+    it('Should display filtered documents in the table', () => {
     
         // Apply a filter
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         cy.get('input[placeholder="Title..."]').type('Plan');
-        cy.get('input[placeholder="Description"]').type('document');
     
         // Verify that the table contains the filtered documents
         cy.get('table tbody tr').should('have.length.greaterThan', 0);
         cy.get('table tbody tr').each(($row) => {
-            cy.wrap($row).should('contain', 'Plan');
-        });
-    }); */
+            cy.wrap($row).should(($el) => {
+              expect($el.text().toLowerCase()).to.contain('plan');
+            });
+          });
+          
+    });
     
     it('Should open details panel when a document is selected', () => {
     
@@ -137,16 +125,16 @@ describe('Sidebar Tests', () => {
         cy.get('.details-panel-container').should('not.exist');
     }); 
     
-  /*  it('When the modify button is clicked', () => {
+    it('When the modify button is clicked', () => {
         cy.visit(`${clientUrl}/login`);
         cy.get("input[placeholder='Enter your Username']").type('username');
         cy.get("input[placeholder='Enter your password']").type('password123');
         cy.get('button[type="submit"]').click();
 
-        cy.get('.bi.bi-list').click();
+        cy.get("button i.bi.bi-view-list").click();
         cy.get('table tbody tr').first().click();
         cy.get('.details-panel-container button').contains('Modify').click();
         cy.url().should('eq', `${clientUrl}/edit/${docId}`);
 
-    }); */ 
+    });
 });
