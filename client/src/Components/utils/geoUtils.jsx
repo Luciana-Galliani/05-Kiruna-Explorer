@@ -1,10 +1,10 @@
 import { boundingExtent } from "ol/extent";
 import { Vector as VectorLayer } from "ol/layer";
-import { Vector as VectorSource } from "ol/source";
+import { Vector as VectorSource, Cluster } from "ol/source";
 import { Feature } from "ol";
 import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
-import { Style, Stroke, Icon } from 'ol/style';
+import { Style, Stroke, Icon, Text, Fill, Circle } from 'ol/style';
 import { GeoJSON } from 'ol/format';
 
 function getRandomPointNearAreaCenter(area) {
@@ -73,10 +73,50 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
     }).filter((feature) => feature !== null);
 
     const vectorSource = new VectorSource({ features });
-    return new VectorLayer({
-        name: "documentLayer",
-        source: vectorSource,
+    const clusterSource = new Cluster({
+        distance: 70,  // Set the distance for clustering
+        source: vectorSource
     });
+
+    // Defines the style for the cluster
+    const clusterLayer = new VectorLayer({
+        name: "documentLayer",
+        source: clusterSource,
+        style: (feature) => {
+            const features = feature.get('features');
+            const size = features.length; // Number of elements in the cluster
+            
+            // If there is only one document in the cluster, show the specific icon
+            if (size === 1) {
+                const singleFeature = features[0];
+                return singleFeature.getStyle();
+            }
+            // Otherwise, it shows a red circle for the cluster
+            return new Style({
+                image: new Circle({
+                    radius: 17,
+                    fill: new Fill({
+                        color: 'rgba(255, 0, 0, 0.4)', // Transparent red circle
+                    }),
+                    stroke: new Stroke({
+                        color: '#ff0000',
+                        width: 2,
+                    }),
+                }),
+                text: new Text({
+                    text: size.toString(),
+                    font: 'bold 14px sans-serif',
+                    fill: new Fill({ color: '#fff' }),
+                    stroke: new Stroke({
+                        color: '#000',
+                        width: 3
+                    }),
+                }),
+            });
+        }
+    });
+    
+    return clusterLayer;
 };
 
 export function handleMapPointerMove({
@@ -118,11 +158,19 @@ export function handleMapPointerMove({
     const handleFeatureHover = (pixel) => {
         const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
         if (featureAtPixel) {
-            updateFeatureHighlight(featureAtPixel);
+            const features = featureAtPixel.get("features"); // Get cluster features
+            if (features?.length > 1) {
+                // It is a cluster, we do not apply the specific hover style
+                resetHighlightedFeature();
+            } else {
+                // It is a single feature
+                const singleFeature = features[0];
+                updateFeatureHighlight(singleFeature);
+            }
         } else {
             resetHighlightedFeature();
         }
-    };
+    };  
 
     const findFeatureAtPixel = (pixel, layerName) => {
         return map.forEachFeatureAtPixel(pixel, (feature, layer) => {

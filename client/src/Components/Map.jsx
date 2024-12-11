@@ -27,6 +27,7 @@ import otherIcon from "../Icons/other.svg";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
+import ClusterDetailsPanel from "./ClusterDetailsPanel";
 import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
@@ -38,6 +39,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
+
+    const [selectedCluster, setSelectedCluster] = useState(null);
 
     const { setAllDocuments, allDocuments, isLoggedIn, isSelectingArea, areaGeoJSON, setAreaGeoJSON, isSelectingCoordinates } = useContext(AppContext);
 
@@ -200,25 +203,36 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             if (isSelectingCoordinates) {
                 handleCoordinateSelection(event);
             } else {
-                handleFeatureSelection(event);
+                const clickedFeature = findClickedFeature(event.pixel);
+        
+                if (clickedFeature) {
+                    const features = clickedFeature.get("features"); // Clustered features
+                    if (features?.length > 1) {
+                        // Cluster clicked
+                        const clusterDocuments = features.map((feature) => {
+                            const documentId = feature.get("documentId");
+                            return findMatchedDocument(documentId);
+                        });
+                        setSelectedCluster(clusterDocuments); // Open ClusterDetailsPanel
+                        setSelectedDocument(null); // Clear single document selection
+                    } else {
+                        // Single document clicked
+                        const documentId = features?.[0]?.get("documentId");
+                        const matchedDocument = findMatchedDocument(documentId);
+                        setSelectedDocument(matchedDocument); // Open DetailsPanel
+                        setSelectedCluster(null); // Clear cluster selection
+                    }
+                } else {
+                    // Click outside any feature
+                    setSelectedDocument(null);
+                    setSelectedCluster(null);
+                }
             }
         };
-
+        
         const handleCoordinateSelection = (event) => {
             const [lon, lat] = toLonLat(event.coordinate);
             handleCoordinatesSelected(lon, lat);
-        };
-
-        const handleFeatureSelection = (event) => {
-            const clickedFeature = findClickedFeature(event.pixel);
-
-            if (clickedFeature) {
-                const documentId = clickedFeature.get("documentId");
-                const matchedDocument = findMatchedDocument(documentId);
-                setSelectedDocument(matchedDocument);
-            } else {
-                setSelectedDocument(null);
-            }
         };
 
         const findClickedFeature = (pixel) => {
@@ -276,6 +290,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
+                />
+            )}
+            {selectedCluster && location.pathname === "/" && (
+                <ClusterDetailsPanel
+                    documents={selectedCluster}
+                    onClose={() => setSelectedCluster(null)}
                 />
             )}
         </div>
