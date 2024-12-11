@@ -9,9 +9,15 @@ import ConsultationIcon from "../reactIcons/consultationIcon";
 import OtherIcon from "../reactIcons/otherIcon";
 import PrescriptiveIcon from "../reactIcons/prescriptiveIcon";
 
-function getIconForType(docType, docColor) {
+import darkerUtils from "./darkerUtils";
+
+function getIconForType(docType, docColor, docColorDark) {
+  console.log(darkerUtils("black"))
+  const docSecondColor = docColorDark ? darkerUtils(docColor, 30) : "black";
+  console.log(docSecondColor)
+
   const iconMap = {
-    Action: (props) => <ActionIcon fillPrimary={docColor} {...props} />,
+    Action: (props) => <ActionIcon fillPrimary={docColor} fillTertiary={docSecondColor} {...props} />,
     Agreement: (props) => <AgreementIcon fillPrimary={docColor} {...props} />,
     Conflict: (props) => <ConflictIcon fillPrimary={docColor} {...props} />,
     Consultation: (props) => <ConsultationIcon fillPrimary={docColor} {...props} />,

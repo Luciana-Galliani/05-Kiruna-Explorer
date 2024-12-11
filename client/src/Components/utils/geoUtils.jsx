@@ -121,7 +121,7 @@ export function handleMapPointerMove({
 
     const handleFeatureHover = (pixel) => {
         const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
-        if (featureAtPixel) {
+        if (featureAtPixel && !featureAtPixel.get("clicked")) {
             updateFeatureHighlight(featureAtPixel);
         } else {
             resetHighlightedFeature();
@@ -205,4 +205,61 @@ export function handleMapPointerMove({
         map.removeLayer(hoverLayer);
     };
 
+}
+
+export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
+    const map = mapInstanceRef.current;
+
+    // Ensure the previous feature's style is reset before updating the new one
+    const resetPreviousFeatureStyle = () => {
+        if (clickedFeatureRef.current) {
+            const previousFeature = clickedFeatureRef.current;
+            const initialStyle = previousFeature.get("initialStyle"); // Assume initialStyle is stored
+            if (initialStyle) {
+                previousFeature.setStyle(initialStyle);
+            }
+            previousFeature.set("clicked", false);
+        }
+    };
+
+    // Apply new style to the clicked feature
+    const applyClickStyle = (feature, doc) => {
+        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
+        const img = new Image();
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor, true))}`;
+
+        const currentStyle = feature.getStyle();
+        feature.set("initialStyle", currentStyle); // Save the initial style for later reset
+
+        img.onload = () => {
+            feature.setStyle(
+                new Style({
+                    image: new Icon({
+                        anchor: [0.5, 0.5],
+                        img: img,
+                        scale: 0.55,
+                        imgSize: [img.width, img.height],
+                    }),
+                    zIndex: 3,
+                })
+            );
+
+            feature.set("clicked", true); //mark the feature as clicked
+        };
+    };
+
+    const handleClick = (event) => {
+        const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
+        if (feature) {
+            resetPreviousFeatureStyle(); // Reset the previous feature's style
+            applyClickStyle(feature, doc); // Apply new style
+            clickedFeatureRef.current = feature; // Update reference to the current feature
+        }
+    };
+
+    // Attach and detach event listener for cleanup
+    map.on("click", handleClick);
+    return () => {
+        map.un("click", handleClick);
+    };
 }

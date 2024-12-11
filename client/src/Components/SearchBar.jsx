@@ -6,7 +6,6 @@ const SearchBar = ({
     handleMunicipality,
     handleAuthor,
     handleTitle,
-    handleIssuanceDate,
     handleDescription,
     handleRange,
     handleType,
@@ -16,7 +15,6 @@ const SearchBar = ({
     const [searchTitle, setSearchTitle] = useState("");
     const [searchAuthor, setSearchAuthor] = useState("");
     const [searchDescription, setSearchDescription] = useState("");
-    const [searchIssuanceDate, setSearchIssuanceDate] = useState("");
     const [showDetailedSearch, setShowDetailedSearch] = useState(false);
     const [startRange, setStartRange] = useState("");
     const [endRange, setEndRange] = useState("");
@@ -46,10 +44,6 @@ const SearchBar = ({
     }, [searchTitle]);
 
     useEffect(() => {
-        handleIssuanceDate(searchIssuanceDate);
-    }, [searchIssuanceDate]);
-
-    useEffect(() => {
         handleAuthor(searchAuthor);
     }, [searchAuthor]);
 
@@ -76,10 +70,6 @@ const SearchBar = ({
 
     const handleSearchDescription = (e) => {
         setSearchDescription(e.target.value);
-    };
-
-    const handleIssuanceDateChange = (e) => {
-        setSearchIssuanceDate(e.target.value);
     };
 
     const handleSearchAuthor = (e) => {
@@ -205,6 +195,10 @@ SearchBar.propTypes = {
     handleTitle: PropTypes.func.isRequired,
     handleIssuanceDate: PropTypes.func.isRequired,
     handleDescription: PropTypes.func.isRequired,
+    handleRange: PropTypes.func.isRequired,
+    handleType: PropTypes.func.isRequired,
+    handleLanguage: PropTypes.func.isRequired,
+    stakeholders: PropTypes.array.isRequired,
 };
 
 export default SearchBar;

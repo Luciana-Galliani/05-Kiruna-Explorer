@@ -11,7 +11,7 @@ import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
-import { Style, Stroke } from "ol/style";
+import { Style, Stroke, Icon } from "ol/style";
 
 // Icons and API
 import API from "../API/API.mjs";
@@ -29,7 +29,7 @@ import actionIcon from "./reactIcons/actionIcon.jsx";
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
 import { AppContext } from "../context/AppContext";
-import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
+import { createDocumentLayer, handleMapPointerMove, applyClickEffect } from "./utils/geoUtils";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
     const mapRef = useRef(null);
@@ -212,11 +212,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleFeatureSelection = (event) => {
             const clickedFeature = findClickedFeature(event.pixel);
+            //Create new style for the clicked feature
 
             if (clickedFeature) {
                 const documentId = clickedFeature.get("documentId");
                 const matchedDocument = findMatchedDocument(documentId);
                 setSelectedDocument(matchedDocument);
+                applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
             } else {
                 setSelectedDocument(null);
             }

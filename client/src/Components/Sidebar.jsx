@@ -43,11 +43,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         setFilter(updatedFilter);
     };
 
-    const handleIssuanceDate = (issuanceDate) => {
-        const updatedFilter = new Filter({ ...filter, issuanceDate: issuanceDate });
-        setFilter(updatedFilter);
-    };
-
     const handleDescription = (description) => {
         const updatedFilter = new Filter({ ...filter, description: description });
         setFilter(updatedFilter);
@@ -125,7 +120,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         handleMunicipality={handleMunicipality}
                         handleAuthor={handleAuthor}
                         handleTitle={handleTitle}
-                        handleIssuanceDate={handleIssuanceDate}
                         handleDescription={handleDescription}
                         handleRange={handleRange}
                         handleType={handleType}
