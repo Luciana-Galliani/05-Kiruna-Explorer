@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 
 // OpenLayers
 import "ol/ol.css";
-import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
@@ -31,10 +31,12 @@ import ClusterDetailsPanel from "./ClusterDetailsPanel";
 import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected }) => {
+const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
+    const see = false;
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
+    const detailsPanelRef = useRef(null);
     const [areas, setAreas] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
@@ -55,7 +57,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         Action: actionIcon,
         Other: otherIcon,
     };
-    const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView });
+    const mapInstanceRef = useMapSetup({ mapRef, isSatelliteView, centerIn });
     useAreaDrawing({ mapInstanceRef, isSelectingArea, setAreaGeoJSON, handleAreaSelected });
 
     useEffect(() => {
@@ -251,11 +253,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleGlobalClick = (event) => {
             const mapElement = mapRef.current;
+            const panelElement = detailsPanelRef.current;
 
             if (
                 mapElement &&
                 !mapElement.contains(event.target) &&
-                !event.target.closest(".details-panel")
+                panelElement &&
+                !panelElement.contains(event.target)
             ) {
                 setSelectedDocument(null);
             }
@@ -287,9 +291,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
             {selectedDocument && location.pathname === "/" && (
                 <DetailsPanel
+                    ref={detailsPanelRef}
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
+                    see={see}
+                    seeOnMap={seeOnMap}
                 />
             )}
             {selectedCluster && location.pathname === "/" && (
@@ -306,6 +313,7 @@ CityMap.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleAreaSelected: PropTypes.func.isRequired,
+    centerIn: PropTypes.any
 };
 
 export default CityMap;

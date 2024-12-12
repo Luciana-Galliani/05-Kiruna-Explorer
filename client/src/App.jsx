@@ -17,12 +17,13 @@ import { AppContext } from "./context/AppContext";
 function App() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [confirmationMessage] = useState("Do you really want to logout?");
+    const [centerIn, setCenterIn] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
 
     const [coordinates, setCoordinates] = useState(null);
     const [isSatelliteView, setIsSatelliteView] = useState(true);
-    const [newArea, setnewArea] = useState(null);
+    const [newArea, setNewArea] = useState(null);
 
     const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
 
@@ -35,7 +36,7 @@ function App() {
         setIsSelectingCoordinates(false);
     };
     const handleAreaSelected = (newA) => {
-        setnewArea(newA);
+        setNewArea(newA);
         setIsSelectingArea(false);
     }
 
@@ -61,6 +62,10 @@ function App() {
         setShowLogoutModal(false);
     };
 
+    const seeOnMap = (info) => {
+        setCenterIn(info);
+    }
+
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
     const contentPadding = isHomePage ? "60px" : "0";
@@ -72,6 +77,7 @@ function App() {
                 headerClass={headerClass}
                 isHomePage={isHomePage}
                 isSatelliteView={isSatelliteView}
+                seeOnMap={seeOnMap}
             />
 
             <HomePage
@@ -79,6 +85,9 @@ function App() {
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
                 handleAreaSelected={handleAreaSelected}
+                centerIn={centerIn}
+                setCenterIn={setCenterIn}
+                seeOnMap={seeOnMap}
             />
 
             <Routes>
@@ -90,7 +99,7 @@ function App() {
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                             newarea={newArea}
-                            setnewArea={setnewArea}
+                            setNewArea={setNewArea}
 
                         />
                     }
@@ -103,7 +112,7 @@ function App() {
                             coordinates={coordinates}
                             className={isSelectingCoordinates ? "d-none" : "d-block"}
                             newarea={newArea}
-                            setnewArea={setnewArea}
+                            setNewArea={setNewArea}
                         />
                     }
                 />
@@ -127,7 +136,7 @@ function App() {
                 location={location}
                 isSatelliteView={isSatelliteView}
                 handleSatelliteView={handleSatelliteView}
-                setnewArea={setnewArea}
+                setNewArea={setNewArea}
                 setCoordinates={setCoordinates}
             />
 
