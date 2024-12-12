@@ -186,11 +186,11 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         if (selectedDocument.longitude && selectedDocument.latitude) {
             const location = fromLonLat([selectedDocument.longitude, selectedDocument.latitude]);
             map.getView().setCenter(location);
-            map.getView().setZoom(14); // Adjust zoom level as needed
+            //map.getView().setZoom(14); // Adjust zoom level as needed
         } else if (selectedDocument.area) {
             const location = fromLonLat([selectedDocument.area.centerLon, selectedDocument.area.centerLat]);
             map.getView().setCenter(location);
-            map.getView().setZoom(14); // Adjust zoom level as needed
+            //map.getView().setZoom(14); // Adjust zoom level as needed
         }
     }, [selectedDocument]);
 

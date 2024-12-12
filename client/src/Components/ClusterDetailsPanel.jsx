@@ -64,7 +64,7 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                 padding: "20px",
                 borderRadius: "12px",
                 boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-                height: "410px",
+                maxHeight: "350px",
                 width: "300px",
                 overflowY: "auto",
                 zIndex: 1000,
