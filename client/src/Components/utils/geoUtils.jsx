@@ -4,7 +4,7 @@ import { Vector as VectorSource } from "ol/source";
 import { Feature } from "ol";
 import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
-import { Style, Stroke, Icon } from 'ol/style';
+import { Style, Stroke, Icon, Fill } from 'ol/style';
 import { GeoJSON } from 'ol/format';
 import { getIconForType } from './iconUtils';
 
@@ -90,6 +90,14 @@ export function handleMapPointerMove({
     allDocuments,
 }) {
     const map = mapInstanceRef.current;
+
+    // Improve the hover event, this not working properly
+    const docId = hoveredFeatureRef.current?.get("documentId");
+    console.log(docId);
+    const matchedDocument = allDocuments.find((doc) => doc.id === docId);
+    const docColor = matchedDocument?.stakeholders?.length === 1 ? matchedDocument.stakeholders[0].color : "purple";
+    //
+    
     const hoverSource = new VectorSource();
     const hoverLayer = new VectorLayer({
         source: hoverSource,
@@ -97,6 +105,9 @@ export function handleMapPointerMove({
             stroke: new Stroke({
                 color: "rgba(255, 165, 0, 0.8)", // Colore per l'effetto hover
                 width: 3,
+            }),
+            fill: new Fill({
+                color: "rgba(255, 165, 0, 0.2)", // Colore per l'effetto hover
             }),
         }),
     });
@@ -219,6 +230,7 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
                 previousFeature.setStyle(initialStyle);
             }
             previousFeature.set("clicked", false);
+            clickedFeatureRef.current = null; // Reset the reference
         }
     };
 
@@ -232,19 +244,20 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
         feature.set("initialStyle", currentStyle); // Save the initial style for later reset
 
         img.onload = () => {
-            feature.setStyle(
-                new Style({
-                    image: new Icon({
-                        anchor: [0.5, 0.5],
-                        img: img,
-                        scale: 0.55,
-                        imgSize: [img.width, img.height],
-                    }),
-                    zIndex: 3,
-                })
-            );
+            const newStyle = new Style({
+                image: new Icon({
+                    anchor: [0.5, 0.5],
+                    img: img,
+                    scale: 0.55,
+                    imgSize: [img.width, img.height],
+                }),
+                zIndex: 3,
+            });
+
+            feature.setStyle(newStyle);
 
             feature.set("clicked", true); //mark the feature as clicked
+            clickedFeatureRef.current = feature; // Update reference to the current feature
         };
     };
 
@@ -253,7 +266,7 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
         if (feature) {
             resetPreviousFeatureStyle(); // Reset the previous feature's style
             applyClickStyle(feature, doc); // Apply new style
-            clickedFeatureRef.current = feature; // Update reference to the current feature
+            //clickedFeatureRef.current = feature; // Update reference to the current feature
         }
     };
 
