@@ -205,30 +205,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             if (isSelectingCoordinates) {
                 handleCoordinateSelection(event);
             } else {
-                const clickedFeature = findClickedFeature(event.pixel);
-        
-                if (clickedFeature) {
-                    const features = clickedFeature.get("features"); // Clustered features
-                    if (features?.length > 1) {
-                        // Cluster clicked
-                        const clusterDocuments = features.map((feature) => {
-                            const documentId = feature.get("documentId");
-                            return findMatchedDocument(documentId);
-                        });
-                        setSelectedCluster(clusterDocuments); // Open ClusterDetailsPanel
-                        setSelectedDocument(null); // Clear single document selection
-                    } else {
-                        // Single document clicked
-                        const documentId = features?.[0]?.get("documentId");
-                        const matchedDocument = findMatchedDocument(documentId);
-                        setSelectedDocument(matchedDocument); // Open DetailsPanel
-                        setSelectedCluster(null); // Clear cluster selection
-                    }
-                } else {
-                    // Click outside any feature
-                    setSelectedDocument(null);
-                    setSelectedCluster(null);
-                }
+                handleFeatureSelection(event);
             }
         };
         
@@ -236,6 +213,33 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             const [lon, lat] = toLonLat(event.coordinate);
             handleCoordinatesSelected(lon, lat);
         };
+
+        const handleFeatureSelection = (event) => {
+            const clickedFeature = findClickedFeature(event.pixel);
+        
+            if (clickedFeature) {
+                const features = clickedFeature.get("features"); // Clustered features
+                if (features?.length > 1) {
+                    // Cluster clicked
+                    const clusterDocuments = features.map((feature) => {
+                        const documentId = feature.get("documentId");
+                        return findMatchedDocument(documentId);
+                    });
+                    setSelectedCluster(clusterDocuments); // Open ClusterDetailsPanel
+                    setSelectedDocument(null); // Clear single document selection
+                } else {
+                    // Single document clicked
+                    const documentId = features?.[0]?.get("documentId");
+                    const matchedDocument = findMatchedDocument(documentId);
+                    setSelectedDocument(matchedDocument); // Open DetailsPanel
+                    setSelectedCluster(null); // Clear cluster selection
+                }
+            } else {
+                // Click outside any feature
+                setSelectedDocument(null);
+                setSelectedCluster(null);
+            }
+        }
 
         const findClickedFeature = (pixel) => {
             let clickedFeature = null;
