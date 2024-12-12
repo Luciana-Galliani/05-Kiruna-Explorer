@@ -1,3 +1,4 @@
+import React, { forwardRef, useImperativeHandle } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import designIcon from "../Icons/design.svg";
@@ -11,7 +12,6 @@ import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
 import { Button } from "react-bootstrap";
 
-// Mappa delle icone per tipo di documento
 const documentIcons = {
     Design: designIcon,
     Informative: informativeIcon,
@@ -49,7 +49,7 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSidebar, see }) => {
+const DetailsPanel = forwardRef(({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSidebar, see }, ref) => {
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
     const [doc, setDoc] = useState(initialDocId);
@@ -58,6 +58,10 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSideb
         return documentIcons[type] || otherIcon;
     };
 
+    useImperativeHandle(ref, () => ({
+        resetDocument: () => setDocument(null),
+        fetchNewDocument: (newDocId) => setDoc(newDocId),
+    }));
 
     useEffect(() => {
         if (initialDocId) setDoc(initialDocId);
@@ -82,11 +86,8 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSideb
 
         if (document.allMunicipality === false) {
             if (document.area) {
-                // Pass the area
                 seeOnMap({ area: document.area });
-
             } else if (document.latitude && document.longitude) {
-                // Pass the coordinates
                 seeOnMap([document.longitude, document.latitude]);
             }
             toggleSidebar();
@@ -274,14 +275,14 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSideb
             </div>
         </div>
     );
-};
+});
 
 DetailsPanel.propTypes = {
     initialDocId: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
     seeOnMap: PropTypes.any,
-    toggleSidebar: PropTypes.func.isRequired,
+    toggleSidebar: PropTypes.func,
     see: PropTypes.bool.isRequired
 };
 

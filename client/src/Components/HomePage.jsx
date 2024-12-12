@@ -2,7 +2,7 @@ import React from 'react';
 import CityMap from './Map.jsx';
 import PropTypes from 'prop-types';
 
-const HomePage = ({ handleCoordinatesSelected, isSatelliteView, handleSatelliteView, handleAreaSelected, centerIn }) => {
+const HomePage = ({ handleCoordinatesSelected, isSatelliteView, handleSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
     return (
         <CityMap
             handleCoordinatesSelected={handleCoordinatesSelected}
@@ -10,6 +10,7 @@ const HomePage = ({ handleCoordinatesSelected, isSatelliteView, handleSatelliteV
             handleSatelliteView={handleSatelliteView}
             handleAreaSelected={handleAreaSelected}
             centerIn={centerIn}
+            seeOnMap={seeOnMap}
         />
     );
 };

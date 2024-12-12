@@ -30,11 +30,12 @@ import DetailsPanel from "./DetailsPanel";
 import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn }) => {
+const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
     const see = false;
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
+    const detailsPanelRef = useRef(null);
     const [areas, setAreas] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
@@ -238,11 +239,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleGlobalClick = (event) => {
             const mapElement = mapRef.current;
+            const panelElement = detailsPanelRef.current;
 
             if (
                 mapElement &&
                 !mapElement.contains(event.target) &&
-                !event.target.closest(".details-panel")
+                panelElement &&
+                !panelElement.contains(event.target)
             ) {
                 setSelectedDocument(null);
             }
@@ -274,10 +277,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
             {selectedDocument && location.pathname === "/" && (
                 <DetailsPanel
+                    ref={detailsPanelRef}
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
                     see={see}
+                    seeOnMap={seeOnMap}
                 />
             )}
         </div>

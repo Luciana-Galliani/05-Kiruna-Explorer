@@ -87,6 +87,7 @@ function App() {
                 handleAreaSelected={handleAreaSelected}
                 centerIn={centerIn}
                 setCenterIn={setCenterIn}
+                seeOnMap={seeOnMap}
             />
 
             <Routes>
