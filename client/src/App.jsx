@@ -10,6 +10,7 @@ import RegistrationForm from "./Components/RegistrationForm";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ListDocuments from "./Components/List";
+import CityMap from "./Components/Map";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
@@ -45,7 +46,7 @@ function App() {
             const response = await API.loginUser({ username, password });
             localStorage.setItem("authToken", response.token);
             setIsLoggedIn(true);
-            navigate("/");
+            navigate("/map");
         } catch (error) {
             throw new Error("Login failed, check your credentials");
         }
@@ -68,28 +69,28 @@ function App() {
 
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
-    const contentPadding = isHomePage ? "60px" : "0";
+    const contentPadding = isHomePage ? "0px" : "0px";
 
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
-            <Header
-                handleLogout={() => setShowLogoutModal(true)}
-                headerClass={headerClass}
-                isHomePage={isHomePage}
-                isSatelliteView={isSatelliteView}
-                seeOnMap={seeOnMap}
-            />
 
-            <HomePage
-                handleCoordinatesSelected={handleCoordinatesSelected}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                handleAreaSelected={handleAreaSelected}
-                centerIn={centerIn}
-                setCenterIn={setCenterIn}
-            />
+            { !isHomePage &&
+                <Header
+                    handleLogout={() => setShowLogoutModal(true)}
+                    headerClass={headerClass}
+                    isHomePage={isHomePage}
+                    isSatelliteView={isSatelliteView}
+                    seeOnMap={seeOnMap}
+                />
+            }
 
             <Routes>
+                <Route
+                    path="/"
+                    element={<HomePage 
+                        handleLogout={() => setShowLogoutModal(true)}
+                        handleLogin={handleLogin}/>}
+                />
                 <Route
                     path="/add"
                     element={
@@ -128,23 +129,51 @@ function App() {
                     path="/municipality"
                     element={<ListDocuments condition="true" />}
                 />
+                <Route
+                    path="/map"
+                    element={
+                        <CityMap
+                            handleCoordinatesSelected={handleCoordinatesSelected}
+                            isSatelliteView={isSatelliteView}
+                            handleSatelliteView={handleSatelliteView}
+                            handleAreaSelected={handleAreaSelected}
+                            centerIn={centerIn}
+                        />
+                    }
+                />
+                <Route
+                    path="/diagram"
+                    element={
+                        <CityMap
+                            handleCoordinatesSelected={handleCoordinatesSelected}
+                            isSatelliteView={isSatelliteView}
+                            handleSatelliteView={handleSatelliteView}
+                            handleAreaSelected={handleAreaSelected}
+                            centerIn={centerIn}
+                        />
+                    }
+                />
             </Routes>
-
-            <Footer
-                isHomePage={isHomePage}
-                location={location}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                setNewArea={setNewArea}
-                setCoordinates={setCoordinates}
-            />
-
-            <ConfirmationModal
-                show={showLogoutModal}
-                onClose={() => setShowLogoutModal(false)}
-                onConfirm={confirmLogout}
-                message={confirmationMessage}
-            />
+            
+            { !isHomePage &&
+                <div>
+                    <Footer
+                        isHomePage={!isHomePage}
+                        location={location}
+                        isSatelliteView={isSatelliteView}
+                        handleSatelliteView={handleSatelliteView}
+                        setNewArea={setNewArea}
+                        setCoordinates={setCoordinates}
+                    />
+    
+                    <ConfirmationModal
+                        show={showLogoutModal}
+                        onClose={() => setShowLogoutModal(false)}
+                        onConfirm={confirmLogout}
+                        message={confirmationMessage}
+                    />
+                </div>
+        }  
         </div>
     );
 }
