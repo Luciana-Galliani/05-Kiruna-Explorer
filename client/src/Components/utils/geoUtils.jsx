@@ -216,6 +216,24 @@ export function handleMapPointerMove({
 
     const handleHoverLayer = (pixel) => {
         const feature = map.forEachFeatureAtPixel(pixel, (f) => f);
+        if (!feature) return;
+
+        // Checks whether the feature is a cluster
+        const featuresInCluster = feature.get("features");
+        const isCluster = Array.isArray(featuresInCluster);
+
+        if (isCluster) {
+            // Itera on features in the cluster
+            featuresInCluster.forEach((individualFeature) => {
+                handleFeature(individualFeature);
+            });
+        } else {
+            // Normal management for a single feature
+            handleFeature(feature);
+        }
+    };
+
+    const handleFeature = (feature) => {
         if (feature?.get("documentId")) {
             const documentId = feature.get("documentId");
             const matchedDocument = findMatchedDocument(documentId);
