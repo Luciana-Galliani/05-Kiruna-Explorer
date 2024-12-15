@@ -7,7 +7,7 @@ import pointToLineDistance from "./utils/DiagramUtils";
 // Constants
 const NODE_RADIUS = 10;
 const LINE = d3.line().curve(d3.curveBasis); // Bezier curve for connections
-const MARGIN = { top: 50, right: 50, bottom: 60, left: 200 };
+const MARGIN = { top: 50, right: 50, bottom: 60, left: 150 };
 const RELATIONSHIP_STYLES = {
     "Direct Consequence": "0", // Solid line
     "Collateral Consequence": "8, 5", // Dashed line
@@ -21,7 +21,8 @@ const processDocuments = (documents) => {
     const nodes = [];
     const links = [];
     const seenConnections = new Set(); // Set to store unique connections
-    const minYear = Math.min(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear()));
+    const minYear =
+        Math.min(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear())) - 1;
     const maxYear = Math.max(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear()));
     const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 
@@ -109,11 +110,21 @@ export default function Diagram() {
 
         svg.selectAll("*").remove();
 
+        // Define the clipping path
+        svg.append("defs")
+            .append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
         const g = svg
             .attr("width", width + MARGIN.left + MARGIN.right)
             .attr("height", height + MARGIN.top + MARGIN.bottom)
             .append("g")
             .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`);
+
+        const gClip = g.append("g").attr("clip-path", "url(#clip)");
 
         // Tooltip to show document title on hover (hidden by default)
         const titleTooltip = d3
@@ -157,7 +168,8 @@ export default function Diagram() {
         const yScale = d3.scaleBand().domain(scales).range([0, height]);
 
         // white alternating columns
-        g.selectAll(".year-column")
+        const yearColumns = gClip
+            .selectAll(".year-column")
             .data(years.filter((y) => y % 2 === 0))
             .enter()
             .append("rect")
@@ -170,7 +182,8 @@ export default function Diagram() {
             .attr("opacity", 0.2);
 
         // Horizontal lines
-        g.selectAll(".horizontal-grid")
+        gClip
+            .selectAll(".horizontal-grid")
             .data(scales)
             .enter()
             .append("line")
@@ -183,8 +196,8 @@ export default function Diagram() {
             .attr("stroke-width", "2");
 
         // Axis
-        g.append("g").call(d3.axisLeft(yScale));
-        g.append("g").call(d3.axisTop(xScale));
+        const xAxis = g.append("g").call(d3.axisTop(xScale));
+        const yAxis = g.append("g").call(d3.axisLeft(yScale));
         // Style for axis lines
         g.selectAll(".domain, .tick line").attr("stroke-width", 2); // Increase axis line thickness
         // Style for axis labels (ticks)
@@ -207,8 +220,79 @@ export default function Diagram() {
                 .text("Plan");
         }
 
+        // Function to update the graph on zoom
+        const updateGraph = (event) => {
+            const transform = event.transform;
+            const newXScale = transform.rescaleX(xScale);
+
+            // Update the axes
+            xAxis.call(d3.axisTop(newXScale).ticks(d3.timeYear.every(1)));
+            g.selectAll(".tick line").attr("stroke-width", 2);
+            g.selectAll(".tick text").style("font-size", "14px").style("font-weight", "bold");
+
+            // Update the positions of the nodes and links
+            gClip.selectAll(".node").attr("cx", (d) => newXScale(new Date(d.date)));
+
+            gClip.selectAll(".link").attr("d", (d) => {
+                const sourceNode = nodes.find((n) => n.id === d.source);
+                const targetNode = nodes.find((n) => n.id === d.target);
+
+                const sourceX = newXScale(new Date(sourceNode.date));
+                const sourceY = sourceNode.y;
+                const targetX = newXScale(new Date(targetNode.date));
+                const targetY = targetNode.y;
+
+                // Control point for the Bezier curve
+                const controlPointX =
+                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+                return LINE([
+                    [sourceX, sourceY],
+                    [controlPointX, controlPointY],
+                    [targetX, targetY],
+                ]);
+            });
+
+            // Update the positions and widths of the year columns
+            yearColumns
+                .attr("x", (d) => newXScale(new Date(d, 0, 1)))
+                .attr(
+                    "width",
+                    newXScale(new Date(years[1], 0, 1)) - newXScale(new Date(years[0], 0, 1))
+                );
+        };
+
+        // Add zoom behavior
+        const zoom = d3
+            .zoom()
+            .scaleExtent([1, 10])
+            .translateExtent([
+                [0, 0],
+                [width, height],
+            ])
+            .extent([
+                [0, 0],
+                [width, height],
+            ])
+            .on("zoom", updateGraph);
+
+        svg.call(zoom);
+
+        // Group nodes by scale and date
+        const nodesByScaleAndDate = d3.group(nodes, (d) => `${d.scale}-${d.date}`);
+
+        // Adjust y-coordinates of nodes to avoid overlapping
+        nodes.forEach((d) => {
+            const nodesInSameScaleAndDate = nodesByScaleAndDate.get(`${d.scale}-${d.date}`);
+            const index = nodesInSameScaleAndDate.findIndex((node) => node.id === d.id);
+            const offset = (index - (nodesInSameScaleAndDate.length - 1) / 2) * (NODE_RADIUS * 3);
+            d.y = yScale(d.scale) + yScale.bandwidth() / 2 + offset;
+        });
+
         // Connection
-        g.selectAll(".link")
+        gClip
+            .selectAll(".link")
             .data(links)
             .enter()
             .append("path")
@@ -218,9 +302,9 @@ export default function Diagram() {
                 const targetNode = nodes.find((n) => n.id === d.target);
 
                 const sourceX = Math.max(xScale(new Date(sourceNode.date)), NODE_RADIUS);
-                const sourceY = yScale(sourceNode.scale) + yScale.bandwidth() / 2;
+                const sourceY = sourceNode.y;
                 const targetX = Math.max(xScale(new Date(targetNode.date)), NODE_RADIUS);
-                const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
+                const targetY = targetNode.y;
 
                 // Control point for the Bezier curve
                 const controlPointX =
@@ -238,6 +322,7 @@ export default function Diagram() {
             .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
             .attr("fill", "none")
             .on("mouseover", (event, d) => {
+                console.log("link hovered :", d);
                 const [hoverX, hoverY] = d3.pointer(event);
 
                 const nearbyLinks = links.filter((link) => {
@@ -245,9 +330,9 @@ export default function Diagram() {
                     const targetNode = nodes.find((n) => n.id === link.target);
 
                     const sourceX = xScale(new Date(sourceNode.date));
-                    const sourceY = yScale(sourceNode.scale) + yScale.bandwidth() / 2;
+                    const sourceY = sourceNode.y;
                     const targetX = xScale(new Date(targetNode.date));
-                    const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
+                    const targetY = targetNode.y;
 
                     const distance = pointToLineDistance(
                         hoverX,
@@ -299,7 +384,8 @@ export default function Diagram() {
                     linkTooltip.style("visibility", "hidden");
                 }
 
-                g.selectAll(".link")
+                gClip
+                    .selectAll(".link")
                     .filter((link) => nearbyLinks.includes(link))
                     .attr("stroke", "red")
                     .attr("stroke-width", 3);
@@ -307,18 +393,18 @@ export default function Diagram() {
             .on("mouseout", (event) => {
                 linkTooltip.style("visibility", "hidden");
 
-                g.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
+                gClip.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
             });
+
         // Nodes
-        g.selectAll(".node")
+        gClip
+            .selectAll(".node")
             .data(nodes)
             .enter()
             .append("circle")
             .attr("class", "node")
             .attr("cx", (d) => max([xScale(new Date(d.date)), NODE_RADIUS]))
-            .attr("cy", (d) => {
-                return yScale(d.scale) + yScale.bandwidth() / 2;
-            })
+            .attr("cy", (d) => d.y)
             .attr("r", NODE_RADIUS)
             .attr("fill", (d) => (d.stakeholders.length ? d.stakeholders[0].color : "#000"))
             .on("mouseover", (event, d) => {
