@@ -15,6 +15,7 @@ import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
+import API from "../API/API.mjs";
 
 const TableList = ({ filter }) => {
     const icon = {
@@ -29,7 +30,7 @@ const TableList = ({ filter }) => {
         Other: otherIcon,
     };
 
-    const { isLoggedIn, allDocuments } = useContext(AppContext);
+    const { isLoggedIn, allDocuments, setAllDocuments } = useContext(AppContext);
 
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -40,7 +41,13 @@ const TableList = ({ filter }) => {
 
     useEffect(() => {
         const fetchDocuments = async () => {
-            const documents = allDocuments;
+            let documents;
+            try {
+                const response = await API.getDocuments();
+                documents = response.documents;
+            } catch (error) {
+                console.log(error);
+            }
             //filter documentsToShow based on the conditions
             const filteredDocuments = documents.filter((document) => {
                 //filter the document with all the conditions required

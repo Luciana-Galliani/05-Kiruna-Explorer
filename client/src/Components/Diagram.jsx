@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import API from "../API/API.mjs";
 import * as d3 from "d3";
-import { min, max, range } from "d3-array";
-import { use } from "react";
+import { max } from "d3-array";
+import pointToLineDistance from "./utils/DiagramUtils";
 
 // Constants
 const NODE_RADIUS = 10;
@@ -190,7 +190,22 @@ export default function Diagram() {
                 .text("Plan");
         }
 
-        // Connections
+        // Tooltip for connections
+        const linkTooltip = d3
+            .select("body")
+            .append("div")
+            .attr("class", "linkTooltip")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("background-color", "rgba(0, 0, 0, 0.7)")
+            .style("color", "white")
+            .style("padding", "5px")
+            .style("border-radius", "4px")
+            .style("font-size", "12px")
+            .style("pointer-events", "none");
+
+        // Connection
         g.selectAll(".link")
             .data(links)
             .enter()
@@ -206,8 +221,7 @@ export default function Diagram() {
                 const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
 
                 // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointX = Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
                 const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
 
                 return LINE([
@@ -219,8 +233,75 @@ export default function Diagram() {
             .attr("stroke", "black")
             .attr("stroke-width", 1.5)
             .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
-            .attr("fill", "none");
+            .attr("fill", "none")
+            .on("mouseover", (event, d) => {
+                const [hoverX, hoverY] = d3.pointer(event);
 
+                const nearbyLinks = links.filter((link) => {
+                    const sourceNode = nodes.find((n) => n.id === link.source);
+                    const targetNode = nodes.find((n) => n.id === link.target);
+
+                    const sourceX = xScale(new Date(sourceNode.date));
+                    const sourceY = yScale(sourceNode.scale) + yScale.bandwidth() / 2;
+                    const targetX = xScale(new Date(targetNode.date));
+                    const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
+
+                    const distance = pointToLineDistance(hoverX, hoverY, sourceX, sourceY, targetX, targetY);
+                    return distance < NODE_RADIUS * 3;
+                });
+
+                if (nearbyLinks.length > 0) {
+                    // Show tooltip
+                    linkTooltip
+                        .style("visibility", "visible")
+                        .html(
+                            `<div>
+                                ${nearbyLinks
+                                .map(
+                                    (link) => {
+                                        const sourceNode = nodes.find((n) => n.id === link.source);
+                                        const targetNode = nodes.find((n) => n.id === link.target);
+                                        return `
+                                        <div>
+                                            <strong>Relationship:</strong> ${link.relationship} <br>
+                                            <strong>From:</strong> ${sourceNode.title} <br>
+                                            <strong>To:</strong> ${targetNode.title}
+                                        </div>`;
+                                    }
+                                )
+                                .join("")}
+                            </div>`
+                        )
+                        .style("left", (event.clientX + 20) + "px")
+                        .style("top", (event.clientY - 10) + "px");
+
+                    const tooltipRect = linkTooltip.node().getBoundingClientRect();
+                    const windowWidth = window.innerWidth;
+                    const windowHeight = window.innerHeight;
+
+                    if (tooltipRect.right > windowWidth) {
+                        linkTooltip.style("left", `${windowWidth - tooltipRect.width - 20}px`);
+                    }
+
+                    if (tooltipRect.bottom > windowHeight) {
+                        linkTooltip.style("top", `${windowHeight - tooltipRect.height - 20}px`);
+                    }
+                } else {
+                    linkTooltip.style("visibility", "hidden");
+                }
+
+                g.selectAll(".link")
+                    .filter((link) => nearbyLinks.includes(link))
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 3);
+            })
+            .on("mouseout", (event) => {
+                linkTooltip.style("visibility", "hidden");
+
+                g.selectAll(".link")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 1.5);
+            });
         // Nodes
         g.selectAll(".node")
             .data(nodes)
@@ -241,16 +322,14 @@ export default function Diagram() {
                     .text(d.title)
                     .style(
                         "left",
-                        `${
-                            rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
+                        `${rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
                         }px`
                     )
                     .style(
                         "top",
-                        `${
-                            rect.top +
-                            MARGIN.top +
-                            parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
+                        `${rect.top +
+                        MARGIN.top +
+                        parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
                         }px`
                     )
                     .style("transform", "translate(-50%, -100%)");

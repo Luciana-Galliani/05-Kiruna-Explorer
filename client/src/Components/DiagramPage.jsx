@@ -1,4 +1,5 @@
 import Diagram from "./Diagram";
+import Legend from "./Legend"
 
 export default function DiagramPage() {
     return (
@@ -7,6 +8,7 @@ export default function DiagramPage() {
             style={{ backgroundColor: "gray", textAlign: "center", paddingTop: "60px" }}
         >
             <Diagram />
+            <Legend />
         </div>
     );
 }
