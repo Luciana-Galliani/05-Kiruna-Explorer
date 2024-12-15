@@ -182,8 +182,7 @@ export default function Diagram() {
             .attr("opacity", 0.2);
 
         // Horizontal lines
-        gClip
-            .selectAll(".horizontal-grid")
+        g.selectAll(".horizontal-grid")
             .data(scales)
             .enter()
             .append("line")
