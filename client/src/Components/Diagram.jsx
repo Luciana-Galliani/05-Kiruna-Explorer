@@ -131,6 +131,23 @@ export default function Diagram() {
             .style("border-radius", "4px")
             .style("font-size", "12px");
 
+        // Tooltip for connections
+        const linkTooltip = d3
+            .select("body")
+            .append("div")
+            .attr("class", "linkTooltip")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("opacity", 1)
+            .style("display", "none")
+            .style("background-color", "rgba(0, 0, 0, 0.7)")
+            .style("color", "white")
+            .style("padding", "5px")
+            .style("border-radius", "4px")
+            .style("font-size", "12px")
+            .style("pointer-events", "none");
+
         // Scales
         const xScale = d3
             .scaleTime()
@@ -190,21 +207,6 @@ export default function Diagram() {
                 .text("Plan");
         }
 
-        // Tooltip for connections
-        const linkTooltip = d3
-            .select("body")
-            .append("div")
-            .attr("class", "linkTooltip")
-            .style("position", "absolute")
-            .style("z-index", "10")
-            .style("visibility", "hidden")
-            .style("background-color", "rgba(0, 0, 0, 0.7)")
-            .style("color", "white")
-            .style("padding", "5px")
-            .style("border-radius", "4px")
-            .style("font-size", "12px")
-            .style("pointer-events", "none");
-
         // Connection
         g.selectAll(".link")
             .data(links)
@@ -221,7 +223,8 @@ export default function Diagram() {
                 const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
 
                 // Control point for the Bezier curve
-                const controlPointX = Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointX =
+                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
                 const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
 
                 return LINE([
@@ -231,7 +234,7 @@ export default function Diagram() {
                 ]);
             })
             .attr("stroke", "black")
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", 3)
             .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
             .attr("fill", "none")
             .on("mouseover", (event, d) => {
@@ -246,7 +249,14 @@ export default function Diagram() {
                     const targetX = xScale(new Date(targetNode.date));
                     const targetY = yScale(targetNode.scale) + yScale.bandwidth() / 2;
 
-                    const distance = pointToLineDistance(hoverX, hoverY, sourceX, sourceY, targetX, targetY);
+                    const distance = pointToLineDistance(
+                        hoverX,
+                        hoverY,
+                        sourceX,
+                        sourceY,
+                        targetX,
+                        targetY
+                    );
                     return distance < NODE_RADIUS * 3;
                 });
 
@@ -254,26 +264,25 @@ export default function Diagram() {
                     // Show tooltip
                     linkTooltip
                         .style("visibility", "visible")
+                        .style("display", "block")
                         .html(
                             `<div>
                                 ${nearbyLinks
-                                .map(
-                                    (link) => {
+                                    .map((link) => {
                                         const sourceNode = nodes.find((n) => n.id === link.source);
                                         const targetNode = nodes.find((n) => n.id === link.target);
                                         return `
                                         <div>
-                                            <strong>Relationship:</strong> ${link.relationship} <br>
+                                            <strong>Connection:</strong> ${link.relationship} <br>
                                             <strong>From:</strong> ${sourceNode.title} <br>
                                             <strong>To:</strong> ${targetNode.title}
                                         </div>`;
-                                    }
-                                )
-                                .join("")}
+                                    })
+                                    .join("<br/>")}
                             </div>`
                         )
-                        .style("left", (event.clientX + 20) + "px")
-                        .style("top", (event.clientY - 10) + "px");
+                        .style("left", event.clientX + 20 + "px")
+                        .style("top", event.clientY - 10 + "px");
 
                     const tooltipRect = linkTooltip.node().getBoundingClientRect();
                     const windowWidth = window.innerWidth;
@@ -298,9 +307,7 @@ export default function Diagram() {
             .on("mouseout", (event) => {
                 linkTooltip.style("visibility", "hidden");
 
-                g.selectAll(".link")
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 1.5);
+                g.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
             });
         // Nodes
         g.selectAll(".node")
@@ -322,14 +329,16 @@ export default function Diagram() {
                     .text(d.title)
                     .style(
                         "left",
-                        `${rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
+                        `${
+                            rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
                         }px`
                     )
                     .style(
                         "top",
-                        `${rect.top +
-                        MARGIN.top +
-                        parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
+                        `${
+                            rect.top +
+                            MARGIN.top +
+                            parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
                         }px`
                     )
                     .style("transform", "translate(-50%, -100%)");
@@ -347,6 +356,7 @@ export default function Diagram() {
 
         return () => {
             titleTooltip.remove();
+            linkTooltip.remove();
             g.selectAll("*").remove();
         };
     }, [documents, dimensions]);
