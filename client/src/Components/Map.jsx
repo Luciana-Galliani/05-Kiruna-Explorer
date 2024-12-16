@@ -218,7 +218,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 const documentId = clickedFeature.get("documentId");
                 const matchedDocument = findMatchedDocument(documentId);
                 setSelectedDocument(matchedDocument);
-                applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
+                //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
             } else {
                 setSelectedDocument(null);
             }

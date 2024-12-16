@@ -7,6 +7,7 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Stroke, Icon, Fill } from 'ol/style';
 import { GeoJSON } from 'ol/format';
 import { getIconForType } from './iconUtils';
+import { reset } from "ol/transform";
 
 function getRandomPointNearAreaCenter(area) {
     const centerLat = parseFloat(area.centerLat);
@@ -132,7 +133,7 @@ export function handleMapPointerMove({
 
     const handleFeatureHover = (pixel) => {
         const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
-        if (featureAtPixel && !featureAtPixel.get("clicked")) {
+        if (featureAtPixel /*&& !featureAtPixel.get("clicked")*/) {
             updateFeatureHighlight(featureAtPixel);
         } else {
             resetHighlightedFeature();
@@ -171,7 +172,7 @@ export function handleMapPointerMove({
                     image: new Icon({
                         anchor: [0.5, 0.5],
                         img: img,
-                        scale: 0.55,
+                        scale: 0.6,
                         imgSize: [img.width, img.height],
                         color: icon.getColor(),
                     }),
