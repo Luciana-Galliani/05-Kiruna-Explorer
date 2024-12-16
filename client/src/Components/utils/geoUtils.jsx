@@ -93,11 +93,12 @@ export function handleMapPointerMove({
     const map = mapInstanceRef.current;
 
     // Improve the hover event, this not working properly
-    const docId = hoveredFeatureRef.current?.get("documentId");
+
+    /*const docId = hoveredFeatureRef.current?.get("documentId");
     console.log(docId);
     const matchedDocument = allDocuments.find((doc) => doc.id === docId);
     const docColor = matchedDocument?.stakeholders?.length === 1 ? matchedDocument.stakeholders[0].color : "purple";
-    //
+    */
     
     const hoverSource = new VectorSource();
     const hoverLayer = new VectorLayer({
@@ -172,9 +173,9 @@ export function handleMapPointerMove({
                     image: new Icon({
                         anchor: [0.5, 0.5],
                         img: img,
-                        scale: 0.6,
+                        scale: 0.55,
                         imgSize: [img.width, img.height],
-                        color: icon.getColor(),
+                        //color: icon.getColor(),
                     }),
                     zIndex: 2,
                 })
@@ -249,7 +250,7 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
                 image: new Icon({
                     anchor: [0.5, 0.5],
                     img: img,
-                    scale: 0.55,
+                    scale: 0.50,
                     imgSize: [img.width, img.height],
                 }),
                 zIndex: 3,
