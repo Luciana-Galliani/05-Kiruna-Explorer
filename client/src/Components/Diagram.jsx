@@ -253,6 +253,27 @@ export default function Diagram() {
                 ]);
             });
 
+            gClip.selectAll(".link-hitbox").attr("d", (d) => {
+                const sourceNode = nodes.find((n) => n.id === d.source);
+                const targetNode = nodes.find((n) => n.id === d.target);
+
+                const sourceX = newXScale(new Date(sourceNode.date));
+                const sourceY = sourceNode.y;
+                const targetX = newXScale(new Date(targetNode.date));
+                const targetY = targetNode.y;
+
+                // Control point for the Bezier curve
+                const controlPointX =
+                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+                return LINE([
+                    [sourceX, sourceY],
+                    [controlPointX, controlPointY],
+                    [targetX, targetY],
+                ]);
+            });
+
             // Update the positions and widths of the year columns
             yearColumns
                 .attr("x", (d) => newXScale(new Date(d, 0, 1)))
@@ -290,6 +311,38 @@ export default function Diagram() {
         });
 
         // Connection
+        // Create visible links
+        gClip
+            .selectAll(".link")
+            .data(links)
+            .enter()
+            .append("path")
+            .attr("class", "link")
+            .attr("d", (d) => {
+                const sourceNode = nodes.find((n) => n.id === d.source);
+                const targetNode = nodes.find((n) => n.id === d.target);
+
+                const sourceX = xScale(new Date(sourceNode.date));
+                const sourceY = sourceNode.y;
+                const targetX = xScale(new Date(targetNode.date));
+                const targetY = targetNode.y;
+
+                // Control point for the Bezier curve
+                const controlPointX =
+                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+                return LINE([
+                    [sourceX, sourceY],
+                    [controlPointX, controlPointY],
+                    [targetX, targetY],
+                ]);
+            })
+            .attr("stroke", "black")
+            .attr("stroke-width", 3)
+            .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
+            .attr("fill", "none");
+
         // Create invisible hitboxes for links
         gClip
             .selectAll(".link-hitbox")
@@ -321,7 +374,9 @@ export default function Diagram() {
             .attr("stroke", "transparent") // Invisible line
             .attr("stroke-width", 20) // Enlarged hitbox
             .on("mouseover", (event, d) => {
-                const nearbyLinks = links.filter((link) => areLinksOverlapping(d, link, nodes, xScale));
+                const nearbyLinks = links.filter((link) =>
+                    areLinksOverlapping(d, link, nodes, xScale)
+                );
 
                 if (nearbyLinks.length > 0) {
                     // Mostra il tooltip solo per i link sovrapposti
@@ -374,39 +429,6 @@ export default function Diagram() {
                 gClip.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
             });
 
-        // Create visible links
-        gClip
-            .selectAll(".link")
-            .data(links)
-            .enter()
-            .append("path")
-            .attr("class", "link")
-            .attr("d", (d) => {
-                const sourceNode = nodes.find((n) => n.id === d.source);
-                const targetNode = nodes.find((n) => n.id === d.target);
-
-                const sourceX = xScale(new Date(sourceNode.date));
-                const sourceY = sourceNode.y;
-                const targetX = xScale(new Date(targetNode.date));
-                const targetY = targetNode.y;
-
-                // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
-                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
-
-                return LINE([
-                    [sourceX, sourceY],
-                    [controlPointX, controlPointY],
-                    [targetX, targetY],
-                ]);
-            })
-            .attr("stroke", "black")
-            .attr("stroke-width", 3)
-            .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
-            .attr("fill", "none");
-
-
         // Nodes
         gClip
             .selectAll(".node")
@@ -426,14 +448,16 @@ export default function Diagram() {
                     .text(d.title)
                     .style(
                         "left",
-                        `${rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
+                        `${
+                            rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
                         }px`
                     )
                     .style(
                         "top",
-                        `${rect.top +
-                        MARGIN.top +
-                        parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
+                        `${
+                            rect.top +
+                            MARGIN.top +
+                            parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
                         }px`
                     )
                     .style("transform", "translate(-50%, -100%)");
