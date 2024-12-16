@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import API from "../API/API.mjs";
 import * as d3 from "d3";
 import { max } from "d3-array";
-import pointToLineDistance from "./utils/DiagramUtils";
+import { areLinksOverlapping } from "./utils/DiagramUtils";
 
 // Constants
 const NODE_RADIUS = 10;
@@ -290,6 +290,91 @@ export default function Diagram() {
         });
 
         // Connection
+        // Create invisible hitboxes for links
+        gClip
+            .selectAll(".link-hitbox")
+            .data(links)
+            .enter()
+            .append("path")
+            .attr("class", "link-hitbox")
+            .attr("d", (d) => {
+                const sourceNode = nodes.find((n) => n.id === d.source);
+                const targetNode = nodes.find((n) => n.id === d.target);
+
+                const sourceX = xScale(new Date(sourceNode.date));
+                const sourceY = sourceNode.y;
+                const targetX = xScale(new Date(targetNode.date));
+                const targetY = targetNode.y;
+
+                // Control point for the Bezier curve
+                const controlPointX =
+                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+                return LINE([
+                    [sourceX, sourceY],
+                    [controlPointX, controlPointY],
+                    [targetX, targetY],
+                ]);
+            })
+            .attr("fill", "none")
+            .attr("stroke", "transparent") // Invisible line
+            .attr("stroke-width", 20) // Enlarged hitbox
+            .on("mouseover", (event, d) => {
+                const nearbyLinks = links.filter((link) => areLinksOverlapping(d, link, nodes, xScale));
+
+                if (nearbyLinks.length > 0) {
+                    // Mostra il tooltip solo per i link sovrapposti
+                    linkTooltip
+                        .style("visibility", "visible")
+                        .style("display", "block")
+                        .html(
+                            `<div>
+                            ${nearbyLinks
+                                .map((link) => {
+                                    const sourceNode = nodes.find((n) => n.id === link.source);
+                                    const targetNode = nodes.find((n) => n.id === link.target);
+                                    return `
+                                    <div>
+                                        <strong>Connection:</strong> ${link.relationship} <br>
+                                        <strong>From:</strong> ${sourceNode.title} <br>
+                                        <strong>To:</strong> ${targetNode.title}
+                                    </div>`;
+                                })
+                                .join("<br/>")}
+                        </div>`
+                        )
+                        .style("left", event.clientX + 20 + "px")
+                        .style("top", event.clientY - 10 + "px");
+
+                    const tooltipRect = linkTooltip.node().getBoundingClientRect();
+                    const windowWidth = window.innerWidth;
+                    const windowHeight = window.innerHeight;
+
+                    if (tooltipRect.right > windowWidth) {
+                        linkTooltip.style("left", `${windowWidth - tooltipRect.width - 20}px`);
+                    }
+
+                    if (tooltipRect.bottom > windowHeight) {
+                        linkTooltip.style("top", `${windowHeight - tooltipRect.height - 20}px`);
+                    }
+
+                    // Evidenzia i link sovrapposti
+                    gClip
+                        .selectAll(".link")
+                        .filter((link) => nearbyLinks.includes(link))
+                        .attr("stroke", "red")
+                        .attr("stroke-width", 3);
+                } else {
+                    linkTooltip.style("visibility", "hidden");
+                }
+            })
+            .on("mouseout", () => {
+                linkTooltip.style("visibility", "hidden");
+                gClip.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
+            });
+
+        // Create visible links
         gClip
             .selectAll(".link")
             .data(links)
@@ -300,9 +385,9 @@ export default function Diagram() {
                 const sourceNode = nodes.find((n) => n.id === d.source);
                 const targetNode = nodes.find((n) => n.id === d.target);
 
-                const sourceX = Math.max(xScale(new Date(sourceNode.date)), NODE_RADIUS);
+                const sourceX = xScale(new Date(sourceNode.date));
                 const sourceY = sourceNode.y;
-                const targetX = Math.max(xScale(new Date(targetNode.date)), NODE_RADIUS);
+                const targetX = xScale(new Date(targetNode.date));
                 const targetY = targetNode.y;
 
                 // Control point for the Bezier curve
@@ -319,81 +404,8 @@ export default function Diagram() {
             .attr("stroke", "black")
             .attr("stroke-width", 3)
             .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
-            .attr("fill", "none")
-            .on("mouseover", (event, d) => {
-                console.log("link hovered :", d);
-                const [hoverX, hoverY] = d3.pointer(event);
+            .attr("fill", "none");
 
-                const nearbyLinks = links.filter((link) => {
-                    const sourceNode = nodes.find((n) => n.id === link.source);
-                    const targetNode = nodes.find((n) => n.id === link.target);
-
-                    const sourceX = xScale(new Date(sourceNode.date));
-                    const sourceY = sourceNode.y;
-                    const targetX = xScale(new Date(targetNode.date));
-                    const targetY = targetNode.y;
-
-                    const distance = pointToLineDistance(
-                        hoverX,
-                        hoverY,
-                        sourceX,
-                        sourceY,
-                        targetX,
-                        targetY
-                    );
-                    return distance < NODE_RADIUS * 3;
-                });
-
-                if (nearbyLinks.length > 0) {
-                    // Show tooltip
-                    linkTooltip
-                        .style("visibility", "visible")
-                        .style("display", "block")
-                        .html(
-                            `<div>
-                                ${nearbyLinks
-                                    .map((link) => {
-                                        const sourceNode = nodes.find((n) => n.id === link.source);
-                                        const targetNode = nodes.find((n) => n.id === link.target);
-                                        return `
-                                        <div>
-                                            <strong>Connection:</strong> ${link.relationship} <br>
-                                            <strong>From:</strong> ${sourceNode.title} <br>
-                                            <strong>To:</strong> ${targetNode.title}
-                                        </div>`;
-                                    })
-                                    .join("<br/>")}
-                            </div>`
-                        )
-                        .style("left", event.clientX + 20 + "px")
-                        .style("top", event.clientY - 10 + "px");
-
-                    const tooltipRect = linkTooltip.node().getBoundingClientRect();
-                    const windowWidth = window.innerWidth;
-                    const windowHeight = window.innerHeight;
-
-                    if (tooltipRect.right > windowWidth) {
-                        linkTooltip.style("left", `${windowWidth - tooltipRect.width - 20}px`);
-                    }
-
-                    if (tooltipRect.bottom > windowHeight) {
-                        linkTooltip.style("top", `${windowHeight - tooltipRect.height - 20}px`);
-                    }
-                } else {
-                    linkTooltip.style("visibility", "hidden");
-                }
-
-                gClip
-                    .selectAll(".link")
-                    .filter((link) => nearbyLinks.includes(link))
-                    .attr("stroke", "red")
-                    .attr("stroke-width", 3);
-            })
-            .on("mouseout", (event) => {
-                linkTooltip.style("visibility", "hidden");
-
-                gClip.selectAll(".link").attr("stroke", "black").attr("stroke-width", 3);
-            });
 
         // Nodes
         gClip
@@ -414,16 +426,14 @@ export default function Diagram() {
                     .text(d.title)
                     .style(
                         "left",
-                        `${
-                            rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
+                        `${rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
                         }px`
                     )
                     .style(
                         "top",
-                        `${
-                            rect.top +
-                            MARGIN.top +
-                            parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
+                        `${rect.top +
+                        MARGIN.top +
+                        parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
                         }px`
                     )
                     .style("transform", "translate(-50%, -100%)");

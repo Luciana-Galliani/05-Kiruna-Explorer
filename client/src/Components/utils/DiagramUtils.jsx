@@ -1,31 +1,42 @@
-export default function pointToLineDistance(px, py, x1, y1, x2, y2) {
-    const A = px - x1;
-    const B = py - y1;
-    const C = x2 - x1;
-    const D = y2 - y1;
+// Funzione per calcolare i punti della curva Bézier con una serie di segmenti
+const getBezierPoints = (link, nodes, xScale, steps = 20) => {
+    const sourceNode = nodes.find((n) => n.id === link.source);
+    const targetNode = nodes.find((n) => n.id === link.target);
 
-    const dot = A * C + B * D;
-    const lenSq = C * C + D * D;
-    let param = -1;
+    const sourceX = xScale(new Date(sourceNode.date));
+    const sourceY = sourceNode.y;
+    const targetX = xScale(new Date(targetNode.date));
+    const targetY = targetNode.y;
 
-    if (lenSq !== 0) {
-        param = dot / lenSq;
+    const controlPointX =
+        Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+    const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+    const points = [];
+    // Suddividiamo la curva in più segmenti
+    for (let t = 0; t <= 1; t += 1 / steps) {
+        const x = (1 - t) * (1 - t) * sourceX + 2 * (1 - t) * t * controlPointX + t * t * targetX;
+        const y = (1 - t) * (1 - t) * sourceY + 2 * (1 - t) * t * controlPointY + t * t * targetY;
+        points.push([x, y]);
     }
+    return points;
+};
 
-    let xx, yy;
-
-    if (param < 0) {
-        xx = x1;
-        yy = y1;
-    } else if (param > 1) {
-        xx = x2;
-        yy = y2;
-    } else {
-        xx = x1 + param * C;
-        yy = y1 + param * D;
-    }
-
-    const dx = px - xx;
-    const dy = py - yy;
-    return Math.sqrt(dx * dx + dy * dy);
+// Funzione per calcolare la distanza euclidea tra due punti
+function euclideanDistance(p1, p2) {
+    return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
 }
+
+export const areLinksOverlapping = (link1, link2, nodes, xScale) => {
+    const points1 = getBezierPoints(link1, nodes, xScale); // Punti della prima curva
+    const points2 = getBezierPoints(link2, nodes, xScale); // Punti della seconda curva
+
+    const threshold = 2; // Soglia per considerare due punti sovrapposti
+
+    // Verifica se tutti i punti della curva 1 sono abbastanza vicini ai punti della curva 2
+    return points1.every((point1, index) => {
+        const point2 = points2[index];
+        const distance = euclideanDistance(point1, point2);
+        return distance < threshold;
+    });
+};
