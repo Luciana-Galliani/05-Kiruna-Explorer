@@ -7,6 +7,7 @@ import DetailsPanel from "./DetailsPanel";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
 import { getIconForType } from "./utils/iconUtils";
+import API from "../API/API";
 
 const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     const see = true;

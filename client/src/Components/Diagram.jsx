@@ -3,9 +3,10 @@ import API from "../API/API.mjs";
 import * as d3 from "d3";
 import { max } from "d3-array";
 import { areLinksOverlapping } from "./utils/DiagramUtils";
+import { getDiagramIconForType } from "./utils/iconUtils";
 
 // Constants
-const NODE_RADIUS = 10;
+const NODE_RADIUS = 20;
 const LINE = d3.line().curve(d3.curveBasis); // Bezier curve for connections
 const MARGIN = { top: 50, right: 50, bottom: 60, left: 150 };
 const RELATIONSHIP_STYLES = {
@@ -48,6 +49,7 @@ const processDocuments = (documents) => {
             scale: scaleKey,
             type: doc.type,
             stakeholders: doc.stakeholders,
+            color: doc.stakeholders.length === 1 ? doc.stakeholders[0].color : "purple",
         });
 
         // Add connections
@@ -192,7 +194,8 @@ export default function Diagram() {
             .attr("y1", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // add 0.5 to avoid weird graphical glitches
             .attr("y2", (d) => (yScale(d) % 1 === 0.0 ? yScale(d) + 0.5 : yScale(d))) // add 0.5 to avoid weird graphical glitches
             .attr("stroke", "black")
-            .attr("stroke-width", "2");
+            .attr("stroke-width", "2")
+            .attr("pointer-events", "none");
 
         // Axis
         const xAxis = g.append("g").call(d3.axisTop(xScale));
@@ -230,7 +233,7 @@ export default function Diagram() {
             g.selectAll(".tick text").style("font-size", "14px").style("font-weight", "bold");
 
             // Update the positions of the nodes and links
-            gClip.selectAll(".node").attr("cx", (d) => newXScale(new Date(d.date)));
+            gClip.selectAll(".node").attr("x", (d) => newXScale(new Date(d.date)) - NODE_RADIUS);
 
             gClip.selectAll(".link").attr("d", (d) => {
                 const sourceNode = nodes.find((n) => n.id === d.source);
@@ -418,7 +421,7 @@ export default function Diagram() {
                     gClip
                         .selectAll(".link")
                         .filter((link) => nearbyLinks.includes(link))
-                        .attr("stroke", "red")
+                        .attr("stroke", "white")
                         .attr("stroke-width", 3);
                 } else {
                     linkTooltip.style("visibility", "hidden");
@@ -434,12 +437,19 @@ export default function Diagram() {
             .selectAll(".node")
             .data(nodes)
             .enter()
-            .append("circle")
+            .append("image")
             .attr("class", "node")
-            .attr("cx", (d) => max([xScale(new Date(d.date)), NODE_RADIUS]))
-            .attr("cy", (d) => d.y)
-            .attr("r", NODE_RADIUS)
-            .attr("fill", (d) => (d.stakeholders.length ? d.stakeholders[0].color : "#000"))
+            .attr("x", (d) => xScale(new Date(d.date)) - NODE_RADIUS)
+            .attr("y", (d) => d.y - NODE_RADIUS)
+            .attr("width", NODE_RADIUS * 2)
+            .attr("height", NODE_RADIUS * 2)
+            .attr(
+                "href",
+                (d) =>
+                    `data:image/svg+xml;utf8,${encodeURIComponent(
+                        getDiagramIconForType(d.type, d.color)
+                    )}`
+            )
             .on("mouseover", (event, d) => {
                 const rect = svgRef.current.getBoundingClientRect(); // Get SVG position
                 titleTooltip
@@ -449,7 +459,10 @@ export default function Diagram() {
                     .style(
                         "left",
                         `${
-                            rect.left + MARGIN.left + parseFloat(d3.select(event.target).attr("cx"))
+                            rect.left +
+                            MARGIN.left +
+                            parseFloat(d3.select(event.target).attr("x")) +
+                            NODE_RADIUS
                         }px`
                     )
                     .style(
@@ -457,20 +470,32 @@ export default function Diagram() {
                         `${
                             rect.top +
                             MARGIN.top +
-                            parseFloat(d3.select(event.target).attr("cy") - NODE_RADIUS - 5)
+                            parseFloat(d3.select(event.target).attr("y")) -
+                            5
                         }px`
                     )
                     .style("transform", "translate(-50%, -100%)");
 
-                // Change border color
-                d3.select(event.target).attr("stroke", "white").attr("stroke-width", 2);
+                d3.select(event.target).attr(
+                    "href",
+                    (d) =>
+                        `data:image/svg+xml;utf8,${encodeURIComponent(
+                            getDiagramIconForType(d.type, d.color, "white")
+                        )}`
+                );
                 // Move the hovered node to the front
                 d3.select(event.target).raise();
             })
             .on("mouseout", (event) => {
                 titleTooltip.style("visibility", "hidden");
-                // Reset border color
-                d3.select(event.target).attr("stroke", "none");
+                // Reset border color or opacity
+                d3.select(event.target).attr(
+                    "href",
+                    (d) =>
+                        `data:image/svg+xml;utf8,${encodeURIComponent(
+                            getDiagramIconForType(d.type, d.color)
+                        )}`
+                );
             });
 
         return () => {
