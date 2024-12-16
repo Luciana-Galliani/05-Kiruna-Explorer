@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
 import API from "../API/API";
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
     const [filter, setFilter] = useState(new Filter());
     const [stakeholders, setStakeholders] = useState([]);
     const [types, setTypes] = useState([]);
@@ -127,7 +127,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         stakeholders={stakeholders}
                     />
                 </div>
-                <TableList filter={filter} />
+                <TableList filter={filter} seeOnMap={seeOnMap} toggleSidebar={toggleSidebar} />
             </div>
 
             {/* Overlay */}
@@ -158,6 +158,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 Sidebar.propTypes = {
     isSidebarOpen: PropTypes.bool,
     toggleSidebar: PropTypes.func.isRequired,
+    seeOnMap: PropTypes.func
 };
 
 export default Sidebar;

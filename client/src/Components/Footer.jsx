@@ -6,7 +6,7 @@ import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 import PropTypes from "prop-types";
 
-const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setnewArea, setCoordinates }) => {
+const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setNewArea, setCoordinates }) => {
     const navigate = useNavigate();
     const { isLoggedIn, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
@@ -33,7 +33,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                     <Button
                         onClick={() => {
                             setShowCloseConfirmation(true);
-                            setnewArea(null);
+                            setNewArea(null);
                             setCoordinates((prev) => ({
                                 ...prev,
                                 latitude: null,
@@ -66,7 +66,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                         onClick={() => {
                             setIsSelectingCoordinates(false);
                             navigate("/");
-                            setnewArea(null);
+                            setNewArea(null);
                             setIsSelectingArea(false);
 
                         }}
@@ -124,7 +124,7 @@ Footer.propTypes = {
     location: PropTypes.object.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleSatelliteView: PropTypes.func.isRequired,
-    setnewArea: PropTypes.func.isRequired,
+    setNewArea: PropTypes.func.isRequired,
     setCoordinates: PropTypes.func.isRequired,
 };
 

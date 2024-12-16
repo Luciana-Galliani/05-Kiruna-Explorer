@@ -16,7 +16,8 @@ import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
 
-const TableList = ({ filter }) => {
+const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
+    const see = true;
     const icon = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
@@ -78,41 +79,36 @@ const TableList = ({ filter }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {documentsToShow.map(
-                            (document, index) => (
-                                (img.src = icon[document.type]),
-                                (
-                                    <tr
-                                        style={{
-                                            cursor: "pointer",
-                                        }}
-                                        key={index}
-                                        onClick={() => setSelectedDocument(document)}
-                                        tabIndex={0}
-                                    >
-                                        <td>{document.type}</td>
-                                        <td>{document.title}</td>
-                                        <td>{document.stakeholders[0].name}</td>
-                                        <td>{document.language}</td>
-                                        <td>
-                                            {icon[document.type] && (
-                                                <img
-                                                    src={img.src}
-                                                    alt={document.type}
-                                                    style={{
-                                                        width: "30px",
-                                                        height: "30px",
-                                                        marginLeft: "5px",
-                                                        padding: "2px",
-                                                        borderRadius: "50%",
-                                                    }}
-                                                />
-                                            )}
-                                        </td>
-                                    </tr>
-                                )
-                            )
-                        )}
+                        {documentsToShow.map((document, index) => (
+                            <tr
+                                style={{
+                                    cursor: "pointer",
+                                }}
+                                key={index}
+                                onClick={() => setSelectedDocument(document)}
+                                tabIndex={0}
+                            >
+                                <td>{document.type}</td>
+                                <td>{document.title}</td>
+                                <td>{document.stakeholders[0].name}</td>
+                                <td>{document.language}</td>
+                                <td>
+                                    {icon[document.type] && (
+                                        <img
+                                            src={icon[document.type]}
+                                            alt={document.type}
+                                            style={{
+                                                width: "30px",
+                                                height: "30px",
+                                                marginLeft: "5px",
+                                                padding: "2px",
+                                                borderRadius: "50%",
+                                            }}
+                                        />
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </Table>
             </div>
@@ -131,6 +127,9 @@ const TableList = ({ filter }) => {
                         initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
+                        seeOnMap={seeOnMap}
+                        toggleSidebar={toggleSidebar}
+                        see={see}
                     />
                 </Modal>
             )}
@@ -140,6 +139,8 @@ const TableList = ({ filter }) => {
 
 TableList.propTypes = {
     filter: PropTypes.instanceOf(Filter).isRequired,
+    seeOnMap: PropTypes.func,
+    toggleSidebar: PropTypes.func
 };
 
 export default TableList;

@@ -2,18 +2,13 @@ import { useRef, useEffect } from "react";
 import { Map, View } from "ol";
 import { Tile as TileLayer } from "ol/layer";
 import { OSM } from "ol/source";
-import { fromLonLat, transformExtent } from "ol/proj";
+import { fromLonLat } from "ol/proj";
 
-export const useMapSetup = ({ mapRef, isSatelliteView }) => {
+export const useMapSetup = ({ mapRef, isSatelliteView, centerIn }) => {
     const mapInstanceRef = useRef(null);
 
     useEffect(() => {
-        const extent = transformExtent(
-            [17.53, 67.21, 23.17, 69.3], // Bounding box for Kiruna
-            "EPSG:4326",
-            "EPSG:3857"
-        );
-        const cityCenter = fromLonLat([20.22513, 67.85572]);
+        const cityCenter = fromLonLat([20.22513, 67.85572]); // Centro di Kiruna
 
         const satelliteLayer = new TileLayer({
             source: new OSM({
@@ -33,7 +28,6 @@ export const useMapSetup = ({ mapRef, isSatelliteView }) => {
                 zoom: 14,
                 minZoom: 1,
                 maxZoom: 20,
-                extent: extent,
             }),
         });
 
@@ -43,6 +37,20 @@ export const useMapSetup = ({ mapRef, isSatelliteView }) => {
             map.setTarget(null);
         };
     }, [isSatelliteView]);
+
+    useEffect(() => {
+        if (!mapInstanceRef.current || !centerIn) return;
+
+        const map = mapInstanceRef.current;
+        if (Array.isArray(centerIn) && centerIn.length === 2) {
+            const location = fromLonLat(centerIn);
+            map.getView().setCenter(location);
+        } else if (centerIn?.area) {
+            const location = fromLonLat([parseFloat(centerIn.area.centerLon), parseFloat(centerIn.area.centerLat)]);
+            map.getView().setCenter(location);
+
+        }
+    }, [centerIn]);
 
     return mapInstanceRef;
 };
