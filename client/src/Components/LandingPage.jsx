@@ -29,19 +29,19 @@ const LandingPage = ({ handleLogout, navigateToMap, navigateToDiagram, onLoginCl
                 <div>
                     {isLoggedIn ? (
                         <button
-                            className={`btn btn-light `}
+                            className={`btn btn-light`}
                             onClick={handleLogout}
                         >
                             Logout
                         </button>
                     ) : (
                         location.pathname !== "/login" && (
-                            <Button
-                                onClick={onLoginClick}
-                                className={`btn btn-light `}
+                            <Link
+                                to="/login"
+                                className={`btn btn-light`}
                             >
                                 Login
-                            </Button>
+                            </Link>
                         )
                     )}
                 </div>

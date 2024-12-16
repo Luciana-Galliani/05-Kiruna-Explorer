@@ -82,44 +82,93 @@ function App() {
                     isSatelliteView={isSatelliteView}
                     seeOnMap={seeOnMap}
                 />
+
             }
 
             <Routes>
                 <Route
                     path="/"
-                    element={<HomePage 
-                        handleLogout={() => setShowLogoutModal(true)}
-                        handleLogin={handleLogin}/>}
-                />
+                    element={
+                        // z-index: number is used to place the element on top of the other elements
+                        <HomePage 
+                            handleLogout={handleLogout}
+                            handleLogin={handleLogin}/>}
+                        />
                 <Route
                     path="/add"
                     element={
-                        <DescriptionForm
-                            setCoordinates={setCoordinates}
-                            coordinates={coordinates}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            newarea={newArea}
-                            setNewArea={setNewArea}
-
-                        />
+                        <div> 
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            <DescriptionForm
+                                setCoordinates={setCoordinates}
+                                coordinates={coordinates}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                                newarea={newArea}
+                                setNewArea={setNewArea}
+                            />
+                        </div>
                     }
                 />
                 <Route
                     path="edit/:documentId"
                     element={
-                        <EditDocumentForm
-                            setCoordinates={setCoordinates}
-                            coordinates={coordinates}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            newarea={newArea}
-                            setNewArea={setNewArea}
-                        />
+                        <div>
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            <EditDocumentForm
+                                setCoordinates={setCoordinates}
+                                coordinates={coordinates}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                                newarea={newArea}
+                                setNewArea={setNewArea}
+                            />
+                        </div>
                     }
                 />
-                <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
+                <Route path="/login" element={
+                    <div>
+                        { isHomePage ? (
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            ) : (
+                                <HomePage
+                                    handleLogout={handleLogout}
+                                    handleLogin={handleLogin}
+                                />
+                            )
+                        }
+                        <LoginForm handleLogin={handleLogin}/>
+                    </div>} />
                 <Route
                     path="/registration"
-                    element={<RegistrationForm handleLogin={handleLogin} />}
+                    element={
+                    <div>
+                        <CityMap
+                            handleCoordinatesSelected={handleCoordinatesSelected}
+                            isSatelliteView={isSatelliteView}
+                            handleSatelliteView={handleSatelliteView}
+                            handleAreaSelected={handleAreaSelected}
+                            centerIn={centerIn}
+                        />
+                        <RegistrationForm handleLogin={handleLogin} />
+                    </div>
+                }
                 />
                 <Route
                     path="/allDocuments"
