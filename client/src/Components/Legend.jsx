@@ -59,15 +59,16 @@ const Legend = () => {
                                     rel.style === "Dashed line"
                                         ? "2px dashed black"
                                         : rel.style === "Dotted line"
-                                            ? "2px dotted black"
-                                            : rel.style.toLowerCase() === "dash-dotted line"
-                                                ? "none" // Non usare il bordo in questo caso
-                                                : "2px solid black",
+                                        ? "2px dotted black"
+                                        : rel.style.toLowerCase() === "dash-dotted line"
+                                        ? "none" // Non usare il bordo in questo caso
+                                        : "2px solid black",
                                 background:
                                     rel.style.toLowerCase() === "dash-dotted line"
-                                        ? "repeating-linear-gradient(90deg, black 0, black 5px, transparent 5px, transparent 10px, black 10px, black 15px)" // Pattern Dash-dotted
+                                        ? "repeating-linear-gradient(90deg, black 0, black 2px, transparent 2px, transparent 7px, black 7px, black 17px, transparent 17px, transparent 22px)"
                                         : "none", // Applicare il pattern solo quando è "Dash-dotted line"
-                                transition: "background 0.3s ease-in-out, border-bottom 0.3s ease-in-out", // Transizione fluida
+                                transition:
+                                    "background 0.3s ease-in-out, border-bottom 0.3s ease-in-out", // Transizione fluida
                             }}
                         ></span>
                     </li>
