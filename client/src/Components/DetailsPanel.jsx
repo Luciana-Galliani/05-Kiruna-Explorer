@@ -1,28 +1,8 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-import designIcon from "../Icons/design.svg";
-import informativeIcon from "../Icons/informative.svg";
-import prescriptiveIcon from "../Icons/prescriptive.svg";
-import technicalIcon from "../Icons/technical.svg";
-import agreementIcon from "../Icons/agreement.svg";
-import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
-import otherIcon from "../Icons/other.svg";
 import { Button } from "react-bootstrap";
-
-const documentIcons = {
-    Design: designIcon,
-    Informative: informativeIcon,
-    Prescriptive: prescriptiveIcon,
-    Technical: technicalIcon,
-    Agreement: agreementIcon,
-    Conflict: conflictIcon,
-    Consultation: consultationIcon,
-    Action: actionIcon,
-    Other: otherIcon,
-};
+import { getIconForType } from "./utils/iconUtils";
 
 import {
     faFilePdf,
@@ -53,10 +33,6 @@ const DetailsPanel = forwardRef(({ initialDocId, onClose, isLoggedIn, seeOnMap, 
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
     const [doc, setDoc] = useState(initialDocId);
-
-    const getDocumentIcon = (type) => {
-        return documentIcons[type] || otherIcon;
-    };
 
     useImperativeHandle(ref, () => ({
         resetDocument: () => setDocument(null),
@@ -123,6 +99,9 @@ const DetailsPanel = forwardRef(({ initialDocId, onClose, isLoggedIn, seeOnMap, 
         };
     });
 
+    const stakeholders = document.stakeholders;
+    const documentColor = stakeholders.length == 1 ? stakeholders[0].color : "purple";
+
     const getIconForFileType = (fileType) => {
         switch (fileType) {
             case "pdf":
@@ -149,7 +128,7 @@ const DetailsPanel = forwardRef(({ initialDocId, onClose, isLoggedIn, seeOnMap, 
                 <div className="d-flex align-items-center justify-content-center mb-4">
                     {/* Render document icon */}
                     <img
-                        src={getDocumentIcon(document.type)}
+                        src={`data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(document.type, documentColor))}`}
                         alt={`${document.type} icon`}
                         style={{ width: "40px", height: "40px", marginRight: "10px" }}
                     />

@@ -4,31 +4,12 @@ import Modal from "react-bootstrap/Modal";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import DetailsPanel from "./DetailsPanel";
-import designIcon from "../Icons/design.svg";
-import informativeIcon from "../Icons/informative.svg";
-import prescriptiveIcon from "../Icons/prescriptive.svg";
-import technicalIcon from "../Icons/technical.svg";
-import agreementIcon from "../Icons/agreement.svg";
-import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
-import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
+import { getIconForType } from "./utils/iconUtils";
 
 const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     const see = true;
-    const icon = {
-        "Design Document": designIcon,
-        "Informative Document": informativeIcon,
-        "Prescriptive Document": prescriptiveIcon,
-        "Technical Document": technicalIcon,
-        Agreement: agreementIcon,
-        Conflict: conflictIcon,
-        Consultation: consultationIcon,
-        Action: actionIcon,
-        Other: otherIcon,
-    };
 
     const { isLoggedIn, allDocuments } = useContext(AppContext);
 
@@ -36,8 +17,6 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isSelected, setIsSelected] = useState(false);
     const location = useLocation();
-
-    const img = new Image();
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -64,6 +43,13 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
         // Close the deteils pannel and the sidebar when the user clicks on modify
         setIsSelected(false);
     }, [location.pathname]);
+
+    const documentColor = (doc) => {
+        if(doc.stakeholders.length == 1){
+            return doc.stakeholders[0].color;
+        }
+        return "purple";
+    }
 
     return (
         <div style={{ display: "flex", maxHeight: "70%", overflowY: "auto" }}>
@@ -93,19 +79,17 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
                                 <td>{document.stakeholders[0].name}</td>
                                 <td>{document.language}</td>
                                 <td>
-                                    {icon[document.type] && (
-                                        <img
-                                            src={icon[document.type]}
-                                            alt={document.type}
-                                            style={{
-                                                width: "30px",
-                                                height: "30px",
-                                                marginLeft: "5px",
-                                                padding: "2px",
-                                                borderRadius: "50%",
-                                            }}
-                                        />
-                                    )}
+                                    <img
+                                        src={`data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(document.type, documentColor(document)))}`}
+                                        alt={document.type}
+                                        style={{
+                                            width: "30px",
+                                            height: "30px",
+                                            marginLeft: "5px",
+                                            padding: "2px",
+                                            borderRadius: "50%",
+                                        }}
+                                    />
                                 </td>
                             </tr>
                         ))}
