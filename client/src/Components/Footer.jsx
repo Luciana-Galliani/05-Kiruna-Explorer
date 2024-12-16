@@ -6,7 +6,14 @@ import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 import PropTypes from "prop-types";
 
-const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, setNewArea, setCoordinates }) => {
+const Footer = ({
+    isHomePage,
+    location,
+    isSatelliteView,
+    handleSatelliteView,
+    setNewArea,
+    setCoordinates,
+}) => {
     const navigate = useNavigate();
     const { isLoggedIn, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
@@ -37,7 +44,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                             setCoordinates((prev) => ({
                                 ...prev,
                                 latitude: null,
-                                longitude: null
+                                longitude: null,
                             }));
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
@@ -59,8 +66,8 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
             )}
 
             {location.pathname === "/allDocuments" ||
-                isEditPage ||
-                location.pathname === "/municipality" ? (
+            isEditPage ||
+            location.pathname === "/municipality" ? (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => {
@@ -68,7 +75,6 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                             navigate("/");
                             setNewArea(null);
                             setIsSelectingArea(false);
-
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
                         style={{
@@ -90,7 +96,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
 
             {
                 /* Not logged */
-                !isLoggedIn && (
+                !isLoggedIn && location.pathname != "/diagram" && (
                     <div className="container">
                         <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
                             <Button

@@ -7,11 +7,12 @@ import DetailsPanel from "./DetailsPanel";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
 import { getIconForType } from "./utils/iconUtils";
+import API from "../API/API";
 
 const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     const see = true;
 
-    const { isLoggedIn, allDocuments } = useContext(AppContext);
+    const { isLoggedIn, allDocuments, setAllDocuments } = useContext(AppContext);
 
     const [documentsToShow, setDocumentsToShow] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -20,7 +21,13 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
 
     useEffect(() => {
         const fetchDocuments = async () => {
-            const documents = allDocuments;
+            let documents;
+            try {
+                const response = await API.getDocuments();
+                documents = response.documents;
+            } catch (error) {
+                console.log(error);
+            }
             //filter documentsToShow based on the conditions
             const filteredDocuments = documents.filter((document) => {
                 //filter the document with all the conditions required
@@ -45,11 +52,11 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
     }, [location.pathname]);
 
     const documentColor = (doc) => {
-        if(doc.stakeholders.length == 1){
+        if (doc.stakeholders.length == 1) {
             return doc.stakeholders[0].color;
         }
         return "purple";
-    }
+    };
 
     return (
         <div style={{ display: "flex", maxHeight: "70%", overflowY: "auto" }}>
@@ -80,7 +87,9 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
                                 <td>{document.language}</td>
                                 <td>
                                     <img
-                                        src={`data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(document.type, documentColor(document)))}`}
+                                        src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                                            getIconForType(document.type, documentColor(document))
+                                        )}`}
                                         alt={document.type}
                                         style={{
                                             width: "30px",
@@ -124,7 +133,7 @@ const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
 TableList.propTypes = {
     filter: PropTypes.instanceOf(Filter).isRequired,
     seeOnMap: PropTypes.func,
-    toggleSidebar: PropTypes.func
+    toggleSidebar: PropTypes.func,
 };
 
 export default TableList;
