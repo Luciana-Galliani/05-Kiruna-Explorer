@@ -11,7 +11,7 @@ const Footer = ({
     location,
     isSatelliteView,
     handleSatelliteView,
-    setnewArea,
+    setNewArea,
     setCoordinates,
 }) => {
     const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Footer = ({
                     <Button
                         onClick={() => {
                             setShowCloseConfirmation(true);
-                            setnewArea(null);
+                            setNewArea(null);
                             setCoordinates((prev) => ({
                                 ...prev,
                                 latitude: null,
@@ -73,7 +73,7 @@ const Footer = ({
                         onClick={() => {
                             setIsSelectingCoordinates(false);
                             navigate("/");
-                            setnewArea(null);
+                            setNewArea(null);
                             setIsSelectingArea(false);
                         }}
                         className="btn btn-danger d-flex align-items-center justify-content-center"
@@ -130,7 +130,7 @@ Footer.propTypes = {
     location: PropTypes.object.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleSatelliteView: PropTypes.func.isRequired,
-    setnewArea: PropTypes.func.isRequired,
+    setNewArea: PropTypes.func.isRequired,
     setCoordinates: PropTypes.func.isRequired,
 };
 

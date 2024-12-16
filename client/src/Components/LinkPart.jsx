@@ -79,6 +79,13 @@ export function LinkPart({ inputValues, setInputValues, relationshipOptions }) {
                                     className="mb-2"
                                 />
                             </Dropdown.Header>
+                            {(document != 0 || document != "") && (
+                                <Dropdown.Item onClick={() => handleDocumentChange("")} style={{ fontWeight: "bold", color: "red" }}>
+                                    Remove selection
+                                </Dropdown.Item>
+                            )}
+
+
                             {filteredDocuments.map((doc) => (
                                 <Dropdown.Item
                                     key={doc.id}

@@ -1,5 +1,8 @@
+import React, { forwardRef, useImperativeHandle } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
+import { Button } from "react-bootstrap";
+import { getIconForType } from "./utils/iconUtils";
 
 import {
     faFilePdf,
@@ -26,10 +29,15 @@ const getFileType = (fileName) => {
     return "generic";
 };
 
-const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
+const DetailsPanel = forwardRef(({ initialDocId, onClose, isLoggedIn, seeOnMap, toggleSidebar, see }, ref) => {
     const [document, setDocument] = useState(null);
     const navigate = useNavigate();
     const [doc, setDoc] = useState(initialDocId);
+
+    useImperativeHandle(ref, () => ({
+        resetDocument: () => setDocument(null),
+        fetchNewDocument: (newDocId) => setDoc(newDocId),
+    }));
 
     useEffect(() => {
         if (initialDocId) setDoc(initialDocId);
@@ -49,6 +57,19 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
         fetchDocumentById();
     }, [doc]);
 
+    const handleSeeOnMap = () => {
+        if (!document) return;
+
+        if (document.allMunicipality === false) {
+            if (document.area) {
+                seeOnMap({ area: document.area });
+            } else if (document.latitude && document.longitude) {
+                seeOnMap([document.longitude, document.latitude]);
+            }
+            toggleSidebar();
+            onClose();
+        }
+    };
 
     if (!document) {
         return (
@@ -78,6 +99,9 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
         };
     });
 
+    const stakeholders = document.stakeholders;
+    const documentColor = stakeholders.length == 1 ? stakeholders[0].color : "purple";
+
     const getIconForFileType = (fileType) => {
         switch (fileType) {
             case "pdf":
@@ -101,7 +125,26 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
     return (
         <div className="details-panel-container">
             <div>
-                <h2 className="text-center mb-4">{document.title}</h2>
+                <div className="d-flex align-items-center justify-content-center mb-4">
+                    {/* Render document icon */}
+                    <img
+                        src={`data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(document.type, documentColor))}`}
+                        alt={`${document.type} icon`}
+                        style={{ width: "40px", height: "40px", marginRight: "10px" }}
+                    />
+                    {/* Document title */}
+                    <h2 className="text-center m-0">{document.title}</h2>
+                </div>
+
+                {/* Pulsante "See on Map" subito dopo il titolo */}
+                {see == true && document.allMunicipality === false && (
+                    <div className="d-flex justify-content-center mb-4">
+                        <Button variant="dark" onClick={handleSeeOnMap}>
+                            See on Map <i className="bi bi-geo-alt"></i>
+                        </Button>
+                    </div>
+                )}
+
 
                 <ul className="list-unstyled">
                     <li>
@@ -211,12 +254,15 @@ const DetailsPanel = ({ initialDocId, onClose, isLoggedIn }) => {
             </div>
         </div>
     );
-};
+});
 
 DetailsPanel.propTypes = {
     initialDocId: PropTypes.number,
     onClose: PropTypes.func.isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
+    seeOnMap: PropTypes.any,
+    toggleSidebar: PropTypes.func,
+    see: PropTypes.bool.isRequired
 };
 
 export default DetailsPanel;

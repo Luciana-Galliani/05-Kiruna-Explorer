@@ -3,9 +3,30 @@ import PropTypes from "prop-types";
 import TableList from "./TableList";
 import SearchBar from "./SearchBar";
 import Filter from "../API/Filters/Filter";
+import API from "../API/API";
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
     const [filter, setFilter] = useState(new Filter());
+    const [stakeholders, setStakeholders] = useState([]);
+    const [types, setTypes] = useState([]);
+
+    useEffect(() => {
+        // Fetch stakeholders
+        const fetchStakeholders = async () => {
+            try {
+                const stakeholders = await API.getStakeholders();
+                // Two times stakeholders.stakeholders because the API returns an object with the stakeholders array inside
+                setStakeholders(stakeholders.stakeholders);
+                console.log("Stakeholders fetched:");
+                console.log(stakeholders);
+            } catch (error) {
+                console.error("Error fetching stakeholders:", error);
+            }
+        };
+        
+        fetchStakeholders();
+    }, []);
+        
 
     const handleMunicipality = () => {
         const updatedFilter = new Filter({ ...filter, allMunicipality: !filter.allMunicipality });
@@ -22,13 +43,23 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         setFilter(updatedFilter);
     };
 
-    const handleIssuanceDate = (issuanceDate) => {
-        const updatedFilter = new Filter({ ...filter, issuanceDate: issuanceDate });
+    const handleDescription = (description) => {
+        const updatedFilter = new Filter({ ...filter, description: description });
         setFilter(updatedFilter);
     };
 
-    const handleDescription = (description) => {
-        const updatedFilter = new Filter({ ...filter, description: description });
+    const handleRange = (startRange, endRange) => {
+        const updatedFilter = new Filter({ ...filter, startRange: startRange, endRange: endRange });
+        setFilter(updatedFilter);
+    };
+
+    const handleType = (type) => {
+        const updatedFilter = new Filter({ ...filter, type: type });
+        setFilter(updatedFilter);
+    };
+
+    const handleLanguage = (language) => {
+        const updatedFilter = new Filter({ ...filter, language: language });
         setFilter(updatedFilter);
     };
 
@@ -89,11 +120,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                         handleMunicipality={handleMunicipality}
                         handleAuthor={handleAuthor}
                         handleTitle={handleTitle}
-                        handleIssuanceDate={handleIssuanceDate}
                         handleDescription={handleDescription}
+                        handleRange={handleRange}
+                        handleType={handleType}
+                        handleLanguage={handleLanguage}
+                        stakeholders={stakeholders}
                     />
                 </div>
-                <TableList filter={filter} />
+                <TableList filter={filter} seeOnMap={seeOnMap} toggleSidebar={toggleSidebar} />
             </div>
 
             {/* Overlay */}
@@ -124,6 +158,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 Sidebar.propTypes = {
     isSidebarOpen: PropTypes.bool,
     toggleSidebar: PropTypes.func.isRequired,
+    seeOnMap: PropTypes.func
 };
 
 export default Sidebar;

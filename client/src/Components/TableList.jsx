@@ -4,31 +4,12 @@ import Modal from "react-bootstrap/Modal";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import DetailsPanel from "./DetailsPanel";
-import designIcon from "../Icons/design.svg";
-import informativeIcon from "../Icons/informative.svg";
-import prescriptiveIcon from "../Icons/prescriptive.svg";
-import technicalIcon from "../Icons/technical.svg";
-import agreementIcon from "../Icons/agreement.svg";
-import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
-import otherIcon from "../Icons/other.svg";
 import PropTypes from "prop-types";
 import Filter from "../API/Filters/Filter";
-import API from "../API/API.mjs";
+import { getIconForType } from "./utils/iconUtils";
 
-const TableList = ({ filter }) => {
-    const icon = {
-        "Design Document": designIcon,
-        "Informative Document": informativeIcon,
-        "Prescriptive Document": prescriptiveIcon,
-        "Technical Document": technicalIcon,
-        Agreement: agreementIcon,
-        Conflict: conflictIcon,
-        Consultation: consultationIcon,
-        Action: actionIcon,
-        Other: otherIcon,
-    };
+const TableList = ({ filter, seeOnMap, toggleSidebar }) => {
+    const see = true;
 
     const { isLoggedIn, allDocuments, setAllDocuments } = useContext(AppContext);
 
@@ -36,8 +17,6 @@ const TableList = ({ filter }) => {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isSelected, setIsSelected] = useState(false);
     const location = useLocation();
-
-    const img = new Image();
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -71,6 +50,13 @@ const TableList = ({ filter }) => {
         setIsSelected(false);
     }, [location.pathname]);
 
+    const documentColor = (doc) => {
+        if (doc.stakeholders.length == 1) {
+            return doc.stakeholders[0].color;
+        }
+        return "purple";
+    };
+
     return (
         <div style={{ display: "flex", maxHeight: "70%", overflowY: "auto" }}>
             <div style={{ flex: 1 }}>
@@ -85,41 +71,36 @@ const TableList = ({ filter }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {documentsToShow.map(
-                            (document, index) => (
-                                (img.src = icon[document.type]),
-                                (
-                                    <tr
+                        {documentsToShow.map((document, index) => (
+                            <tr
+                                style={{
+                                    cursor: "pointer",
+                                }}
+                                key={index}
+                                onClick={() => setSelectedDocument(document)}
+                                tabIndex={0}
+                            >
+                                <td>{document.type}</td>
+                                <td>{document.title}</td>
+                                <td>{document.stakeholders[0].name}</td>
+                                <td>{document.language}</td>
+                                <td>
+                                    <img
+                                        src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                                            getIconForType(document.type, documentColor(document))
+                                        )}`}
+                                        alt={document.type}
                                         style={{
-                                            cursor: "pointer",
+                                            width: "30px",
+                                            height: "30px",
+                                            marginLeft: "5px",
+                                            padding: "2px",
+                                            borderRadius: "50%",
                                         }}
-                                        key={index}
-                                        onClick={() => setSelectedDocument(document)}
-                                        tabIndex={0}
-                                    >
-                                        <td>{document.type}</td>
-                                        <td>{document.title}</td>
-                                        <td>{document.stakeholders[0].name}</td>
-                                        <td>{document.language}</td>
-                                        <td>
-                                            {icon[document.type] && (
-                                                <img
-                                                    src={img.src}
-                                                    alt={document.type}
-                                                    style={{
-                                                        width: "30px",
-                                                        height: "30px",
-                                                        marginLeft: "5px",
-                                                        padding: "2px",
-                                                        borderRadius: "50%",
-                                                    }}
-                                                />
-                                            )}
-                                        </td>
-                                    </tr>
-                                )
-                            )
-                        )}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </Table>
             </div>
@@ -138,6 +119,9 @@ const TableList = ({ filter }) => {
                         initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
+                        seeOnMap={seeOnMap}
+                        toggleSidebar={toggleSidebar}
+                        see={see}
                     />
                 </Modal>
             )}
@@ -147,6 +131,8 @@ const TableList = ({ filter }) => {
 
 TableList.propTypes = {
     filter: PropTypes.instanceOf(Filter).isRequired,
+    seeOnMap: PropTypes.func,
+    toggleSidebar: PropTypes.func,
 };
 
 export default TableList;

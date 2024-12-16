@@ -2,7 +2,7 @@ import { Form, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 export function GeoPart({ inputValues, setInputValues, setSecond, handleChooseInMap }) {
-    
+
     const handleArea = () => {
         setSecond(true);
     };
@@ -86,4 +86,5 @@ GeoPart.propTypes = {
     }).isRequired,
     setInputValues: PropTypes.func.isRequired,
     setSecond: PropTypes.func.isRequired,
+    handleChooseInMap: PropTypes.func
 };
