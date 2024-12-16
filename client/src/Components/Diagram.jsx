@@ -59,7 +59,8 @@ const processDocuments = (documents) => {
             const relationship = connection.relationship;
 
             // Create a unique key for the connection
-            const connectionKey = [source, target].sort().join("-") + "-" + relationship;
+            const connectionKey =
+                [source, target].sort((a, b) => a - b).join("-") + "-" + relationship;
 
             // Add connection only if it's not already seen
             if (!seenConnections.has(connectionKey)) {
