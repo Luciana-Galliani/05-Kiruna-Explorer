@@ -3,7 +3,7 @@ import React from "react";
 const ConsultationIcon = ({
   size = 24,
   fillPrimary = "white",
-  fillSecondary = "gray",
+  fillTertiary = "#000000",
   ...props
 }) => (
    <svg
@@ -44,7 +44,7 @@ const ConsultationIcon = ({
       cy="234.30701"
       fill="#d3d3d3"
       id="circle1"
-      style={{strokeWidth:1, fill:"#000000"}}
+      style={{strokeWidth:1, fill:fillTertiary}}
       r="50.000053%" /><circle
       style={{fill:fillPrimary, strokeWidth:41.9546}}
       id="path4"

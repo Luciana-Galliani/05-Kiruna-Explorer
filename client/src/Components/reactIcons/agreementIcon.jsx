@@ -3,7 +3,7 @@ import React from "react";
 const AgreementIcon = ({
   size = 24,
   fillPrimary = "white",
-  fillSecondary = "gray",
+  fillTertiary = "#000000",
   ...props
 }) => (
     <svg
@@ -43,7 +43,7 @@ const AgreementIcon = ({
          cy="256"
          fill="#d3d3d3"
          id="circle1"
-         style={{fill:"#000000", strokeWidth:1.00392}}
+         style={{fill: fillTertiary, strokeWidth:1.00392}}
          r="55.215763%" />
       <circle
          style={{fill:fillPrimary, strokeWidth:61.5045}}

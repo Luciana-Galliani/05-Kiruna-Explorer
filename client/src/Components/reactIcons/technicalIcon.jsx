@@ -3,7 +3,7 @@ import React from "react";
 const TechnicalIcon = ({
   size = 24,
   fillPrimary = "white",
-  fillSecondary = "gray",
+  fillTertiary = "#000000",
   ...props
 }) => (
    <svg
@@ -43,7 +43,7 @@ const TechnicalIcon = ({
         cy="255.99998"
         fill="#d3d3d3"
         id="circle1"
-        style={{strokeWidth:1.02852, fill:"#000000"}}
+        style={{strokeWidth:1.02852, fill:fillTertiary}}
         r="56.568539%" />
      <circle
         style={{fill:fillPrimary, strokeWidth:27.3974}}

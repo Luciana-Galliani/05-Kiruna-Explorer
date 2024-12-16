@@ -3,7 +3,7 @@ import React from "react";
 const DesignIcon = ({
   size = 24,
   fillPrimary = "white",
-  fillSecondary = "gray",
+  fillTertiary = "#ffffff",
   ...props
 }) => (
    <svg
@@ -41,9 +41,8 @@ const DesignIcon = ({
      <circle
         cx="192"
         cy="256"
-        fill="#d3d3d3"
         id="circle1"
-        style={{strokeWidth:1.02852, fill:"#000000"}}
+        style={{strokeWidth:1.02852, fill:fillTertiary}}
         r="56.568539%" />
      <circle
         style={{fill:fillPrimary, strokeWidth:135.275}}

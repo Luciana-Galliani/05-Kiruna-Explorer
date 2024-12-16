@@ -3,7 +3,7 @@ import React from "react";
 const InformativeIcon = ({
   size = 24,
   fillPrimary = "white",
-  fillSecondary = "gray",
+  fillTertiary = "#000000",
   ...props
 }) => (
    <svg
@@ -43,7 +43,7 @@ const InformativeIcon = ({
         cy="256"
         fill="#d3d3d3"
         id="circle1"
-        style={{strokeWidth:1.02852, fill:"#000000"}}
+        style={{strokeWidth:1.02852, fill:fillTertiary}}
         r="56.568539%" />
      <circle
         style={{fill:fillPrimary, strokeWidth:10.7682}}
@@ -75,12 +75,11 @@ const InformativeIcon = ({
           x="106.63596"
           y="278.69421"
           text-anchor="middle"
-          fill={{fillPrimary}}
           font-size="73.0873px"
           font-family="Arial"
           dy="21.926174"
           id="text2"
-          style={{strokeWidth:6.09061}}>i</text>
+          style={{fill: fillPrimary, strokeWidth:6.09061}}>i</text>
        <g
           id="g3"
           transform="translate(35.742304,102.51177)" />
