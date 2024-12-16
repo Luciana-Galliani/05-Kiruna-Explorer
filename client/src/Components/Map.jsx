@@ -11,7 +11,7 @@ import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
-import { Style, Stroke } from "ol/style";
+import { Style, Stroke, Icon } from "ol/style";
 
 // Icons and API
 import API from "../API/API.mjs";
@@ -22,14 +22,15 @@ import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
+//import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
+import actionIcon from "./reactIcons/actionIcon.jsx";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
 import ClusterDetailsPanel from "./ClusterDetailsPanel";
 import { AppContext } from "../context/AppContext";
-import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
+import { createDocumentLayer, handleMapPointerMove, applyClickEffect } from "./utils/geoUtils";
 
 const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
     const see = false;
@@ -229,10 +230,15 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     setSelectedDocument(null); // Clear single document selection
                 } else {
                     // Single document clicked
+
+                    //Create new style for the clicked feature
+
                     const documentId = features?.[0]?.get("documentId");
                     const matchedDocument = findMatchedDocument(documentId);
                     setSelectedDocument(matchedDocument); // Open DetailsPanel
                     setSelectedCluster(null); // Clear cluster selection
+
+                    //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
                 }
             } else {
                 // Click outside any feature

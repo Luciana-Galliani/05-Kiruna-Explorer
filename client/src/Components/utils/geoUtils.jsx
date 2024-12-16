@@ -6,6 +6,8 @@ import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Stroke, Icon, Text, Fill, Circle } from 'ol/style';
 import { GeoJSON } from 'ol/format';
+import { getIconForType } from './iconUtils';
+import { reset } from "ol/transform";
 
 function getRandomPointNearAreaCenter(area) {
     const centerLat = parseFloat(area.centerLat);
@@ -54,7 +56,10 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
         });
 
         const img = new Image();
-        img.src = iconMap[doc.type];
+        
+        // if length of stakeholders is equal to 1, get the color of the first stakeholder, else use purple
+        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor))}`;
         img.onload = () => {
             const initialStyle = new Style({
                 image: new Icon({
@@ -62,7 +67,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
                     img: img,
                     scale: 0.5,
                     imgSize: [img.width, img.height],
-                    color: doc.stakeholders?.[0]?.color || "purple",
+                    //color: doc.stakeholders?.[0]?.color || "purple",
                 }),
             });
             feature.setStyle(initialStyle);
@@ -126,6 +131,15 @@ export function handleMapPointerMove({
     allDocuments,
 }) {
     const map = mapInstanceRef.current;
+
+    // Improve the hover event, this not working properly
+
+    /*const docId = hoveredFeatureRef.current?.get("documentId");
+    console.log(docId);
+    const matchedDocument = allDocuments.find((doc) => doc.id === docId);
+    const docColor = matchedDocument?.stakeholders?.length === 1 ? matchedDocument.stakeholders[0].color : "purple";
+    */
+    
     const hoverSource = new VectorSource();
     const hoverLayer = new VectorLayer({
         source: hoverSource,
@@ -133,6 +147,9 @@ export function handleMapPointerMove({
             stroke: new Stroke({
                 color: "rgba(255, 165, 0, 0.8)", // Colore per l'effetto hover
                 width: 3,
+            }),
+            fill: new Fill({
+                color: "rgba(255, 165, 0, 0.2)", // Colore per l'effetto hover
             }),
         }),
     });
@@ -157,7 +174,8 @@ export function handleMapPointerMove({
 
     const handleFeatureHover = (pixel) => {
         const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
-        if (featureAtPixel) {
+        
+        if (featureAtPixel /*&& !featureAtPixel.get("clicked")*/) {
             const features = featureAtPixel.get("features"); // Get cluster features
             if (features?.length > 1) {
                 // It is a cluster, we do not apply the specific hover style
@@ -206,7 +224,7 @@ export function handleMapPointerMove({
                         img: img,
                         scale: 0.55,
                         imgSize: [img.width, img.height],
-                        color: icon.getColor(),
+                        //color: icon.getColor(),
                     }),
                     zIndex: 2,
                 })
@@ -267,4 +285,63 @@ export function handleMapPointerMove({
         map.removeLayer(hoverLayer);
     };
 
+}
+
+export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
+    const map = mapInstanceRef.current;
+
+    // Ensure the previous feature's style is reset before updating the new one
+    const resetPreviousFeatureStyle = () => {
+        if (clickedFeatureRef.current) {
+            const previousFeature = clickedFeatureRef.current;
+            const initialStyle = previousFeature.get("initialStyle"); // Assume initialStyle is stored
+            if (initialStyle) {
+                previousFeature.setStyle(initialStyle);
+            }
+            previousFeature.set("clicked", false);
+            clickedFeatureRef.current = null; // Reset the reference
+        }
+    };
+
+    // Apply new style to the clicked feature
+    const applyClickStyle = (feature, doc) => {
+        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
+        const img = new Image();
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor, true))}`;
+
+        const currentStyle = feature.getStyle();
+        feature.set("initialStyle", currentStyle); // Save the initial style for later reset
+
+        img.onload = () => {
+            const newStyle = new Style({
+                image: new Icon({
+                    anchor: [0.5, 0.5],
+                    img: img,
+                    scale: 0.50,
+                    imgSize: [img.width, img.height],
+                }),
+                zIndex: 3,
+            });
+
+            feature.setStyle(newStyle);
+
+            feature.set("clicked", true); //mark the feature as clicked
+            clickedFeatureRef.current = feature; // Update reference to the current feature
+        };
+    };
+
+    const handleClick = (event) => {
+        const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
+        if (feature) {
+            resetPreviousFeatureStyle(); // Reset the previous feature's style
+            applyClickStyle(feature, doc); // Apply new style
+            //clickedFeatureRef.current = feature; // Update reference to the current feature
+        }
+    };
+
+    // Attach and detach event listener for cleanup
+    map.on("click", handleClick);
+    return () => {
+        map.un("click", handleClick);
+    };
 }
