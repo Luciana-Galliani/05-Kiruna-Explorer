@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import API from "../API/API.mjs";
 import * as d3 from "d3";
-import { max } from "d3-array";
-import { areLinksOverlapping } from "./utils/DiagramUtils";
+import { areLinksOverlapping, getBezierLine } from "./utils/DiagramUtils";
 import { getDiagramIconForType } from "./utils/iconUtils";
 
 // Constants
@@ -200,7 +199,7 @@ export default function Diagram() {
 
         // Axis
         const xAxis = g.append("g").call(d3.axisTop(xScale));
-        const yAxis = g.append("g").call(d3.axisLeft(yScale));
+        g.append("g").call(d3.axisLeft(yScale));
         // Style for axis lines
         g.selectAll(".domain, .tick line").attr("stroke-width", 2); // Increase axis line thickness
         // Style for axis labels (ticks)
@@ -236,47 +235,13 @@ export default function Diagram() {
             // Update the positions of the nodes and links
             gClip.selectAll(".node").attr("x", (d) => newXScale(new Date(d.date)) - NODE_RADIUS);
 
-            gClip.selectAll(".link").attr("d", (d) => {
-                const sourceNode = nodes.find((n) => n.id === d.source);
-                const targetNode = nodes.find((n) => n.id === d.target);
+            gClip
+                .selectAll(".link")
+                .attr("d", (d) => getBezierLine(nodes, newXScale, LINE, d.source, d.target));
 
-                const sourceX = newXScale(new Date(sourceNode.date));
-                const sourceY = sourceNode.y;
-                const targetX = newXScale(new Date(targetNode.date));
-                const targetY = targetNode.y;
-
-                // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
-                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
-
-                return LINE([
-                    [sourceX, sourceY],
-                    [controlPointX, controlPointY],
-                    [targetX, targetY],
-                ]);
-            });
-
-            gClip.selectAll(".link-hitbox").attr("d", (d) => {
-                const sourceNode = nodes.find((n) => n.id === d.source);
-                const targetNode = nodes.find((n) => n.id === d.target);
-
-                const sourceX = newXScale(new Date(sourceNode.date));
-                const sourceY = sourceNode.y;
-                const targetX = newXScale(new Date(targetNode.date));
-                const targetY = targetNode.y;
-
-                // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
-                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
-
-                return LINE([
-                    [sourceX, sourceY],
-                    [controlPointX, controlPointY],
-                    [targetX, targetY],
-                ]);
-            });
+            gClip
+                .selectAll(".link-hitbox")
+                .attr("d", (d) => getBezierLine(nodes, newXScale, LINE, d.source, d.target));
 
             // Update the positions and widths of the year columns
             yearColumns
@@ -322,26 +287,7 @@ export default function Diagram() {
             .enter()
             .append("path")
             .attr("class", "link")
-            .attr("d", (d) => {
-                const sourceNode = nodes.find((n) => n.id === d.source);
-                const targetNode = nodes.find((n) => n.id === d.target);
-
-                const sourceX = xScale(new Date(sourceNode.date));
-                const sourceY = sourceNode.y;
-                const targetX = xScale(new Date(targetNode.date));
-                const targetY = targetNode.y;
-
-                // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
-                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
-
-                return LINE([
-                    [sourceX, sourceY],
-                    [controlPointX, controlPointY],
-                    [targetX, targetY],
-                ]);
-            })
+            .attr("d", (d) => getBezierLine(nodes, xScale, LINE, d.source, d.target))
             .attr("stroke", "black")
             .attr("stroke-width", 3)
             .attr("stroke-dasharray", (d) => RELATIONSHIP_STYLES[d.relationship] || "0")
@@ -354,26 +300,7 @@ export default function Diagram() {
             .enter()
             .append("path")
             .attr("class", "link-hitbox")
-            .attr("d", (d) => {
-                const sourceNode = nodes.find((n) => n.id === d.source);
-                const targetNode = nodes.find((n) => n.id === d.target);
-
-                const sourceX = xScale(new Date(sourceNode.date));
-                const sourceY = sourceNode.y;
-                const targetX = xScale(new Date(targetNode.date));
-                const targetY = targetNode.y;
-
-                // Control point for the Bezier curve
-                const controlPointX =
-                    Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
-                const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
-
-                return LINE([
-                    [sourceX, sourceY],
-                    [controlPointX, controlPointY],
-                    [targetX, targetY],
-                ]);
-            })
+            .attr("d", (d) => getBezierLine(nodes, xScale, LINE, d.source, d.target))
             .attr("fill", "none")
             .attr("stroke", "transparent") // Invisible line
             .attr("stroke-width", 20) // Enlarged hitbox

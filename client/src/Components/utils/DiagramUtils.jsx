@@ -8,8 +8,7 @@ const getBezierPoints = (link, nodes, xScale, steps = 20) => {
     const targetX = xScale(new Date(targetNode.date));
     const targetY = targetNode.y;
 
-    const controlPointX =
-        Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+    const controlPointX = Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
     const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
 
     const points = [];
@@ -39,4 +38,24 @@ export const areLinksOverlapping = (link1, link2, nodes, xScale) => {
         const distance = euclideanDistance(point1, point2);
         return distance < threshold;
     });
+};
+
+export const getBezierLine = (nodes, xScale, line, source, target) => {
+    const sourceNode = nodes.find((n) => n.id === source);
+    const targetNode = nodes.find((n) => n.id === target);
+
+    const sourceX = xScale(new Date(sourceNode.date));
+    const sourceY = sourceNode.y;
+    const targetX = xScale(new Date(targetNode.date));
+    const targetY = targetNode.y;
+
+    // Control point for the Bezier curve
+    const controlPointX = Math.min(sourceX, targetX) + Math.abs(sourceX - targetX) * 0.2;
+    const controlPointY = (sourceY + targetY) / 2 + Math.abs(sourceY - targetY) * 0.4;
+
+    return line([
+        [sourceX, sourceY],
+        [controlPointX, controlPointY],
+        [targetX, targetY],
+    ]);
 };
