@@ -1,10 +1,10 @@
 import Diagram from "./Diagram";
 import Legend from "./Legend";
 
-export default function DiagramPage() {
+export default function DiagramPage(seeOnMap) {
     return (
         <div
-            className="w-100 h-100 position-absolute top-0"
+            className="w-100 h-100 position-absolute top-0 diagram-container"
             style={{
                 backgroundColor: "gray",
                 textAlign: "center",
@@ -13,7 +13,7 @@ export default function DiagramPage() {
                 overflowX: "hidden",
             }}
         >
-            <Diagram />
+            <Diagram seeOnMap={seeOnMap} />
             <Legend />
         </div>
     );
