@@ -13,7 +13,6 @@ import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
 
 const ClusterDetailsPanel = ({ documents, onClose }) => {
-    
     const icon = {
         "Design Document": designIcon,
         "Informative Document": informativeIcon,
@@ -51,6 +50,7 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                 id="cluster-panel-overlay"
                 onClick={handleOutsideClick}
                 onKeyDown={handleKeyDown}
+                tabIndex={-1}
                 style={{
                     position: "fixed",
                     top: 0,
@@ -113,6 +113,8 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                                             setSelectedDocument(document);
                                         }
                                     }}
+                                    onMouseOver={(e) => e.currentTarget.focus()}
+                                    onFocus={() => {}}
                                     tabIndex={0}
                                     style={{
                                         display: "flex",
