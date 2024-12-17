@@ -119,7 +119,6 @@ function App() {
                         </div>
                     }
                 />
-                <Route path="/diagram" element={<DiagramPage />} />
                 <Route
                     path="edit/:documentId"
                     element={
@@ -195,21 +194,10 @@ function App() {
                         />
                     }
                 />
-                <Route
-                    path="/diagram"
-                    element={
-                        <CityMap
-                            handleCoordinatesSelected={handleCoordinatesSelected}
-                            isSatelliteView={isSatelliteView}
-                            handleSatelliteView={handleSatelliteView}
-                            handleAreaSelected={handleAreaSelected}
-                            centerIn={centerIn}
-                        />
-                    }
-                />
+                <Route path="/diagram" element={<DiagramPage />} />
             </Routes>
             
-            { !isHomePage &&
+            { !isHomePage && location.pathname !== "/diagram" &&
                 <div>
                     <Footer
                         isHomePage={!isHomePage}
