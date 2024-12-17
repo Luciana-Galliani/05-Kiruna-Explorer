@@ -28,6 +28,7 @@ import actionIcon from "./reactIcons/actionIcon.jsx";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
+import ClusterDetailsPanel from "./ClusterDetailsPanel";
 import { AppContext } from "../context/AppContext";
 import { createDocumentLayer, handleMapPointerMove, applyClickEffect } from "./utils/geoUtils";
 
@@ -41,6 +42,8 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
     const [boundaryLayer, setBoundaryLayer] = useState(null);
+
+    const [selectedCluster, setSelectedCluster] = useState(null);
 
     const { setAllDocuments, allDocuments, isLoggedIn, isSelectingArea, areaGeoJSON, setAreaGeoJSON, isSelectingCoordinates } = useContext(AppContext);
 
@@ -186,11 +189,11 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
         if (selectedDocument.longitude && selectedDocument.latitude) {
             const location = fromLonLat([selectedDocument.longitude, selectedDocument.latitude]);
             map.getView().setCenter(location);
-            map.getView().setZoom(14); // Adjust zoom level as needed
+            //map.getView().setZoom(14); // Adjust zoom level as needed
         } else if (selectedDocument.area) {
             const location = fromLonLat([selectedDocument.area.centerLon, selectedDocument.area.centerLat]);
             map.getView().setCenter(location);
-            map.getView().setZoom(14); // Adjust zoom level as needed
+            //map.getView().setZoom(14); // Adjust zoom level as needed
         }
     }, [selectedDocument]);
 
@@ -206,7 +209,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 handleFeatureSelection(event);
             }
         };
-
+        
         const handleCoordinateSelection = (event) => {
             const [lon, lat] = toLonLat(event.coordinate);
             handleCoordinatesSelected(lon, lat);
@@ -214,17 +217,35 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleFeatureSelection = (event) => {
             const clickedFeature = findClickedFeature(event.pixel);
-            //Create new style for the clicked feature
-
+        
             if (clickedFeature) {
-                const documentId = clickedFeature.get("documentId");
-                const matchedDocument = findMatchedDocument(documentId);
-                setSelectedDocument(matchedDocument);
-                //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
+                const features = clickedFeature.get("features"); // Clustered features
+                if (features?.length > 1) {
+                    // Cluster clicked
+                    const clusterDocuments = features.map((feature) => {
+                        const documentId = feature.get("documentId");
+                        return findMatchedDocument(documentId);
+                    });
+                    setSelectedCluster(clusterDocuments); // Open ClusterDetailsPanel
+                    setSelectedDocument(null); // Clear single document selection
+                } else {
+                    // Single document clicked
+
+                    //Create new style for the clicked feature
+
+                    const documentId = features?.[0]?.get("documentId");
+                    const matchedDocument = findMatchedDocument(documentId);
+                    setSelectedDocument(matchedDocument); // Open DetailsPanel
+                    setSelectedCluster(null); // Clear cluster selection
+
+                    //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
+                }
             } else {
+                // Click outside any feature
                 setSelectedDocument(null);
+                setSelectedCluster(null);
             }
-        };
+        }
 
         const findClickedFeature = (pixel) => {
             let clickedFeature = null;
@@ -286,6 +307,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     isLoggedIn={isLoggedIn}
                     see={see}
                     seeOnMap={seeOnMap}
+                />
+            )}
+            {selectedCluster && location.pathname === "/map" && (
+                <ClusterDetailsPanel
+                    documents={selectedCluster}
+                    onClose={() => setSelectedCluster(null)}
                 />
             )}
         </div>

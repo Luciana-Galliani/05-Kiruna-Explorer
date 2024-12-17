@@ -27,7 +27,6 @@ describe("CityMap Tests", () => {
         // Trova il pulsante per cambiare vista e cliccalo
         cy.get("button").filter((index, el) => Cypress.$(el).find("i.bi-globe").length > 0)
         .should("exist").click();
-        //cy.get('button').contains('Satellite View').click();
     
         // Verifica che il layer satellite sia caricato
         cy.get('.ol-layer').should('exist');
@@ -35,7 +34,6 @@ describe("CityMap Tests", () => {
         // Clicca di nuovo per tornare alla vista standard
         cy.get("button").filter((index, el) => Cypress.$(el).find("i.bi-globe").length > 0)
         .should("exist").click();
-        //cy.get('button').contains('Standard View').click();
     
         // Verifica che il layer standard sia caricato
         cy.get('.ol-layer').should('exist');
