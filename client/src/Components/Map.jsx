@@ -309,7 +309,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     seeOnMap={seeOnMap}
                 />
             )}
-            {selectedCluster && location.pathname === "/" && (
+            {selectedCluster && location.pathname === "/map" && (
                 <ClusterDetailsPanel
                     documents={selectedCluster}
                     onClose={() => setSelectedCluster(null)}

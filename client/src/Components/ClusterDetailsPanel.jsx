@@ -50,7 +50,6 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                 id="cluster-panel-overlay"
                 onClick={handleOutsideClick}
                 onKeyDown={handleKeyDown}
-                tabIndex={-1}
                 style={{
                     position: "fixed",
                     top: 0,
@@ -76,7 +75,8 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                         zIndex: 1000,
                     }}
                     onClick={(e) => e.stopPropagation()}
-                    onFocus={(e) => e.stopPropagation()}
+                    onKeyDown={handleKeyDown} //in dubbio
+                    role="presentation"
                 >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <h3 style={{ margin: 0, fontSize: "18px", color: "#333" }}>Cluster Content</h3>
@@ -105,7 +105,7 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                         {documents.map((document) => {
                             const imgSrc = icon[document.type];
                             return (
-                                <li
+                                <div
                                     key={document.id}
                                     onClick={() => setSelectedDocument(document)}
                                     onKeyDown={(e) => {
@@ -113,9 +113,7 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                                             setSelectedDocument(document);
                                         }
                                     }}
-                                    onMouseOver={(e) => e.currentTarget.focus()}
-                                    onFocus={() => {}}
-                                    tabIndex={0}
+                                    role="button"
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
@@ -146,7 +144,7 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                                     <div style={{ flexGrow: 1 }}>
                                         <span style={{ fontWeight: "bold", color: "#333" }}>{document.title}</span>
                                     </div>
-                                </li>
+                                </div>
                             );
                         })}
                     </ul>
