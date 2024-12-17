@@ -26,6 +26,7 @@ function App() {
     const [isSatelliteView, setIsSatelliteView] = useState(true);
     const [newArea, setNewArea] = useState(null);
 
+
     const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
 
     const handleSatelliteView = () => {
@@ -70,6 +71,7 @@ function App() {
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
     const contentPadding = isHomePage ? "0px" : "0px";
+    
 
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
@@ -138,7 +140,7 @@ function App() {
                 />
                 <Route path="/login" element={
                     <div>
-                        { isHomePage ? (
+                        { !isHomePage ? (
                             <CityMap
                                 handleCoordinatesSelected={handleCoordinatesSelected}
                                 isSatelliteView={isSatelliteView}

@@ -62,7 +62,7 @@ function LoginForm({ handleLogin }) {
                                     >
                                         Login
                                     </Button>
-                                    <Link className="btn btn-danger" to={"/"}>
+                                    <Link className="btn btn-danger" to={"/map"}>
                                         Cancel
                                     </Link>
                                 </div>

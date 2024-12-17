@@ -65,7 +65,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                     <Button
                         onClick={() => {
                             setIsSelectingCoordinates(false);
-                            navigate("/");
+                            navigate("/map");
                             setNewArea(null);
                             setIsSelectingArea(false);
 
@@ -111,7 +111,7 @@ const Footer = ({ isHomePage, location, isSatelliteView, handleSatelliteView, se
                     setShowCloseConfirmation(false);
                     setIsSelectingCoordinates(false);
                     setIsSelectingArea(false);
-                    navigate("/");
+                    navigate("/map");
                 }}
                 message="Are you sure you want to close the form? Your changes will be lost."
             />

@@ -23,7 +23,7 @@ function RegistrationForm({ handleLogin }) {
         try {
             await API.registerUser({ username, password });
             await handleLogin(username, password);
-            navigate("/");
+            navigate("/map");
         } catch (err) {
             setError(err.message);
         }
@@ -98,7 +98,7 @@ function RegistrationForm({ handleLogin }) {
                                     >
                                         Register
                                     </Button>
-                                    <Link className="btn btn-danger" to={"/"}>
+                                    <Link className="btn btn-danger" to={"/map"}>
                                         Cancel
                                     </Link>
                                 </div>
