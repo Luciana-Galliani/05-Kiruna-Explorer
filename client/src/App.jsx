@@ -197,7 +197,7 @@ function App() {
                 <Route path="/diagram" element={<DiagramPage />} />
             </Routes>
             
-            { !isHomePage && location.pathname !== "/diagram" &&
+            { !isHomePage && location.pathname  &&
                 <div>
                     <Footer
                         isHomePage={!isHomePage}

@@ -1,10 +1,11 @@
 import { useState, useContext } from "react";
 import { useNavigate, matchPath } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
-import { Button } from "react-bootstrap";
+import { Button, ButtonGroup } from "react-bootstrap";
 import { AppContext } from "../context/AppContext";
 import LinkButton from "./LinkButton";
 import PropTypes from "prop-types";
+import { lineOverlap } from "@turf/turf";
 
 const Footer = ({
     isHomePage,
@@ -20,22 +21,30 @@ const Footer = ({
     const isEditPage = matchPath("/edit/:documentId", location.pathname);
     return (
         <>
-            {isHomePage && isLoggedIn && (
+            {isHomePage && isLoggedIn && location.pathname !== "/diagram" && (
                 <div className="container">
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                         <LinkButton msg="Add Document" link="/add" color={isSatelliteView} />
                     </div>
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                        <Button
-                            className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                            onClick={handleSatelliteView}
-                        >
-                            <i className="bi bi-globe"></i>
-                        </Button>
+                        <ButtonGroup>
+                            <Button
+                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                onClick={handleSatelliteView}
+                            >
+                                <i className="bi bi-globe"></i>
+                            </Button>
+                            <Button
+                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                onClick={() => navigate("/diagram")}
+                            >
+                                <i className="bi bi-diagram-3"></i>
+                            </Button>
+                        </ButtonGroup>
                     </div>
                 </div>
             )}
-            {(location.pathname === "/add" || location.pathname === "/edit/:documentId") && (
+            {(location.pathname === "/add" || location.pathname === "/edit/:documentId") && location.pathname !== "/diagram" && (
                 <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
                     <Button
                         onClick={() => {
@@ -96,15 +105,40 @@ const Footer = ({
 
             {
                 /* Not logged */
-                !isLoggedIn && location.pathname != "/diagram" && (
+                !isLoggedIn && location.pathname !== "/diagram" && (
                     <div className="container">
                         <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                            <Button
-                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                                onClick={handleSatelliteView}
-                            >
-                                <i className="bi bi-globe"></i>
-                            </Button>
+                            <ButtonGroup> 
+                                <Button
+                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                    onClick={handleSatelliteView}
+                                >
+                                    <i className="bi bi-globe"></i>
+                                </Button>
+                                <Button
+                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                    onClick={() => navigate("/diagram")}
+                                >
+                                    <i className="bi bi-diagram-3"></i>
+                                </Button>
+                            </ButtonGroup>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                location.pathname === "/diagram" && (
+                    <div className="container" zIndex="0">
+                        <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-3">
+                            <ButtonGroup> 
+                                <Button
+                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                    onClick={() => navigate("/map")}
+                                >
+                                    <i className="bi bi-map"></i>
+                                </Button>
+                            </ButtonGroup>
                         </div>
                     </div>
                 )
