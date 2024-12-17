@@ -4,10 +4,9 @@ import { Vector as VectorSource, Cluster } from "ol/source";
 import { Feature } from "ol";
 import { Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
-import { Style, Stroke, Icon, Text, Fill, Circle } from 'ol/style';
-import { GeoJSON } from 'ol/format';
-import { getIconForType } from './iconUtils';
-import { reset } from "ol/transform";
+import { Style, Stroke, Icon, Text, Fill, Circle } from "ol/style";
+import { GeoJSON } from "ol/format";
+import { getIconForType } from "./iconUtils";
 
 function getRandomPointNearAreaCenter(area) {
     const centerLat = parseFloat(area.centerLat);
@@ -34,53 +33,55 @@ function getRandomPointNearAreaCenter(area) {
     return [randomLon, randomLat];
 }
 
-
-
 export const createDocumentLayer = (allDocuments, iconMap) => {
-    const features = allDocuments.map((doc) => {
-        let location;
-        if (doc.longitude !== null && doc.latitude !== null) {
-            location = fromLonLat([doc.longitude, doc.latitude]);
-        } else if (doc.area) {
-            if (doc?.area?.centerLat && doc?.area?.centerLon) {
-                location = fromLonLat(getRandomPointNearAreaCenter(doc.area));
+    const features = allDocuments
+        .map((doc) => {
+            let location;
+            if (doc.longitude !== null && doc.latitude !== null) {
+                location = fromLonLat([doc.longitude, doc.latitude]);
+            } else if (doc.area) {
+                if (doc?.area?.centerLat && doc?.area?.centerLon) {
+                    location = fromLonLat(getRandomPointNearAreaCenter(doc.area));
+                }
             }
-        }
 
-        if (!location) return null; // Skip if no valid coordinates
+            if (!location) return null; // Skip if no valid coordinates
 
-        const feature = new Feature({
-            geometry: new Point(location),
-            documentId: doc.id,
-            documentTitle: doc.title,
-        });
-
-        const img = new Image();
-        
-        // if length of stakeholders is equal to 1, get the color of the first stakeholder, else use purple
-        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
-        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor))}`;
-        img.onload = () => {
-            const initialStyle = new Style({
-                image: new Icon({
-                    anchor: [0.5, 0.5],
-                    img: img,
-                    scale: 0.5,
-                    imgSize: [img.width, img.height],
-                    //color: doc.stakeholders?.[0]?.color || "purple",
-                }),
+            const feature = new Feature({
+                geometry: new Point(location),
+                documentId: doc.id,
+                documentTitle: doc.title,
             });
-            feature.setStyle(initialStyle);
-            feature.initialStyle = initialStyle;
-        };
 
-        return feature;
-    }).filter((feature) => feature !== null);
+            const img = new Image();
+
+            // if length of stakeholders is equal to 1, get the color of the first stakeholder, else use purple
+            const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
+            img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
+                getIconForType(doc.type, docColor)
+            )}`;
+            img.onload = () => {
+                const initialStyle = new Style({
+                    image: new Icon({
+                        anchor: [0.5, 0.5],
+                        img: img,
+                        scale: 0.5,
+                        imgSize: [img.width, img.height],
+                        //color: doc.stakeholders?.[0]?.color || "purple",
+                    }),
+                });
+                feature.setStyle(initialStyle);
+                feature.initialStyle = initialStyle;
+            };
+
+            return feature;
+        })
+        .filter((feature) => feature !== null);
 
     const vectorSource = new VectorSource({ features });
     const clusterSource = new Cluster({
-        distance: 70,  // Set the distance for clustering
-        source: vectorSource
+        distance: 70, // Set the distance for clustering
+        source: vectorSource,
     });
 
     // Defines the style for the cluster
@@ -88,9 +89,9 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
         name: "documentLayer",
         source: clusterSource,
         style: (feature) => {
-            const features = feature.get('features');
+            const features = feature.get("features");
             const size = features.length; // Number of elements in the cluster
-            
+
             // If there is only one document in the cluster, show the specific icon
             if (size === 1) {
                 const singleFeature = features[0];
@@ -101,26 +102,26 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
                 image: new Circle({
                     radius: 17,
                     fill: new Fill({
-                        color: 'rgba(255, 0, 0, 0.4)', // Transparent red circle
+                        color: "rgba(255, 0, 0, 0.4)", // Transparent red circle
                     }),
                     stroke: new Stroke({
-                        color: '#ff0000',
+                        color: "#ff0000",
                         width: 2,
                     }),
                 }),
                 text: new Text({
                     text: size.toString(),
-                    font: 'bold 14px sans-serif',
-                    fill: new Fill({ color: '#fff' }),
+                    font: "bold 14px sans-serif",
+                    fill: new Fill({ color: "#fff" }),
                     stroke: new Stroke({
-                        color: '#000',
-                        width: 3
+                        color: "#000",
+                        width: 3,
                     }),
                 }),
             });
-        }
+        },
     });
-    
+
     return clusterLayer;
 };
 
@@ -139,7 +140,7 @@ export function handleMapPointerMove({
     const matchedDocument = allDocuments.find((doc) => doc.id === docId);
     const docColor = matchedDocument?.stakeholders?.length === 1 ? matchedDocument.stakeholders[0].color : "purple";
     */
-    
+
     const hoverSource = new VectorSource();
     const hoverLayer = new VectorLayer({
         source: hoverSource,
@@ -174,7 +175,7 @@ export function handleMapPointerMove({
 
     const handleFeatureHover = (pixel) => {
         const featureAtPixel = findFeatureAtPixel(pixel, "documentLayer");
-        
+
         if (featureAtPixel /*&& !featureAtPixel.get("clicked")*/) {
             const features = featureAtPixel.get("features"); // Get cluster features
             if (features?.length > 1) {
@@ -188,7 +189,7 @@ export function handleMapPointerMove({
         } else {
             resetHighlightedFeature();
         }
-    };  
+    };
 
     const findFeatureAtPixel = (pixel, layerName) => {
         return map.forEachFeatureAtPixel(pixel, (feature, layer) => {
@@ -213,6 +214,7 @@ export function handleMapPointerMove({
 
     const applyHoverStyle = (feature) => {
         const currentStyle = feature.getStyle();
+        const title = feature.get("documentTitle");
         const icon = currentStyle.getImage();
         const img = new Image();
         img.src = icon.getSrc();
@@ -224,7 +226,26 @@ export function handleMapPointerMove({
                         img: img,
                         scale: 0.55,
                         imgSize: [img.width, img.height],
-                        //color: icon.getColor(),
+                    }),
+                    text: new Text({
+                        text: title,
+                        font: "13px Arial",
+                        offsetY: -35,
+                        fill: new Fill({
+                            color: "#fff",
+                        }),
+                        backgroundFill: new Fill({
+                            color: "rgba(0, 0, 0, 0.8)",
+                        }),
+                        padding: [2, 0, 0, 2],
+                        textAlign: "center",
+                        textBaseline: "middle",
+                        backgroundStroke: new Stroke({
+                            color: "rgba(0, 0, 0, 0.9)",
+                            width: 10,
+                            lineCap: "round",
+                            lineJoin: "round",
+                        }),
                     }),
                     zIndex: 2,
                 })
@@ -284,7 +305,6 @@ export function handleMapPointerMove({
         map.un("pointermove", handlePointerMove);
         map.removeLayer(hoverLayer);
     };
-
 }
 
 export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
@@ -307,7 +327,9 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
     const applyClickStyle = (feature, doc) => {
         const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
         const img = new Image();
-        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor, true))}`;
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
+            getIconForType(doc.type, docColor, true)
+        )}`;
 
         const currentStyle = feature.getStyle();
         feature.set("initialStyle", currentStyle); // Save the initial style for later reset
@@ -317,7 +339,7 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
                 image: new Icon({
                     anchor: [0.5, 0.5],
                     img: img,
-                    scale: 0.50,
+                    scale: 0.5,
                     imgSize: [img.width, img.height],
                 }),
                 zIndex: 3,
