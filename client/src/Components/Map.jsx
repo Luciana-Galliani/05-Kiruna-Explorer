@@ -11,7 +11,7 @@ import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { GeoJSON } from "ol/format";
-import { Style, Stroke } from "ol/style";
+import { Style, Stroke, Icon } from "ol/style";
 
 // Icons and API
 import API from "../API/API.mjs";
@@ -22,19 +22,21 @@ import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
+//import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
+import actionIcon from "./reactIcons/actionIcon.jsx";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
 import { AppContext } from "../context/AppContext";
-import { createDocumentLayer, handleMapPointerMove } from "./utils/geoUtils";
+import { createDocumentLayer, handleMapPointerMove, applyClickEffect } from "./utils/geoUtils";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn }) => {
+const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
     const see = false;
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
+    const detailsPanelRef = useRef(null);
     const [areas, setAreas] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLayer, setDocumentLayer] = useState(null);
@@ -212,11 +214,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleFeatureSelection = (event) => {
             const clickedFeature = findClickedFeature(event.pixel);
+            //Create new style for the clicked feature
 
             if (clickedFeature) {
                 const documentId = clickedFeature.get("documentId");
                 const matchedDocument = findMatchedDocument(documentId);
                 setSelectedDocument(matchedDocument);
+                //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
             } else {
                 setSelectedDocument(null);
             }
@@ -238,11 +242,13 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleGlobalClick = (event) => {
             const mapElement = mapRef.current;
+            const panelElement = detailsPanelRef.current;
 
             if (
                 mapElement &&
                 !mapElement.contains(event.target) &&
-                !event.target.closest(".details-panel")
+                panelElement &&
+                !panelElement.contains(event.target)
             ) {
                 setSelectedDocument(null);
             }
@@ -274,10 +280,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
             {selectedDocument && location.pathname === "/map" && (
                 <DetailsPanel
+                    ref={detailsPanelRef}
                     initialDocId={selectedDocument.id}
                     onClose={() => setSelectedDocument(null)}
                     isLoggedIn={isLoggedIn}
                     see={see}
+                    seeOnMap={seeOnMap}
                 />
             )}
         </div>

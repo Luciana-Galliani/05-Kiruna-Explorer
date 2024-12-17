@@ -5,6 +5,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { DescriptionForm } from "./Components/Form";
 import { EditDocumentForm } from "./Components/EditDocumentForm";
 import HomePage from "./Components/HomePage";
+import DiagramPage from "./Components/DiagramPage";
 import LoginForm from "./Components/LoginForm";
 import RegistrationForm from "./Components/RegistrationForm";
 import Header from "./Components/Header";
@@ -27,7 +28,8 @@ function App() {
     const [newArea, setNewArea] = useState(null);
 
 
-    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } = useContext(AppContext);
+    const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } =
+         useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
@@ -40,7 +42,7 @@ function App() {
     const handleAreaSelected = (newA) => {
         setNewArea(newA);
         setIsSelectingArea(false);
-    }
+    };
 
     const handleLogin = async (username, password) => {
         try {
@@ -66,7 +68,7 @@ function App() {
 
     const seeOnMap = (info) => {
         setCenterIn(info);
-    }
+    };
 
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
@@ -117,6 +119,7 @@ function App() {
                         </div>
                     }
                 />
+                <Route path="/diagram" element={<DiagramPage />} />
                 <Route
                     path="edit/:documentId"
                     element={

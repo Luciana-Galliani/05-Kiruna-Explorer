@@ -253,52 +253,64 @@ export default async function populateDB(sequelize) {
             {
                 sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[4].id,
+                relationship: "Prevision",
             },
             {
                 sourceDocumentId: documents[3].id,
                 targetDocumentId: documents[2].id,
+                relationship: "Update",
             },
             {
                 sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[1].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[5].id,
                 targetDocumentId: documents[6].id,
+                relationship: "Direct Consequence",
             },
             {
                 sourceDocumentId: documents[5].id,
                 targetDocumentId: documents[7].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[8].id,
                 targetDocumentId: documents[9].id,
+                relationship: "Update",
             },
 
             // Reverse connections
             {
                 sourceDocumentId: documents[4].id,
                 targetDocumentId: documents[0].id,
+                relationship: "Prevision",
             },
             {
                 sourceDocumentId: documents[2].id,
                 targetDocumentId: documents[3].id,
+                relationship: "Update",
             },
             {
                 sourceDocumentId: documents[1].id,
                 targetDocumentId: documents[0].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[6].id,
                 targetDocumentId: documents[5].id,
+                relationship: "Direct Consequence",
             },
             {
                 sourceDocumentId: documents[7].id,
                 targetDocumentId: documents[5].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[9].id,
                 targetDocumentId: documents[8].id,
+                relationship: "Update",
             },
         ]);
 
