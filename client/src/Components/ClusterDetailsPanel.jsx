@@ -28,7 +28,6 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
 
     const { isLoggedIn } = useContext(AppContext);
     const [selectedDocument, setSelectedDocument] = useState(null);
-    const img = new Image();
 
     if (!documents || documents.length === 0) {
         return null;
@@ -52,8 +51,6 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                 id="cluster-panel-overlay"
                 onClick={handleOutsideClick}
                 onKeyDown={handleKeyDown}
-                role="button"
-                tabIndex={0}
                 style={{
                     position: "fixed",
                     top: 0,
@@ -105,50 +102,51 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                         </button>
                     </div>
                     <ul style={{ listStyle: "none", padding: 0, margin: "20px 0 0" }}>
-                        {documents.map((document) => (
-                            (img.src = icon[document.type]),
-                            <li
-                                key={document.id}
-                                onClick={() => setSelectedDocument(document)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") {
-                                        setSelectedDocument(document);
-                                    }
-                                }}
-                                tabIndex={0}
-                                role="button"
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    padding: "10px 15px",
-                                    marginBottom: "10px",
-                                    backgroundColor: "#ffffff",
-                                    borderRadius: "8px",
-                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                    cursor: "pointer",
-                                    transition: "background-color 0.3s",
-                                }}
-                            >
-                                <div style={{ marginRight: "10px", color: "#007BFF" }}>
-                                    {icon[document.type] && (
-                                        <img
-                                            src={img.src}
-                                            alt={document.type}
-                                            style={{
-                                                width: "30px",
-                                                height: "30px",
-                                                marginLeft: "5px",
-                                                padding: "2px",
-                                                borderRadius: "50%",
-                                            }}
-                                        />
-                                    )}
-                                </div>
-                                <div style={{ flexGrow: 1 }}>
-                                    <span style={{ fontWeight: "bold", color: "#333" }}>{document.title}</span>
-                                </div>
-                            </li>
-                        ))}
+                        {documents.map((document) => {
+                            const imgSrc = icon[document.type];
+                            return (
+                                <li
+                                    key={document.id}
+                                    onClick={() => setSelectedDocument(document)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            setSelectedDocument(document);
+                                        }
+                                    }}
+                                    tabIndex={0}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        padding: "10px 15px",
+                                        marginBottom: "10px",
+                                        backgroundColor: "#ffffff",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                        cursor: "pointer",
+                                        transition: "background-color 0.3s",
+                                    }}
+                                >
+                                    <div style={{ marginRight: "10px", color: "#007BFF" }}>
+                                        {imgSrc && (
+                                            <img
+                                                src={imgSrc}
+                                                alt={document.type}
+                                                style={{
+                                                    width: "30px",
+                                                    height: "30px",
+                                                    marginLeft: "5px",
+                                                    padding: "2px",
+                                                    borderRadius: "50%",
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                    <div style={{ flexGrow: 1 }}>
+                                        <span style={{ fontWeight: "bold", color: "#333" }}>{document.title}</span>
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             </div>
