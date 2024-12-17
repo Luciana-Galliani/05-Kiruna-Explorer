@@ -6,6 +6,7 @@ import { getDiagramIconForType } from "./utils/iconUtils";
 
 // Constants
 const NODE_RADIUS = 20;
+const ROW_HEIGHT = 100;
 const LINE = d3.line().curve(d3.curveBasis); // Bezier curve for connections
 const MARGIN = { top: 50, right: 50, bottom: 60, left: 150 };
 const RELATIONSHIP_STYLES = {
@@ -69,7 +70,7 @@ const processDocuments = (documents) => {
         });
     });
 
-    return { nodes, links, scales: Array.from(scales.keys()), years };
+    return { nodes, links, scales: Array.from(scales.keys()).sort().reverse(), years };
 };
 
 export default function Diagram() {
@@ -106,7 +107,8 @@ export default function Diagram() {
 
         // Main graph
         const width = dimensions.width - MARGIN.left - MARGIN.right;
-        const height = dimensions.height - 60 - MARGIN.top - MARGIN.bottom;
+        //const height = dimensions.height - 60 - MARGIN.top - MARGIN.bottom;
+        const height = scales.length * ROW_HEIGHT;
 
         const svg = d3.select(svgRef.current);
 
@@ -255,7 +257,7 @@ export default function Diagram() {
         // Add zoom behavior
         const zoom = d3
             .zoom()
-            .scaleExtent([1, 10])
+            .scaleExtent([1, 15])
             .translateExtent([
                 [0, 0],
                 [width, height],
@@ -266,7 +268,15 @@ export default function Diagram() {
             ])
             .on("zoom", updateGraph);
 
-        svg.call(zoom);
+        // Add an overlay rectangle for zooming (matching gClip's dimensions)
+        const zoomOverlay = gClip
+            .append("rect")
+            .attr("class", "zoom-overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all");
+        zoomOverlay.call(zoom);
 
         // Group nodes by scale and date
         const nodesByScaleAndDate = d3.group(nodes, (d) => `${d.scale}-${d.date}`);
@@ -275,7 +285,7 @@ export default function Diagram() {
         nodes.forEach((d) => {
             const nodesInSameScaleAndDate = nodesByScaleAndDate.get(`${d.scale}-${d.date}`);
             const index = nodesInSameScaleAndDate.findIndex((node) => node.id === d.id);
-            const offset = (index - (nodesInSameScaleAndDate.length - 1) / 2) * (NODE_RADIUS * 3);
+            const offset = (index - (nodesInSameScaleAndDate.length - 1) / 2) * NODE_RADIUS * 2;
             d.y = yScale(d.scale) + yScale.bandwidth() / 2 + offset;
         });
 
