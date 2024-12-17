@@ -20,9 +20,9 @@ const Legend = () => {
             onMouseEnter={toggleLegend}
             onMouseLeave={toggleLegend}
             style={{
-                position: "absolute",
+                position: "fixed",
                 bottom: "10px",
-                right: "10px",
+                right: "30px",
                 boxSizing: "border-box",
                 padding: expanded ? "20px" : "10px",
                 backgroundColor: "rgba(255, 255, 255, 0.96)",
