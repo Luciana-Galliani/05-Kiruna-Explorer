@@ -11,6 +11,7 @@ import RegistrationForm from "./Components/RegistrationForm";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import ListDocuments from "./Components/List";
+import CityMap from "./Components/Map";
 import API from "./API/API.mjs";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ConfirmationModal from "./Components/ConfirmationModal";
@@ -26,8 +27,9 @@ function App() {
     const [isSatelliteView, setIsSatelliteView] = useState(true);
     const [newArea, setNewArea] = useState(null);
 
+
     const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } =
-        useContext(AppContext);
+         useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
@@ -47,7 +49,7 @@ function App() {
             const response = await API.loginUser({ username, password });
             localStorage.setItem("authToken", response.token);
             setIsLoggedIn(true);
-            navigate("/");
+            navigate("/map");
         } catch (error) {
             throw new Error("Login failed, check your credentials");
         }
@@ -70,78 +72,150 @@ function App() {
 
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
-    const contentPadding = isHomePage ? "60px" : "0";
+    const contentPadding = "0px";
+    
 
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
-            <Header
-                handleLogout={() => setShowLogoutModal(true)}
-                headerClass={headerClass}
-                isHomePage={isHomePage}
-                isSatelliteView={isSatelliteView}
-                seeOnMap={seeOnMap}
-            />
 
-            <HomePage
-                handleCoordinatesSelected={handleCoordinatesSelected}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                handleAreaSelected={handleAreaSelected}
-                centerIn={centerIn}
-                setCenterIn={setCenterIn}
-                seeOnMap={seeOnMap}
-            />
+            { !isHomePage &&
+                <Header
+                    handleLogout={() => setShowLogoutModal(true)}
+                    headerClass={headerClass}
+                    isHomePage={isHomePage}
+                    isSatelliteView={isSatelliteView}
+                    seeOnMap={seeOnMap}
+                />
+
+            }
 
             <Routes>
                 <Route
+                    path="/"
+                    element={
+                        // z-index: number is used to place the element on top of the other elements
+                        <HomePage 
+                            handleLogout={handleLogout}
+                            handleLogin={handleLogin}/>}
+                        />
+                <Route
                     path="/add"
                     element={
-                        <DescriptionForm
-                            setCoordinates={setCoordinates}
-                            coordinates={coordinates}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            newarea={newArea}
-                            setNewArea={setNewArea}
+                        <div> 
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            <DescriptionForm
+                                setCoordinates={setCoordinates}
+                                coordinates={coordinates}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                                newarea={newArea}
+                                setNewArea={setNewArea}
+                            />
+                        </div>
+                    }
+                />
+                <Route
+                    path="edit/:documentId"
+                    element={
+                        <div>
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            <EditDocumentForm
+                                setCoordinates={setCoordinates}
+                                coordinates={coordinates}
+                                className={isSelectingCoordinates ? "d-none" : "d-block"}
+                                newarea={newArea}
+                                setNewArea={setNewArea}
+                            />
+                        </div>
+                    }
+                />
+                <Route path="/login" element={
+                    <div>
+                        { !isHomePage ? (
+                            <CityMap
+                                handleCoordinatesSelected={handleCoordinatesSelected}
+                                isSatelliteView={isSatelliteView}
+                                handleSatelliteView={handleSatelliteView}
+                                handleAreaSelected={handleAreaSelected}
+                                centerIn={centerIn}
+                            />
+                            ) : (
+                                <HomePage
+                                    handleLogout={handleLogout}
+                                    handleLogin={handleLogin}
+                                />
+                            )
+                        }
+                        <LoginForm handleLogin={handleLogin}/>
+                    </div>} />
+                <Route
+                    path="/registration"
+                    element={
+                    <div>
+                        <CityMap
+                            handleCoordinatesSelected={handleCoordinatesSelected}
+                            isSatelliteView={isSatelliteView}
+                            handleSatelliteView={handleSatelliteView}
+                            handleAreaSelected={handleAreaSelected}
+                            centerIn={centerIn}
+                        />
+                        <RegistrationForm handleLogin={handleLogin} />
+                    </div>
+                }
+                />
+                <Route
+                    path="/allDocuments"
+                    element={<ListDocuments condition="false" />}
+                />
+                <Route
+                    path="/municipality"
+                    element={<ListDocuments condition="true" />}
+                />
+                <Route
+                    path="/map"
+                    element={
+                        <CityMap
+                            handleCoordinatesSelected={handleCoordinatesSelected}
+                            isSatelliteView={isSatelliteView}
+                            handleSatelliteView={handleSatelliteView}
+                            handleAreaSelected={handleAreaSelected}
+                            centerIn={centerIn}
                         />
                     }
                 />
                 <Route path="/diagram" element={<DiagramPage />} />
-                <Route
-                    path="edit/:documentId"
-                    element={
-                        <EditDocumentForm
-                            setCoordinates={setCoordinates}
-                            coordinates={coordinates}
-                            className={isSelectingCoordinates ? "d-none" : "d-block"}
-                            newarea={newArea}
-                            setNewArea={setNewArea}
-                        />
-                    }
-                />
-                <Route path="/login" element={<LoginForm handleLogin={handleLogin} />} />
-                <Route
-                    path="/registration"
-                    element={<RegistrationForm handleLogin={handleLogin} />}
-                />
-                <Route path="/allDocuments" element={<ListDocuments condition="false" />} />
-                <Route path="/municipality" element={<ListDocuments condition="true" />} />
             </Routes>
-
-            <Footer
-                isHomePage={isHomePage}
-                location={location}
-                isSatelliteView={isSatelliteView}
-                handleSatelliteView={handleSatelliteView}
-                setNewArea={setNewArea}
-                setCoordinates={setCoordinates}
-            />
-
-            <ConfirmationModal
-                show={showLogoutModal}
-                onClose={() => setShowLogoutModal(false)}
-                onConfirm={confirmLogout}
-                message={confirmationMessage}
-            />
+            
+            { !isHomePage && location.pathname  &&
+                <div>
+                    <Footer
+                        isHomePage={!isHomePage}
+                        location={location}
+                        isSatelliteView={isSatelliteView}
+                        handleSatelliteView={handleSatelliteView}
+                        setNewArea={setNewArea}
+                        setCoordinates={setCoordinates}
+                    />
+    
+                    <ConfirmationModal
+                        show={showLogoutModal}
+                        onClose={() => setShowLogoutModal(false)}
+                        onConfirm={confirmLogout}
+                        message={confirmationMessage}
+                    />
+                </div>
+        }  
         </div>
     );
 }
