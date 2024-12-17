@@ -72,7 +72,7 @@ function App() {
 
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
-    const contentPadding = isHomePage ? "0px" : "0px";
+    const contentPadding = "0px";
     
 
     return (
