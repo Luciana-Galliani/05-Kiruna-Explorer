@@ -45,19 +45,6 @@ describe('Link Part Form Tests', () => {
         cy.get('button[id="dropdown-basic-button"]').should('contain', 'Development Plan (41)');
     });
     
-/*    it('should enable and disable the "Type Of Connection" field based on document selection', () => {
-        cy.get('button[id="dropdown-basic-button"]').click();
-        cy.get('.dropdown-menu').contains('Development Plan (41)').click();
-    
-        // Verifica che il campo "Type Of Connection" sia abilitato
-        cy.get('select').should('not.be.disabled');
-    
-        // Deseleziona il documento
-        cy.get('button[id="dropdown-basic-button"]').click();
-        cy.get('.dropdown-menu').contains('Select a document').click();
-        cy.get('select').should('be.disabled');
-    }); */
-    
     it('should add a connection when a document and relationship are selected', () => {
         cy.get('button[id="dropdown-basic-button"]').click();
         cy.get('.dropdown-menu').contains('Development Plan (41)').click();
