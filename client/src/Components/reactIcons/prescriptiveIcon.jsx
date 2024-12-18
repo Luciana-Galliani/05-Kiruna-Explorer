@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const PrescriptiveIcon = ({
     size = 24,
@@ -72,5 +73,11 @@ const PrescriptiveIcon = ({
         </g>
     </svg>
 );
+
+PrescriptiveIcon.propTypes = {
+    size: PropTypes.number,
+    fillPrimary: PropTypes.string,
+    fillTertiary: PropTypes.string,
+};
 
 export default PrescriptiveIcon;

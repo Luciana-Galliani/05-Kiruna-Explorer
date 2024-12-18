@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const AgreementIcon = ({
   size = 24,
@@ -59,5 +60,11 @@ const AgreementIcon = ({
     </svg>
     
 );
+
+AgreementIcon.propTypes = {
+   size: PropTypes.number,
+   fillPrimary: PropTypes.string,
+   fillTertiary: PropTypes.string,
+};
 
 export default AgreementIcon;

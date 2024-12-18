@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const OtherIcon = ({
   size = 24,
@@ -64,5 +65,11 @@ const OtherIcon = ({
    </svg>
     
 );
+
+OtherIcon.propTypes = {
+   size: PropTypes.number,
+   fillPrimary: PropTypes.string,
+   fillTertiary: PropTypes.string,
+};
 
 export default OtherIcon;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const ActionIcon = ({ size = 24, fillPrimary = "white", fillTertiary = "#000000", ...props }) => (
     <svg
@@ -99,5 +100,11 @@ const ActionIcon = ({ size = 24, fillPrimary = "white", fillTertiary = "#000000"
         </g>
     </svg>
 );
+
+ActionIcon.propTypes = {
+    fillPrimary: PropTypes.number,
+    fillSecondary: PropTypes.string,
+    fillTertiary: PropTypes.string,
+};
 
 export default ActionIcon;

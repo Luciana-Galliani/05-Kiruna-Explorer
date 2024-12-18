@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const DesignIcon = ({ size = 24, fillPrimary = "white", fillTertiary = "#ffffff", ...props }) => (
     <svg
@@ -75,5 +76,11 @@ const DesignIcon = ({ size = 24, fillPrimary = "white", fillTertiary = "#ffffff"
         </g>
     </svg>
 );
+
+DesignIcon.propTypes = {
+    size: PropTypes.number,
+    fillPrimary: PropTypes.string,
+    fillTertiary: PropTypes.string,
+};
 
 export default DesignIcon;
