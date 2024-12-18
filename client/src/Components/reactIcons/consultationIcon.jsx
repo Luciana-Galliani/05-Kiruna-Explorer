@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const ConsultationIcon = ({
   size = 24,
@@ -81,15 +82,21 @@ const ConsultationIcon = ({
       transform="matrix(3.6,0,0,2.7,-87,-17.5)"
       x="19.9%"
       y="9.6999998%"
-      text-anchor="middle"
+      textAnchor="middle"
       fill="currentColor"
-      font-size="48px"
-      font-family="Arial"
+      fontSize="48px"
+      fontFamily="Arial"
       dy="0.30000001em"
       id="text3">?</text>
    </g>
    </svg>
     
 );
+
+ConsultationIcon.propTypes = {
+   size: PropTypes.number,
+   fillPrimary: PropTypes.string,
+   fillTertiary: PropTypes.string,
+};
 
 export default ConsultationIcon;

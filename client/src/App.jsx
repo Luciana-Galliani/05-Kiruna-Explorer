@@ -27,9 +27,8 @@ function App() {
     const [isSatelliteView, setIsSatelliteView] = useState(true);
     const [newArea, setNewArea] = useState(null);
 
-
     const { setIsLoggedIn, isSelectingCoordinates, setIsSelectingCoordinates, setIsSelectingArea } =
-         useContext(AppContext);
+        useContext(AppContext);
 
     const handleSatelliteView = () => {
         setIsSatelliteView(!isSatelliteView);
@@ -73,12 +72,10 @@ function App() {
     const isHomePage = location.pathname === "/";
     const headerClass = isHomePage ? "position-fixed" : "position-relative";
     const contentPadding = "0px";
-    
 
     return (
         <div style={{ position: "relative", height: "100vh", paddingTop: contentPadding }}>
-
-            { !isHomePage &&
+            {!isHomePage && (
                 <Header
                     handleLogout={() => setShowLogoutModal(true)}
                     headerClass={headerClass}
@@ -86,22 +83,20 @@ function App() {
                     isSatelliteView={isSatelliteView}
                     seeOnMap={seeOnMap}
                 />
-
-            }
+            )}
 
             <Routes>
                 <Route
                     path="/"
                     element={
                         // z-index: number is used to place the element on top of the other elements
-                        <HomePage 
-                            handleLogout={handleLogout}
-                            handleLogin={handleLogin}/>}
-                        />
+                        <HomePage handleLogout={handleLogout} handleLogin={handleLogin} />
+                    }
+                />
                 <Route
                     path="/add"
                     element={
-                        <div> 
+                        <div>
                             <CityMap
                                 handleCoordinatesSelected={handleCoordinatesSelected}
                                 isSatelliteView={isSatelliteView}
@@ -140,9 +135,29 @@ function App() {
                         </div>
                     }
                 />
-                <Route path="/login" element={
-                    <div>
-                        { !isHomePage ? (
+                <Route
+                    path="/login"
+                    element={
+                        <div>
+                            {!isHomePage ? (
+                                <CityMap
+                                    handleCoordinatesSelected={handleCoordinatesSelected}
+                                    isSatelliteView={isSatelliteView}
+                                    handleSatelliteView={handleSatelliteView}
+                                    handleAreaSelected={handleAreaSelected}
+                                    centerIn={centerIn}
+                                />
+                            ) : (
+                                <HomePage handleLogout={handleLogout} handleLogin={handleLogin} />
+                            )}
+                            <LoginForm handleLogin={handleLogin} />
+                        </div>
+                    }
+                />
+                <Route
+                    path="/registration"
+                    element={
+                        <div>
                             <CityMap
                                 handleCoordinatesSelected={handleCoordinatesSelected}
                                 isSatelliteView={isSatelliteView}
@@ -150,38 +165,12 @@ function App() {
                                 handleAreaSelected={handleAreaSelected}
                                 centerIn={centerIn}
                             />
-                            ) : (
-                                <HomePage
-                                    handleLogout={handleLogout}
-                                    handleLogin={handleLogin}
-                                />
-                            )
-                        }
-                        <LoginForm handleLogin={handleLogin}/>
-                    </div>} />
-                <Route
-                    path="/registration"
-                    element={
-                    <div>
-                        <CityMap
-                            handleCoordinatesSelected={handleCoordinatesSelected}
-                            isSatelliteView={isSatelliteView}
-                            handleSatelliteView={handleSatelliteView}
-                            handleAreaSelected={handleAreaSelected}
-                            centerIn={centerIn}
-                        />
-                        <RegistrationForm handleLogin={handleLogin} />
-                    </div>
-                }
+                            <RegistrationForm handleLogin={handleLogin} />
+                        </div>
+                    }
                 />
-                <Route
-                    path="/allDocuments"
-                    element={<ListDocuments condition="false" />}
-                />
-                <Route
-                    path="/municipality"
-                    element={<ListDocuments condition="true" />}
-                />
+                <Route path="/allDocuments" element={<ListDocuments condition="false" />} />
+                <Route path="/municipality" element={<ListDocuments condition="true" />} />
                 <Route
                     path="/map"
                     element={
@@ -196,8 +185,8 @@ function App() {
                 />
                 <Route path="/diagram" element={<DiagramPage />} />
             </Routes>
-            
-            { !isHomePage && location.pathname  &&
+
+            {!isHomePage && location.pathname && (
                 <div>
                     <Footer
                         isHomePage={!isHomePage}
@@ -207,7 +196,7 @@ function App() {
                         setNewArea={setNewArea}
                         setCoordinates={setCoordinates}
                     />
-    
+
                     <ConfirmationModal
                         show={showLogoutModal}
                         onClose={() => setShowLogoutModal(false)}
@@ -215,7 +204,7 @@ function App() {
                         message={confirmationMessage}
                     />
                 </div>
-        }  
+            )}
         </div>
     );
 }

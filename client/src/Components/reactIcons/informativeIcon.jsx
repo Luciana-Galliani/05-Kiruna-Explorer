@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const InformativeIcon = ({
     size = 24,
@@ -90,5 +91,11 @@ const InformativeIcon = ({
         </g>
     </svg>
 );
+
+InformativeIcon.propTypes = {
+    size: PropTypes.number,
+    fillPrimary: PropTypes.string,
+    fillTertiary: PropTypes.string,
+};
 
 export default InformativeIcon;

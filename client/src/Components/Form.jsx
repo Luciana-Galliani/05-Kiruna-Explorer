@@ -345,7 +345,7 @@ export function DescriptionForm({
             } else {
                 await handleCreateDocument(documentData);
             }
-            navigate("/");
+            navigate("/map");
         } catch (error) {
             console.error("Error saving document:", error);
             showNotification("Error saving document. Please try again.", "error");

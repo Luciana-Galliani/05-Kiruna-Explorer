@@ -2,28 +2,9 @@ import PropTypes from "prop-types";
 import React, { useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import DetailsPanel from "./DetailsPanel";
-import designIcon from "../Icons/design.svg";
-import informativeIcon from "../Icons/informative.svg";
-import prescriptiveIcon from "../Icons/prescriptive.svg";
-import technicalIcon from "../Icons/technical.svg";
-import agreementIcon from "../Icons/agreement.svg";
-import conflictIcon from "../Icons/conflict.svg";
-import consultationIcon from "../Icons/consultation.svg";
-import actionIcon from "../Icons/action.svg";
-import otherIcon from "../Icons/other.svg";
+import { getIconForType } from "./utils/iconUtils";
 
 const ClusterDetailsPanel = ({ documents, onClose }) => {
-    const icon = {
-        "Design Document": designIcon,
-        "Informative Document": informativeIcon,
-        "Prescriptive Document": prescriptiveIcon,
-        "Technical Document": technicalIcon,
-        Agreement: agreementIcon,
-        Conflict: conflictIcon,
-        Consultation: consultationIcon,
-        Action: actionIcon,
-        Other: otherIcon,
-    };
 
     const { isLoggedIn } = useContext(AppContext);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -103,7 +84,12 @@ const ClusterDetailsPanel = ({ documents, onClose }) => {
                     </div>
                     <ul style={{ listStyle: "none", padding: 0, margin: "20px 0 0" }}>
                         {documents.map((document) => {
-                            const imgSrc = icon[document.type];
+                            //const imgSrc = icon[document.type];
+                            const docColor = document.stakeholders.length === 1 ? document.stakeholders[0].color : "purple";
+                            const imgSrc = `data:image/svg+xml;utf8,
+                                            ${encodeURIComponent(
+                                                getIconForType(document.type, docColor)
+                                            )}`;
                             return (
                                 <div
                                     key={document.id}

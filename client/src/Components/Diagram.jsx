@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { Modal } from "react-bootstrap";
+import DetailsPanel from "./DetailsPanel";
 import API from "../API/API.mjs";
 import * as d3 from "d3";
-import { areLinksOverlapping, getBezierLine } from "./utils/DiagramUtils";
+import { areLinksOverlapping, getBezierLine, processDocuments } from "./utils/DiagramUtils";
 import { getDiagramIconForType } from "./utils/iconUtils";
+import { AppContext } from "../context/AppContext";
 
 // Constants
 const NODE_RADIUS = 20;
@@ -16,63 +19,6 @@ const RELATIONSHIP_STYLES = {
     Update: "2, 5, 10, 5", // Dash-dotted line
 };
 
-// Function to process the documents and return the nodes and links
-const processDocuments = (documents) => {
-    const scales = new Map();
-    const nodes = [];
-    const links = [];
-    const seenConnections = new Set(); // Set to store unique connections
-    const minYear =
-        Math.min(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear())) - 1;
-    const maxYear = Math.max(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear()));
-    const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
-
-    documents.forEach((doc) => {
-        const issuanceDate = new Date(doc.issuanceDate);
-        const year = issuanceDate.getFullYear();
-
-        // Vertical scale
-        let scaleKey = doc.scaleType;
-        if (doc.scaleType === "Plan") {
-            scaleKey = doc.scaleValue;
-        }
-        if (!scales.has(scaleKey)) {
-            scales.set(scaleKey, scales.size);
-        }
-
-        // Add nodes
-        nodes.push({
-            id: doc.id,
-            title: doc.title,
-            year,
-            date: doc.issuanceDate,
-            scale: scaleKey,
-            type: doc.type,
-            stakeholders: doc.stakeholders,
-            color: doc.stakeholders.length === 1 ? doc.stakeholders[0].color : "purple",
-        });
-
-        // Add connections
-        doc.connections.forEach((connection) => {
-            const source = doc.id;
-            const target = connection.targetDocument.id;
-            const relationship = connection.relationship;
-
-            // Create a unique key for the connection
-            const connectionKey =
-                [source, target].sort((a, b) => a - b).join("-") + "-" + relationship;
-
-            // Add connection only if it's not already seen
-            if (!seenConnections.has(connectionKey)) {
-                seenConnections.add(connectionKey);
-                links.push({ source, target, relationship });
-            }
-        });
-    });
-
-    return { nodes, links, scales: Array.from(scales.keys()).sort().reverse(), years };
-};
-
 export default function Diagram() {
     const [documents, setDocuments] = useState([]);
     const svgRef = useRef();
@@ -80,6 +26,15 @@ export default function Diagram() {
         width: window.innerWidth,
         height: window.innerHeight,
     });
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [isSelected, setIsSelected] = useState(false);
+    const { isLoggedIn } = useContext(AppContext);
+
+    useEffect(() => {
+        if (selectedDocument) {
+            setIsSelected(true);
+        }
+    }, [selectedDocument]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -388,6 +343,9 @@ export default function Diagram() {
                         getDiagramIconForType(d.type, d.color)
                     )}`
             )
+            .on("click", (event, d) => {
+                setSelectedDocument(d);
+            })
             .on("mouseover", (event, d) => {
                 const rect = svgRef.current.getBoundingClientRect(); // Get SVG position
                 titleTooltip
@@ -443,5 +401,30 @@ export default function Diagram() {
         };
     }, [documents, dimensions]);
 
-    return <svg ref={svgRef}></svg>;
+    return (
+        <>
+            <svg ref={svgRef}></svg>;
+            {isSelected && selectedDocument && (
+                <Modal
+                    size="lg"
+                    show={isSelected}
+                    onHide={() => {
+                        setSelectedDocument(null);
+                        setIsSelected(false);
+                    }}
+                    className="custom-modal-table-list"
+                    animation={false}
+                >
+                    <DetailsPanel
+                        initialDocId={selectedDocument.id}
+                        onClose={() => setSelectedDocument(null)}
+                        isLoggedIn={isLoggedIn}
+                        seeOnMap={() => {}}
+                        toggleSidebar={() => {}}
+                        see={false}
+                    />
+                </Modal>
+            )}
+        </>
+    );
 }

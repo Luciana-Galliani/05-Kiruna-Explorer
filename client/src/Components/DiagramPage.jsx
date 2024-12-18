@@ -4,7 +4,7 @@ import Legend from "./Legend";
 export default function DiagramPage() {
     return (
         <div
-            className="w-100 h-100 position-absolute top-0"
+            className="w-100 h-100 position-absolute top-0 diagram-container"
             style={{
                 backgroundColor: "gray",
                 textAlign: "center",

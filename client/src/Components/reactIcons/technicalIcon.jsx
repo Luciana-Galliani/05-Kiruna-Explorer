@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const TechnicalIcon = ({
     size = 24,
@@ -80,5 +81,11 @@ const TechnicalIcon = ({
         </g>
     </svg>
 );
+
+TechnicalIcon.propTypes = {
+    size: PropTypes.number,
+    fillPrimary: PropTypes.string,
+    fillTertiary: PropTypes.string,
+};
 
 export default TechnicalIcon;

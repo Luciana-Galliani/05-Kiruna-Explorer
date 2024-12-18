@@ -42,7 +42,11 @@
 
 ## Users Credentials
 
-- username and password
+- Pre define user:
+    - username: `urbanPlanner1`
+    - password: `password`
+
+**Note**: there are possibility to register a new user
 
 ## Deploy environment
 
