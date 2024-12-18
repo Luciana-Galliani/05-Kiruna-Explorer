@@ -51,6 +51,8 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
                 geometry: new Point(location),
                 documentId: doc.id,
                 documentTitle: doc.title,
+                documentType: doc.type,
+                documentStakeholders: doc.stakeholders,
             });
 
             const img = new Image();
@@ -72,6 +74,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
                 });
                 feature.setStyle(initialStyle);
                 feature.initialStyle = initialStyle;
+                feature.previousStyle = initialStyle;
             };
 
             return feature;
@@ -207,7 +210,7 @@ export function handleMapPointerMove({
 
     const resetHighlightedFeature = () => {
         if (hoveredFeatureRef.current) {
-            hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.initialStyle);
+            hoveredFeatureRef.current.setStyle(hoveredFeatureRef.current.previousStyle);
             hoveredFeatureRef.current = null;
         }
     };
@@ -311,58 +314,42 @@ export function handleMapPointerMove({
     };
 }
 
-export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
-    const map = mapInstanceRef.current;
-
-    const resetPreviousFeatureStyle = () => {
-        if (clickedFeatureRef.current) {
-            const previousFeature = clickedFeatureRef.current;
-            const initialStyle = previousFeature.get("initialStyle");
-            if (initialStyle) {
-                previousFeature.setStyle(initialStyle);
-            }
-            previousFeature.set("clicked", false);
-            clickedFeatureRef.current = null;
+export const resetPreviousFeatureStyle = (clickedFeatureRef) => {
+    if (clickedFeatureRef.current) {
+        const previousFeature = clickedFeatureRef.current;
+        const initialStyle = previousFeature.initialStyle;
+        previousFeature.previousStyle = initialStyle;
+        if (initialStyle) {
+            previousFeature.setStyle(initialStyle);
         }
+        previousFeature.set("clicked", false);
+        clickedFeatureRef.current = null;
+    }
+};
+
+export const applyClickStyle = (feature) => {
+    const docColor =
+        feature.get("documentStakeholders")?.length === 1
+            ? feature.get("documentStakeholders")[0].color
+            : "purple";
+    const img = new Image();
+    img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
+        getIconForType(feature.get("documentType"), docColor, true)
+    )}`;
+
+    img.onload = () => {
+        const newStyle = new Style({
+            image: new Icon({
+                anchor: [0.5, 0.5],
+                img: img,
+                scale: 0.5,
+                imgSize: [img.width, img.height],
+            }),
+            zIndex: 3,
+        });
+
+        feature.setStyle(newStyle);
+        feature.previousStyle = newStyle;
+        feature.set("clicked", true);
     };
-
-    const applyClickStyle = (feature, doc) => {
-        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
-        const img = new Image();
-        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
-            getIconForType(doc.type, docColor, true)
-        )}`;
-
-        const currentStyle = feature.getStyle();
-        feature.set("initialStyle", currentStyle);
-
-        img.onload = () => {
-            const newStyle = new Style({
-                image: new Icon({
-                    anchor: [0.5, 0.5],
-                    img: img,
-                    scale: 0.5,
-                    imgSize: [img.width, img.height],
-                }),
-                zIndex: 3,
-            });
-
-            feature.setStyle(newStyle);
-            feature.set("clicked", true);
-            clickedFeatureRef.current = feature;
-        };
-    };
-
-    const handleClick = (event) => {
-        const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
-        if (feature) {
-            resetPreviousFeatureStyle();
-            applyClickStyle(feature, doc);
-        }
-    };
-
-    map.on("click", handleClick);
-    return () => {
-        map.un("click", handleClick);
-    };
-}
+};

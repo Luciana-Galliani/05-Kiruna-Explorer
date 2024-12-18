@@ -30,13 +30,25 @@ import actionIcon from "./reactIcons/actionIcon.jsx";
 import DetailsPanel from "./DetailsPanel";
 import ClusterDetailsPanel from "./ClusterDetailsPanel";
 import { AppContext } from "../context/AppContext";
-import { createDocumentLayer, handleMapPointerMove, applyClickEffect } from "./utils/geoUtils";
+import {
+    createDocumentLayer,
+    handleMapPointerMove,
+    resetPreviousFeatureStyle,
+    applyClickStyle,
+} from "./utils/geoUtils";
 
-const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelected, centerIn, seeOnMap }) => {
+const CityMap = ({
+    handleCoordinatesSelected,
+    isSatelliteView,
+    handleAreaSelected,
+    centerIn,
+    seeOnMap,
+}) => {
     const see = false;
     const mapRef = useRef(null);
     const location = useLocation();
     const hoveredFeatureRef = useRef(null);
+    const clickedFeatureRef = useRef(null);
     const detailsPanelRef = useRef(null);
     const [areas, setAreas] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -45,7 +57,15 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
     const [selectedCluster, setSelectedCluster] = useState(null);
 
-    const { setAllDocuments, allDocuments, isLoggedIn, isSelectingArea, areaGeoJSON, setAreaGeoJSON, isSelectingCoordinates } = useContext(AppContext);
+    const {
+        setAllDocuments,
+        allDocuments,
+        isLoggedIn,
+        isSelectingArea,
+        areaGeoJSON,
+        setAreaGeoJSON,
+        isSelectingCoordinates,
+    } = useContext(AppContext);
 
     const iconMap = {
         "Design Document": designIcon,
@@ -191,7 +211,10 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             map.getView().setCenter(location);
             //map.getView().setZoom(14); // Adjust zoom level as needed
         } else if (selectedDocument.area) {
-            const location = fromLonLat([selectedDocument.area.centerLon, selectedDocument.area.centerLat]);
+            const location = fromLonLat([
+                selectedDocument.area.centerLon,
+                selectedDocument.area.centerLat,
+            ]);
             map.getView().setCenter(location);
             //map.getView().setZoom(14); // Adjust zoom level as needed
         }
@@ -209,7 +232,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 handleFeatureSelection(event);
             }
         };
-        
+
         const handleCoordinateSelection = (event) => {
             const [lon, lat] = toLonLat(event.coordinate);
             handleCoordinatesSelected(lon, lat);
@@ -217,7 +240,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         const handleFeatureSelection = (event) => {
             const clickedFeature = findClickedFeature(event.pixel);
-        
+
             if (clickedFeature) {
                 const features = clickedFeature.get("features"); // Clustered features
                 if (features?.length > 1) {
@@ -238,14 +261,16 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                     setSelectedDocument(matchedDocument); // Open DetailsPanel
                     setSelectedCluster(null); // Clear cluster selection
 
-                    //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
+                    resetPreviousFeatureStyle(clickedFeatureRef);
+                    applyClickStyle(clickedFeature.values_.features[0]);
+                    clickedFeatureRef.current = clickedFeature.values_.features[0];
                 }
             } else {
                 // Click outside any feature
                 setSelectedDocument(null);
                 setSelectedCluster(null);
             }
-        }
+        };
 
         const findClickedFeature = (pixel) => {
             let clickedFeature = null;
@@ -297,10 +322,7 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
     }, [allDocuments, areas, isSelectingCoordinates]);
 
     // hover and click effect
-    useEffect(() => {
-        
-    }, [allDocuments, selectedDocument]);
-    
+    useEffect(() => {}, [allDocuments, selectedDocument]);
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
@@ -309,7 +331,11 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
                 <DetailsPanel
                     ref={detailsPanelRef}
                     initialDocId={selectedDocument.id}
-                    onClose={() => setSelectedDocument(null)}
+                    onClose={() => {
+                        setSelectedDocument(null);
+                        resetPreviousFeatureStyle(clickedFeatureRef);
+                        clickedFeatureRef.current = null;
+                    }}
                     isLoggedIn={isLoggedIn}
                     see={see}
                     seeOnMap={seeOnMap}
@@ -329,7 +355,7 @@ CityMap.propTypes = {
     handleCoordinatesSelected: PropTypes.func.isRequired,
     isSatelliteView: PropTypes.bool.isRequired,
     handleAreaSelected: PropTypes.func.isRequired,
-    centerIn: PropTypes.any
+    centerIn: PropTypes.any,
 };
 
 export default CityMap;
