@@ -215,9 +215,13 @@ export function handleMapPointerMove({
     const applyHoverStyle = (feature) => {
         const currentStyle = feature.getStyle();
         const title = feature.get("documentTitle");
-        const icon = currentStyle.getImage();
+        const docId = feature.get("documentId");
+        const doc = findMatchedDocument(docId);
+        const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
         const img = new Image();
-        img.src = icon.getSrc();
+        img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
+            getIconForType(doc.type, docColor, true)
+        )}`;
         img.onload = () => {
             feature.setStyle(
                 new Style({
