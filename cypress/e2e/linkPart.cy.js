@@ -66,7 +66,7 @@ describe('Link Part Form Tests', () => {
     
     it('should save the form when save button is clicked', () => {
         cy.get('button').contains('Save').click();
-        cy.url().should("eq", `${clientUrl}/`);
+        cy.url().should("eq", `${clientUrl}/map`);
     });
     
 });

@@ -310,7 +310,8 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:1.500",
                     issuanceDate: "2018-10",
                     type: "Prescriptive Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    areaId: 2,
                     language: "Swedish",
                     pages: "1-46",
                     description:
@@ -322,7 +323,8 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:12.000",
                     issuanceDate: "2019-04",
                     type: "Technical Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    areaId: 1,
                     language: "Swedish",
                     pages: "1",
                     description:
@@ -347,7 +349,8 @@ export default async function populateDB(sequelize) {
                     scaleValue: "1:2.000",
                     issuanceDate: "2021-09-04",
                     type: "Prescriptive Document",
-                    allMunicipality: true,
+                    allMunicipality: false,
+                    areaId: 1,
                     language: "Swedish",
                     pages: "1-56",
                     description:
