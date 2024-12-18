@@ -138,6 +138,7 @@ const SearchBar = ({
                 <Row className="mt-2">
                     <Col>
                         <Form.Control as="select"
+                            id="documentType-select" //for Cypress
                             value={searchType}
                             onChange={handleSearchType}>
                             <option value="" selected style={{color: "lightgray"}}>Document Type</option>
@@ -148,6 +149,7 @@ const SearchBar = ({
                     </Col>
                     <Col>
                         <Form.Control as="select"
+                            id="stakeholder-select" //for Cypress
                             value={searchAuthor}
                             onChange={handleSearchAuthor}>
                             <option value="" selected style={{color: "lightgray"}}>Stakeholder</option>

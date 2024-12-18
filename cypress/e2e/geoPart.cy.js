@@ -6,7 +6,7 @@ describe('Georeference Part Form Tests', () => {
         cy.get("input[placeholder='Enter your Username']").type('username');
         cy.get("input[placeholder='Enter your password']").type('password123');
         cy.get('button[type="submit"]').click();
-        cy.url().should('eq', `${clientUrl}/`);
+        cy.url().should('eq', `${clientUrl}/map`);
         cy.get("a").contains("Add Document").should("exist").click();
         cy.url().should("eq", `${clientUrl}/add`);
 

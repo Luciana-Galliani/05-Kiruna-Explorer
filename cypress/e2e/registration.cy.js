@@ -50,7 +50,7 @@ describe("Registration Form Tests", () => {
     cy.wait(1000); // Wait a while for registration to complete
 
     // Verify that the user is logged in successfully and that the token is stored
-    cy.url().should("eq", `${clientUrl}/`);
+    cy.url().should("eq", `${clientUrl}/map`);
     cy.window().its("localStorage.authToken").should("exist"); // Verifica che il token di autenticazione sia presente nel localStorage
   });
   
@@ -68,6 +68,6 @@ describe("Registration Form Tests", () => {
       
   it("Redirects to home page on cancel", () => {
     cy.get("a").contains("Cancel").click();
-    cy.url().should("eq", `${clientUrl}/`);
+    cy.url().should("eq", `${clientUrl}/map`);
   });
 });  

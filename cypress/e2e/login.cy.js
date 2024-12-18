@@ -31,7 +31,7 @@ describe('Login Page Tests', () => {
 
     cy.wait(1000);
     
-    cy.url().should('eq', `${clientUrl}/`); //Check the redirect to the homepage
+    cy.url().should('eq', `${clientUrl}/map`); //Check the redirect to the map page
   });
 
   it('Shows error message for invalid credentials', () => {
@@ -46,9 +46,9 @@ describe('Login Page Tests', () => {
     cy.get('.alert.alert-danger').should('be.visible').and('contain', 'Login failed, check your credentials');
   });
 
-  it("Redirects to home page on cancel", () => {
+  it("Redirects to map page on cancel", () => {
     cy.get("a").contains("Cancel").click();
-    cy.url().should("eq", `${clientUrl}/`);
+    cy.url().should("eq", `${clientUrl}/map`);
   });
 
   it("Redirects to registration form page", () => {

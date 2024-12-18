@@ -3,8 +3,9 @@ describe('Sidebar Tests', () => {
     const docId = 1;
 
     beforeEach(() => {
-        // Navigate to the login page
         cy.visit(`${clientUrl}/`);
+        cy.get("button").contains("Go to Map").click();
+        cy.url().should("eq", `${clientUrl}/map`);
     });
 
     it("opens the sidebar when the menu button is clicked", () => {
@@ -50,8 +51,9 @@ describe('Sidebar Tests', () => {
         // Enable detailed search
         cy.get('.bi.bi-sliders').click({force: true});
         cy.get('input[placeholder="Description"]').type('plan');
-        cy.get('input[placeholder="Stakeholder"]').type('LKAB');
-        cy.get('input[placeholder="Year"]').type('2014');
+        cy.get('#stakeholder-select').select('LKAB');
+        cy.get('#documentType-select').select('Technical Document');
+        cy.get('input[placeholder="Start Date"]').type('2014-01-01');
     });
 
     it('Should toggle "All Municipality" switch', () => {
@@ -80,7 +82,7 @@ describe('Sidebar Tests', () => {
         cy.visit(`${clientUrl}/login`);
 
         // Go back and check that the filters are reset
-        cy.visit(`${clientUrl}/`);
+        cy.visit(`${clientUrl}/map`);
         cy.get("button i.bi.bi-view-list").click();
         cy.get('input[placeholder="Title..."]').should('have.value', '');
     });
@@ -132,7 +134,7 @@ describe('Sidebar Tests', () => {
         cy.get('button[type="submit"]').click();
 
         cy.get("button i.bi.bi-view-list").click();
-        cy.get('table tbody tr').first().click();
+        cy.get('table tbody tr').first().click({force: true});
         cy.get('.details-panel-container button').contains('Modify').click();
         cy.url().should('eq', `${clientUrl}/edit/${docId}`);
 

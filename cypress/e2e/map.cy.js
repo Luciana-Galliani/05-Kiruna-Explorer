@@ -3,6 +3,8 @@ describe("CityMap Tests", () => {
     
     beforeEach(() => {
         cy.visit(`${clientUrl}/`);
+        cy.get("button").contains("Go to Map").click();
+        cy.url().should("eq", `${clientUrl}/map`);
     });
 
     it("renders the map and loads documents", () => {

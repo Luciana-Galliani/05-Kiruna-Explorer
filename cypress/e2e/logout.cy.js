@@ -7,7 +7,7 @@ describe('Logout Tests', () => {
     cy.get("input[placeholder='Enter your Username']").type('username');
     cy.get("input[placeholder='Enter your password']").type('password123');
     cy.get('button[type="submit"]').click();
-    cy.url().should('eq', `${clientUrl}/`);
+    cy.url().should('eq', `${clientUrl}/map`);
   });
 
   it('Logout successfully when confirmed', () => {
@@ -23,7 +23,7 @@ describe('Logout Tests', () => {
     cy.get(".modal").should("be.visible");
     // Click "No" to annul logout
     cy.get(".modal .btn-secondary").click();
-    cy.url().should("eq", `${clientUrl}/`);
+    cy.url().should("eq", `${clientUrl}/map`);
   });
 });
   

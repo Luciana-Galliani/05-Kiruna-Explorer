@@ -7,7 +7,7 @@ describe('Footer Tests', () => {
         cy.get("input[placeholder='Enter your Username']").type('username');
         cy.get("input[placeholder='Enter your password']").type('password123');
         cy.get('button[type="submit"]').click();
-        cy.url().should('eq', `${clientUrl}/`);
+        cy.url().should('eq', `${clientUrl}/map`);
     });
 
     it("renders 'Add Document' and 'Satellite View' buttons on the homepage for logged-in users", () => {
@@ -29,12 +29,12 @@ describe('Footer Tests', () => {
         // Check on the "All Documents" page
         cy.visit(`${clientUrl}/allDocuments`);
         cy.get("button").find(".bi-x").click();
-        cy.url().should("eq", `${clientUrl}/`);
+        cy.url().should("eq", `${clientUrl}/map`);
       
         // Check on the "Municipality" page
         cy.visit(`${clientUrl}/municipality`);
         cy.get("button").find(".bi-x").click();
-        cy.url().should("eq", `${clientUrl}/`);
+        cy.url().should("eq", `${clientUrl}/map`);
     });
       
     it("renders the 'Satellite View' button for non-logged-in users", () => {
@@ -67,7 +67,7 @@ describe('Footer Tests', () => {
         // Confirm the closure
         cy.get("button .bi-x").should("exist").click();
         cy.get(".modal").contains("Yes").click();
-        cy.url().should("eq", `${clientUrl}/`);
+        cy.url().should("eq", `${clientUrl}/map`);
     });
       
 });
