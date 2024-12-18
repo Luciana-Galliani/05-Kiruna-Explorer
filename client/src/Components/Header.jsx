@@ -45,8 +45,9 @@ const Header = ({ handleLogout, headerClass, isSatelliteView, seeOnMap }) => {
                 >
                     <Link
                         to="/"
-                        className={`${isSatelliteView ? "text-light" : "text-dark"
-                            } text-decoration-none`}
+                        className={`${
+                            isSatelliteView ? "text-light" : "text-dark"
+                        } text-decoration-none`}
                         style={{ fontFamily: "fantasy" }}
                     >
                         Kiruna eXplorer
@@ -59,6 +60,7 @@ const Header = ({ handleLogout, headerClass, isSatelliteView, seeOnMap }) => {
                     <button
                         className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
                         onClick={handleLogout}
+                        style={{ marginRight: "10px" }}
                     >
                         Logout
                     </button>
@@ -67,6 +69,7 @@ const Header = ({ handleLogout, headerClass, isSatelliteView, seeOnMap }) => {
                         <Link
                             to="/login"
                             className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                            style={{ marginRight: "10px" }}
                         >
                             Login
                         </Link>
@@ -75,7 +78,11 @@ const Header = ({ handleLogout, headerClass, isSatelliteView, seeOnMap }) => {
             </div>
 
             {/* Sidebar Component */}
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={setIsSidebarOpen} seeOnMap={seeOnMap} />
+            <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                toggleSidebar={setIsSidebarOpen}
+                seeOnMap={seeOnMap}
+            />
         </header>
     );
 };
@@ -84,7 +91,7 @@ Header.propTypes = {
     handleLogout: PropTypes.func.isRequired,
     headerClass: PropTypes.string,
     isSatelliteView: PropTypes.bool.isRequired,
-    seeOnMap: PropTypes.func
+    seeOnMap: PropTypes.func,
 };
 
 export default Header;

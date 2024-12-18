@@ -21,58 +21,62 @@ const Footer = ({
     const isEditPage = matchPath("/edit/:documentId", location.pathname);
     return (
         <>
-            {isHomePage && isLoggedIn && location.pathname !== "/diagram" && (
-                <div className="container">
+            {isHomePage &&
+                isLoggedIn &&
+                location.pathname !== "/diagram" &&
+                location.pathname !== "/add" && (
+                    <div className="container">
+                        <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
+                            <LinkButton msg="Add Document" link="/add" color={isSatelliteView} />
+                        </div>
+                        <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
+                            <ButtonGroup>
+                                <Button
+                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                    onClick={handleSatelliteView}
+                                >
+                                    <i className="bi bi-globe"></i>
+                                </Button>
+                                <Button
+                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                    onClick={() => navigate("/diagram")}
+                                >
+                                    <i className="bi bi-diagram-3"></i>
+                                </Button>
+                            </ButtonGroup>
+                        </div>
+                    </div>
+                )}
+            {(location.pathname === "/add" || location.pathname === "/edit/:documentId") &&
+                location.pathname !== "/diagram" && (
                     <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
-                        <LinkButton msg="Add Document" link="/add" color={isSatelliteView} />
+                        <Button
+                            onClick={() => {
+                                setShowCloseConfirmation(true);
+                                setNewArea(null);
+                                setCoordinates((prev) => ({
+                                    ...prev,
+                                    latitude: null,
+                                    longitude: null,
+                                }));
+                            }}
+                            className="btn btn-danger d-flex align-items-center justify-content-center"
+                            style={{
+                                width: "3rem",
+                                height: "3rem",
+                                borderRadius: "50%",
+                                color: "white",
+                                transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
+                                position: "relative",
+                            }}
+                        >
+                            <i
+                                className="bi bi-x"
+                                style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
+                            ></i>
+                        </Button>
                     </div>
-                    <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                        <ButtonGroup>
-                            <Button
-                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                                onClick={handleSatelliteView}
-                            >
-                                <i className="bi bi-globe"></i>
-                            </Button>
-                            <Button
-                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                                onClick={() => navigate("/diagram")}
-                            >
-                                <i className="bi bi-diagram-3"></i>
-                            </Button>
-                        </ButtonGroup>
-                    </div>
-                </div>
-            )}
-            {(location.pathname === "/add" || location.pathname === "/edit/:documentId") && location.pathname !== "/diagram" && (
-                <div className="position-fixed d-flex flex-column gap-1 bottom-0 end-0 mb-4 me-1">
-                    <Button
-                        onClick={() => {
-                            setShowCloseConfirmation(true);
-                            setNewArea(null);
-                            setCoordinates((prev) => ({
-                                ...prev,
-                                latitude: null,
-                                longitude: null,
-                            }));
-                        }}
-                        className="btn btn-danger d-flex align-items-center justify-content-center"
-                        style={{
-                            width: "3rem",
-                            height: "3rem",
-                            borderRadius: "50%",
-                            color: "white",
-                            transition: "font-size 0.3s, width 0.3s, border-radius 0.3s",
-                            position: "relative",
-                        }}
-                    >
-                        <i
-                            className="bi bi-x"
-                            style={{ transition: "opacity 0.3s", fontSize: "2rem" }}
-                        ></i>
-                    </Button>
-                </div>
-            )}
+                )}
 
             {location.pathname === "/allDocuments" ||
             isEditPage ||
@@ -108,7 +112,7 @@ const Footer = ({
                 !isLoggedIn && location.pathname !== "/diagram" && (
                     <div className="container">
                         <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-5">
-                            <ButtonGroup> 
+                            <ButtonGroup>
                                 <Button
                                     className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
                                     onClick={handleSatelliteView}
@@ -127,22 +131,20 @@ const Footer = ({
                 )
             }
 
-            {
-                location.pathname === "/diagram" && (
-                    <div className="container" zIndex="0">
-                        <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-3">
-                            <ButtonGroup> 
-                                <Button
-                                    className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
-                                    onClick={() => navigate("/map")}
-                                >
-                                    <i className="bi bi-map"></i>
-                                </Button>
-                            </ButtonGroup>
-                        </div>
+            {location.pathname === "/diagram" && (
+                <div className="container" zIndex="0">
+                    <div className="position-fixed d-flex flex-column gap-1 bottom-0 start-0 mb-2 ms-3">
+                        <ButtonGroup>
+                            <Button
+                                className={`btn ${isSatelliteView ? "btn-light" : "btn-dark"}`}
+                                onClick={() => navigate("/map")}
+                            >
+                                <i className="bi bi-map"></i>
+                            </Button>
+                        </ButtonGroup>
                     </div>
-                )
-            }
+                </div>
+            )}
 
             <ConfirmationModal
                 show={showCloseConfirmation}

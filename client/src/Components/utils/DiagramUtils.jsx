@@ -59,3 +59,60 @@ export const getBezierLine = (nodes, xScale, line, source, target) => {
         [targetX, targetY],
     ]);
 };
+
+// Function to process the documents and return the nodes and links
+export const processDocuments = (documents) => {
+    const scales = new Map();
+    const nodes = [];
+    const links = [];
+    const seenConnections = new Set(); // Set to store unique connections
+    const minYear =
+        Math.min(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear())) - 1;
+    const maxYear = Math.max(...documents.map((doc) => new Date(doc.issuanceDate).getFullYear()));
+    const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
+
+    documents.forEach((doc) => {
+        const issuanceDate = new Date(doc.issuanceDate);
+        const year = issuanceDate.getFullYear();
+
+        // Vertical scale
+        let scaleKey = doc.scaleType;
+        if (doc.scaleType === "Plan") {
+            scaleKey = doc.scaleValue;
+        }
+        if (!scales.has(scaleKey)) {
+            scales.set(scaleKey, scales.size);
+        }
+
+        // Add nodes
+        nodes.push({
+            id: doc.id,
+            title: doc.title,
+            year,
+            date: doc.issuanceDate,
+            scale: scaleKey,
+            type: doc.type,
+            stakeholders: doc.stakeholders,
+            color: doc.stakeholders.length === 1 ? doc.stakeholders[0].color : "purple",
+        });
+
+        // Add connections
+        doc.connections.forEach((connection) => {
+            const source = doc.id;
+            const target = connection.targetDocument.id;
+            const relationship = connection.relationship;
+
+            // Create a unique key for the connection
+            const connectionKey =
+                [source, target].sort((a, b) => a - b).join("-") + "-" + relationship;
+
+            // Add connection only if it's not already seen
+            if (!seenConnections.has(connectionKey)) {
+                seenConnections.add(connectionKey);
+                links.push({ source, target, relationship });
+            }
+        });
+    });
+
+    return { nodes, links, scales: Array.from(scales.keys()).sort().reverse(), years };
+};
