@@ -1,7 +1,7 @@
 import Diagram from "./Diagram";
 import Legend from "./Legend";
 
-export default function DiagramPage(seeOnMap) {
+export default function DiagramPage() {
     return (
         <div
             className="w-100 h-100 position-absolute top-0 diagram-container"
@@ -13,7 +13,7 @@ export default function DiagramPage(seeOnMap) {
                 overflowX: "hidden",
             }}
         >
-            <Diagram seeOnMap={seeOnMap} />
+            <Diagram />
             <Legend />
         </div>
     );

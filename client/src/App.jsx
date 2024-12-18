@@ -183,7 +183,7 @@ function App() {
                         />
                     }
                 />
-                <Route path="/diagram" element={<DiagramPage seeOnMap={seeOnMap} />} />
+                <Route path="/diagram" element={<DiagramPage />} />
             </Routes>
 
             {!isHomePage && location.pathname && (

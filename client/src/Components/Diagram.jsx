@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Modal } from "react-bootstrap";
-import { useContext } from "react";
 import DetailsPanel from "./DetailsPanel";
 import API from "../API/API.mjs";
 import * as d3 from "d3";
@@ -20,7 +19,7 @@ const RELATIONSHIP_STYLES = {
     Update: "2, 5, 10, 5", // Dash-dotted line
 };
 
-export default function Diagram(seeOnMap) {
+export default function Diagram() {
     const [documents, setDocuments] = useState([]);
     const svgRef = useRef();
     const [dimensions, setDimensions] = useState({
@@ -420,7 +419,7 @@ export default function Diagram(seeOnMap) {
                         initialDocId={selectedDocument.id}
                         onClose={() => setSelectedDocument(null)}
                         isLoggedIn={isLoggedIn}
-                        seeOnMap={seeOnMap}
+                        seeOnMap={() => {}}
                         toggleSidebar={() => {}}
                         see={false}
                     />
