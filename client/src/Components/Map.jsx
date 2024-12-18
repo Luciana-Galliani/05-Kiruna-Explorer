@@ -216,11 +216,42 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
             const clickedFeature = findClickedFeature(event.pixel);
             //Create new style for the clicked feature
 
+            const resetPreviousFeatureStyle = () => {
+                if (hoveredFeatureRef.current) {
+                    const previousFeature = hoveredFeatureRef.current;
+                    const initialStyle = previousFeature.get("initialStyle"); // Store the initial style in the feature
+                    if (initialStyle) {
+                        previousFeature.setStyle(initialStyle);
+                    }
+                    hoveredFeatureRef.current = null; // Clear the reference
+                }
+            };
+
+            const applyClickStyle = (feature) => {
+                const currentStyle = feature.getStyle();
+                const docId = feature.get("documentId");
+                const doc = findMatchedDocument(docId);
+                const docColor = doc.stakeholders.length === 1 ? doc.stakeholders[0].color : "purple";
+                feature.set("initialStyle", currentStyle); // Save the current style for resetting later
+        
+                const clickedStyle = new Style({
+                    image: new Icon({
+                        src:  `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor, true))}`, // Replace with your clicked icon path
+                        scale: 0.55,
+                    }),
+                });
+        
+                feature.setStyle(clickedStyle);
+                hoveredFeatureRef.current = feature; // Update the reference to the clicked feature
+            };
+
             if (clickedFeature) {
                 const documentId = clickedFeature.get("documentId");
                 const matchedDocument = findMatchedDocument(documentId);
                 setSelectedDocument(matchedDocument);
                 //applyClickEffect({ mapInstanceRef, clickedFeatureRef: clickedFeature, doc: matchedDocument });
+                resetPreviousFeatureStyle();
+                applyClickStyle(clickedFeature);
             } else {
                 setSelectedDocument(null);
             }
@@ -274,6 +305,12 @@ const CityMap = ({ handleCoordinatesSelected, isSatelliteView, handleAreaSelecte
 
         return cleanup; // remove effects when unmount component
     }, [allDocuments, areas, isSelectingCoordinates]);
+
+    // hover and click effect
+    useEffect(() => {
+        
+    }, [allDocuments, selectedDocument]);
+    
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>

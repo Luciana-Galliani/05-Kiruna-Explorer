@@ -223,27 +223,25 @@ export function handleMapPointerMove({
 export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
     const map = mapInstanceRef.current;
 
-    // Ensure the previous feature's style is reset before updating the new one
     const resetPreviousFeatureStyle = () => {
         if (clickedFeatureRef.current) {
             const previousFeature = clickedFeatureRef.current;
-            const initialStyle = previousFeature.get("initialStyle"); // Assume initialStyle is stored
+            const initialStyle = previousFeature.get("initialStyle");
             if (initialStyle) {
                 previousFeature.setStyle(initialStyle);
             }
             previousFeature.set("clicked", false);
-            clickedFeatureRef.current = null; // Reset the reference
+            clickedFeatureRef.current = null;
         }
     };
 
-    // Apply new style to the clicked feature
     const applyClickStyle = (feature, doc) => {
         const docColor = doc.stakeholders?.length === 1 ? doc.stakeholders[0].color : "purple";
         const img = new Image();
         img.src = `data:image/svg+xml;utf8,${encodeURIComponent(getIconForType(doc.type, docColor, true))}`;
 
         const currentStyle = feature.getStyle();
-        feature.set("initialStyle", currentStyle); // Save the initial style for later reset
+        feature.set("initialStyle", currentStyle);
 
         img.onload = () => {
             const newStyle = new Style({
@@ -257,22 +255,19 @@ export function applyClickEffect({ mapInstanceRef, clickedFeatureRef, doc }) {
             });
 
             feature.setStyle(newStyle);
-
-            feature.set("clicked", true); //mark the feature as clicked
-            clickedFeatureRef.current = feature; // Update reference to the current feature
+            feature.set("clicked", true);
+            clickedFeatureRef.current = feature;
         };
     };
 
     const handleClick = (event) => {
         const feature = map.forEachFeatureAtPixel(event.pixel, (f) => f);
         if (feature) {
-            resetPreviousFeatureStyle(); // Reset the previous feature's style
-            applyClickStyle(feature, doc); // Apply new style
-            //clickedFeatureRef.current = feature; // Update reference to the current feature
+            resetPreviousFeatureStyle();
+            applyClickStyle(feature, doc);
         }
     };
 
-    // Attach and detach event listener for cleanup
     map.on("click", handleClick);
     return () => {
         map.un("click", handleClick);
