@@ -15,11 +15,6 @@ sections:
 - Total points committed vs done: 30 vs 30
 - Nr of hours planned vs spent (as a team): 64h vs 65h30m
 
--   Unit Tests passing
--   Code review completed
--   Code present on VCS
--   End-to-End tests performed
-
 **Remember**  a story is done ONLY if it fits the Definition of Done:
  
 - Unit Tests passing
@@ -50,9 +45,13 @@ sections:
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
 
+    VALUE: 2,34 %
+
 -   Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
     $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
+
+    VALUE: 2,15 %
 
 ## QUALITY MEASURES
 
