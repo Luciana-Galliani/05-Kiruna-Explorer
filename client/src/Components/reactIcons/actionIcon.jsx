@@ -102,7 +102,7 @@ const ActionIcon = ({ size = 24, fillPrimary = "white", fillTertiary = "#000000"
 );
 
 ActionIcon.propTypes = {
-    fillPrimary: PropTypes.number,
+    fillPrimary: PropTypes.string,
     fillSecondary: PropTypes.string,
     fillTertiary: PropTypes.string,
 };
