@@ -90,7 +90,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
     // Defines the style for the cluster
     const clusterLayer = new VectorLayer({
         name: "documentLayer",
-        zIndex: 4,
+        zIndex: 10,
         source: clusterSource,
         style: (feature) => {
             const features = feature.get("features");
