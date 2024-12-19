@@ -12,7 +12,7 @@ sections:
 ### Macro statistics
 
 -   Number of stories committed vs done 3 vs 3
--   Total points committed vs done 18 vs 18
+-   Total points committed vs done 30 vs 30
 -   Nr of hours planned vs spent (as a team) 64 vs 65.5
 
 **Remember** a story is done ONLY if it fits the Definition of Done:
@@ -29,9 +29,9 @@ sections:
 | Story | # Tasks | Points | Hours est. | Hours actual |
 | ----- | ------- | ------ | ---------- | ------------ |
 | _#0_  | 18      | -      | 33         | 34.5         |
-| 10    | 10      | 10     | 18.5       | 19.25        |
-| 20    | 5       | 3      | 9.5        | 9.5          |
-| 14    | 3       | 5      | 3          | 3            |
+| 10    | 10      | 21     | 18.5       | 19.25        |
+| 20    | 5       | 7      | 9.5        | 9.5          |
+| 14    | 3       | 2      | 3          | 3            |
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
