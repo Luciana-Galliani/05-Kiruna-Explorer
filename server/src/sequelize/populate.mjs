@@ -232,7 +232,7 @@ export default async function populateDB(sequelize) {
                     description:
                         "Simultaneously with the start of construction on the Aurora Center, work also began on Block 1, another mixed-use building overlooking the main square and the road leading to old Kiruna. These are the first residential buildings in the new town.",
                 },
- 
+
                 {
                     title: "Mail to Kiruna kommun (2)",
                     scaleType: "Text",
@@ -278,7 +278,7 @@ export default async function populateDB(sequelize) {
                     language: "Swedish",
                     pages: "1-15",
                     description:
-                        "This is the first Detailed Plan for the new city center, covering a very small area. It regulates the use of a portion of land that will host a single building. Its boundaries coincide with the outer footprint of the new Town Hall, \"Kristallen,\" the first building to be constructed in the new Kiruna.",
+                        'This is the first Detailed Plan for the new city center, covering a very small area. It regulates the use of a portion of land that will host a single building. Its boundaries coincide with the outer footprint of the new Town Hall, "Kristallen," the first building to be constructed in the new Kiruna.',
                 },
                 {
                     title: "Detailed Overview Plan for the Central Area of Kiruna 2014. (44)",
@@ -315,7 +315,7 @@ export default async function populateDB(sequelize) {
                     language: "Swedish",
                     pages: "1-46",
                     description:
-                        "The third Detailed Plan of the second demolition phase covers a narrow, elongated area straddling the old railway. Like all areas within the \"Gruvstadpark 2\" zone, its sole designated land use is for mining activities, although it will temporarily be used as a park during an interim phase.",
+                        'The third Detailed Plan of the second demolition phase covers a narrow, elongated area straddling the old railway. Like all areas within the "Gruvstadpark 2" zone, its sole designated land use is for mining activities, although it will temporarily be used as a park during an interim phase.',
                 },
                 {
                     title: "Deformation forecast (62)",
@@ -367,7 +367,7 @@ export default async function populateDB(sequelize) {
                     latitude: 68.4219,
                     longitude: 20.3921,
                     description:
-                        "On June 2, the Kiruna Church was closed to begin the necessary preparations for its relocation, following a solemn ceremony. The relocation is scheduled for the summer of 2025 and will take two days. Both the new site and the route for the move have already been determined. A significant period will pass between the relocation and the reopening of the church, voted \"Sweden's most beautiful building constructed before 1950.\"",
+                        'On June 2, the Kiruna Church was closed to begin the necessary preparations for its relocation, following a solemn ceremony. The relocation is scheduled for the summer of 2025 and will take two days. Both the new site and the route for the move have already been determined. A significant period will pass between the relocation and the reopening of the church, voted "Sweden\'s most beautiful building constructed before 1950."',
                 },
             ],
             { validate: true }
@@ -403,6 +403,11 @@ export default async function populateDB(sequelize) {
                 sourceDocumentId: documents[0].id,
                 targetDocumentId: documents[4].id,
                 relationship: "Prevision",
+            },
+            {
+                sourceDocumentId: documents[0].id,
+                targetDocumentId: documents[4].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[3].id,
@@ -491,6 +496,11 @@ export default async function populateDB(sequelize) {
                 sourceDocumentId: documents[4].id,
                 targetDocumentId: documents[0].id,
                 relationship: "Prevision",
+            },
+            {
+                sourceDocumentId: documents[4].id,
+                targetDocumentId: documents[0].id,
+                relationship: "Collateral Consequence",
             },
             {
                 sourceDocumentId: documents[2].id,

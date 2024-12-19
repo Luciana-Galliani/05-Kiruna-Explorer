@@ -195,7 +195,6 @@ SearchBar.propTypes = {
     handleMunicipality: PropTypes.func.isRequired,
     handleAuthor: PropTypes.func.isRequired,
     handleTitle: PropTypes.func.isRequired,
-    handleIssuanceDate: PropTypes.func.isRequired,
     handleDescription: PropTypes.func.isRequired,
     handleRange: PropTypes.func.isRequired,
     handleType: PropTypes.func.isRequired,

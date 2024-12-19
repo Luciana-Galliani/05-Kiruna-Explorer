@@ -90,6 +90,7 @@ export const createDocumentLayer = (allDocuments, iconMap) => {
     // Defines the style for the cluster
     const clusterLayer = new VectorLayer({
         name: "documentLayer",
+        zIndex: 10,
         source: clusterSource,
         style: (feature) => {
             const features = feature.get("features");
@@ -156,6 +157,7 @@ export function handleMapPointerMove({
                 color: "rgba(255, 165, 0, 0.2)", // Colore per l'effetto hover
             }),
         }),
+        zIndex: 3,
     });
 
     map.addLayer(hoverLayer);
@@ -254,7 +256,7 @@ export function handleMapPointerMove({
                             lineJoin: "round",
                         }),
                     }),
-                    zIndex: 2,
+                    zIndex: 1000,
                 })
             );
         };

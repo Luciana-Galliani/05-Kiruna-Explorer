@@ -17,16 +17,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
                 const stakeholders = await API.getStakeholders();
                 // Two times stakeholders.stakeholders because the API returns an object with the stakeholders array inside
                 setStakeholders(stakeholders.stakeholders);
-                console.log("Stakeholders fetched:");
-                console.log(stakeholders);
             } catch (error) {
                 console.error("Error fetching stakeholders:", error);
             }
         };
-        
+
         fetchStakeholders();
     }, []);
-        
 
     const handleMunicipality = () => {
         const updatedFilter = new Filter({ ...filter, allMunicipality: !filter.allMunicipality });
@@ -66,7 +63,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
     const closeSidebar = () => {
         toggleSidebar();
     };
-
 
     const handleOverlayClick = (e) => {
         // If the overlay was clicked, close the sidebar
@@ -158,7 +154,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, seeOnMap }) => {
 Sidebar.propTypes = {
     isSidebarOpen: PropTypes.bool,
     toggleSidebar: PropTypes.func.isRequired,
-    seeOnMap: PropTypes.func
+    seeOnMap: PropTypes.func,
 };
 
 export default Sidebar;
