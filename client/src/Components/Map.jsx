@@ -260,10 +260,9 @@ const CityMap = ({
                     const matchedDocument = findMatchedDocument(documentId);
                     setSelectedDocument(matchedDocument); // Open DetailsPanel
                     setSelectedCluster(null); // Clear cluster selection
-
                     resetPreviousFeatureStyle(clickedFeatureRef);
                     applyClickStyle(clickedFeature.values_.features[0]);
-                    clickedFeatureRef.current = clickedFeature.values_.features[0];
+                    clickedFeatureRef.current = clickedFeature.values_?.features[0];
                 }
             } else {
                 // Click outside any feature
@@ -275,8 +274,8 @@ const CityMap = ({
         const findClickedFeature = (pixel) => {
             let clickedFeature = null;
 
-            map.forEachFeatureAtPixel(pixel, (feature) => {
-                clickedFeature = feature;
+            map.forEachFeatureAtPixel(pixel, (feature, layer) => {
+                if (layer.get("name") === "documentLayer") clickedFeature = feature;
             });
 
             return clickedFeature;
