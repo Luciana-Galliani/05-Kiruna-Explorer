@@ -17,9 +17,9 @@ sections:
 ### Macro statistics
 
 
-- Number of stories committed vs done 
-- Total points committed vs done 
-- Nr of hours planned vs spent (as a team)
+- Number of stories committed vs done: 3 vs 3
+- Total points committed vs done: 30 vs 30
+- Nr of hours planned vs spent (as a team): 64h vs 65h30m
 
 
 **Remember**  a story is done ONLY if it fits the Definition of Done:
@@ -28,9 +28,6 @@ sections:
 - Code review completed
 - Code present on VCS
 - End-to-End tests performed
-
-
-> Please refine your DoD 
 
 
 ### Detailed statistics
@@ -49,10 +46,10 @@ sections:
 - Hours per task average, standard deviation (estimate and actual)
 
 
-|            | Mean | StDev |
-|------------|------|-------|
-| Estimation |      |       | 
-| Actual     |      |       |
+|            | Mean    | StDev |
+|------------|---------|-------|
+| Estimation |  1,78   | 0,97  | 
+| Actual     |  1,82   | 1,04  |
 
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
