@@ -22,9 +22,9 @@ import technicalIcon from "../Icons/technical.svg";
 import agreementIcon from "../Icons/agreement.svg";
 import conflictIcon from "../Icons/conflict.svg";
 import consultationIcon from "../Icons/consultation.svg";
-//import actionIcon from "../Icons/action.svg";
+import actionIcon from "../Icons/action.svg";
 import otherIcon from "../Icons/other.svg";
-import actionIcon from "./reactIcons/actionIcon.jsx";
+//import actionIcon from "./reactIcons/actionIcon.jsx";
 
 // internal components and appContext
 import DetailsPanel from "./DetailsPanel";
@@ -36,6 +36,68 @@ import {
     resetPreviousFeatureStyle,
     applyClickStyle,
 } from "./utils/geoUtils";
+
+const Legend = ({ iconMap }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    const toggleLegend = () => {
+        setExpanded((prev) => !prev);
+    };
+
+    return (
+        <div
+            className={`legend ${expanded ? "expanded" : "collapsed"}`}
+            onMouseEnter={toggleLegend}
+            onMouseLeave={toggleLegend}
+            style={{
+                position: "fixed",
+                bottom: "100px",
+                right: "20px",
+                boxSizing: "border-box",
+                padding: expanded ? "20px" : "10px",
+                backgroundColor: "rgba(255, 255, 255, 0.96)",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                cursor: "pointer",
+                transition:
+                    "padding 0.3s ease-in-out, max-width 0.3s ease-in-out, max-height 0.3s ease-in-out",
+                maxWidth: expanded ? "400px" : "140px",
+                maxHeight: expanded ? "800px" : "40px",
+                overflowY: "hidden",
+            }}
+        >
+            <h6 style={{ margin: 0, textAlign: "center", fontWeight: "bold" }}>Legend</h6>
+            <ul style={{ listStyleType: "none", padding: "10px 0 0 0", margin: 0 }}>
+                {Object.entries(iconMap).map(([label, icon]) => (
+                    <li
+                        key={label}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        <img
+                            src={icon}
+                            alt={label}
+                            style={{
+                                width: "20px",
+                                height: "20px",
+                                marginRight: "10px",
+                            }}
+                        />
+                        <div>
+                            <h6>{label}</h6>
+                        </div>
+                    </li>
+                ))}
+
+            </ul>
+        </div>
+    );
+};
+
+
 
 const CityMap = ({
     handleCoordinatesSelected,
@@ -321,11 +383,13 @@ const CityMap = ({
     }, [allDocuments, areas, isSelectingCoordinates]);
 
     // hover and click effect
-    useEffect(() => {}, [allDocuments, selectedDocument]);
+    useEffect(() => { }, [allDocuments, selectedDocument]);
 
     return (
         <div style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}>
             <div id="map" ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+            <Legend iconMap={iconMap} />
+
             {selectedDocument && location.pathname === "/map" && (
                 <DetailsPanel
                     ref={detailsPanelRef}
