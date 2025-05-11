@@ -1,6 +1,13 @@
-# Project name : "Kiruna Explorer"
+# Kiruna Explorer
 
-## Group: 5
+Kiruna Explorer is an interactive platform that tells the story of Kiruna's relocation—a monumental endeavor to preserve the city as it adapts to mining activities and evolving urban needs. The application features historical records, urban planning documents, and cultural highlights, offering an engaging way to explore Kiruna's past, present, and future.
+
+Developed by Team 5 of the Software Engineering II course at Politecnico di Torino during the academic year 2024-2025.
+
+## Teaser Video
+A video showing the execution of the Kiruna eXplorer system software.
+
+Link: https://www.youtube.com/watch?v=iAWV1fb5a5I
 
 ## React Client Application Routes
 
@@ -38,7 +45,6 @@
     -   sourceDocumentId,
     -   targetDocumentId
 
-## Main React Components
 
 ## Users Credentials
 
@@ -51,7 +57,9 @@
 ## Deploy environment
 
 For run this project in a deploy environment without have the code need to use the `docker-compose.deploy.yml` file.
+
 The command for running are `docker-compose -f docker-compose.deploy.yml up -d`.
+
 The web-app run on **localhost:5173**
 
 ## License
